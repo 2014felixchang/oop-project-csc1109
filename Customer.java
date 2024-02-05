@@ -1,3 +1,3 @@
 public class Customer {
-    private int weiming=0;
+    private int OID;
 }
