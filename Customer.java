@@ -75,14 +75,9 @@ public class Customer {
     public String[] getDetails() {
         return new String[] {name, address, phoneNumber, email, dateOfBirth};
     }
-}
-
-// Define a class to write Customer data to a CSV file
-class CustomerCSVWriter {
-    // Method to append a customer's details to a CSV file
-    public static void appendCustomerToCSV(Customer customer) {
+    public void appendToCSV() {
         // Get the customer's details as an array
-        String[] data = customer.getDetails();
+        String[] data = getDetails();
 
         try {
             // Create a FileWriter in append mode
@@ -101,3 +96,5 @@ class CustomerCSVWriter {
         }
     }
 }
+
+
