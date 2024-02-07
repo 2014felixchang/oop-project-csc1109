@@ -1,12 +1,15 @@
 import java.io.*;
 
+// Define a Customer class
 public class Customer {
+    // Declare private fields for customer details
     private String name;
     private String address;
     private String phoneNumber;
     private String email;
     private String dateOfBirth;
 
+    // Constructor for the Customer class
     public Customer(String name, String address, String phoneNumber, String email, String dateOfBirth) {
         this.name = name;
         this.address = address;
@@ -15,6 +18,7 @@ public class Customer {
         this.dateOfBirth = dateOfBirth;
     }
 
+    // Getter methods for customer details
     public String getName() {
         return name;
     }
@@ -35,30 +39,33 @@ public class Customer {
         return dateOfBirth;
     }
 
+    // Method to return all customer details as an array
     public String[] getDetails() {
         return new String[] {name, address, phoneNumber, email, dateOfBirth};
     }
 }
 
+// Define a class to write Customer data to a CSV file
 class CustomerCSVWriter {
+    // Method to append a customer's details to a CSV file
     public static void appendCustomerToCSV(Customer customer) {
+        // Get the customer's details as an array
         String[] data = customer.getDetails();
 
         try {
-            FileWriter fileWriter = new FileWriter("filename.csv", true); // Set the second parameter to true for append mode
+            // Create a FileWriter in append mode
+            FileWriter fileWriter = new FileWriter("filename.csv", true); 
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+            // Write the customer's details to the file, separated by commas
             bufferedWriter.write(String.join(",", data));
-            bufferedWriter.newLine(); // Add this line if you want to append a new line to the file
+            // Add a new line to the file
+            bufferedWriter.newLine(); 
+            // Close the BufferedWriter
             bufferedWriter.close();
         } catch (IOException e) {
-            // Exception handling
+            // Handle any exceptions that occur
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) {
-        Customer customer = new Customer("John Doe", "123 Main St", "555-555-5555", "johndoe@example.com", "01-01-1981");
-        appendCustomerToCSV(customer);
     }
 }
