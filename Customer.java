@@ -73,7 +73,7 @@ public class Customer {
 
     // Method to return all customer details as an array
     public String[] getDetails() {
-        return new String[] {name, address, phoneNumber, email, dateOfBirth};
+        return new String[] {name, address, phoneNumber, email, dateOfBirth, String.valueOf(password)};
     }
 }
 
