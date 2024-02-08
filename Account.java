@@ -59,14 +59,15 @@ public class Account {
      * Process: adds amount to balance
      */
     public void deposit(double amount) {
-        this.accountNum += amount;
+        this.balance += amount;
     }
 
     /*
      * Output: returns balance as String in 2 d.p, rounded up
      */
     public String getBalance() {
-        String balance = String.format(".2f", this.balance);
+        String balance = String.format("$%.2f", this.balance);
+        //double balance = this.balance;
         return balance;
     }
 
@@ -92,6 +93,24 @@ public class Account {
     public String getDebt() {
         String debt = String.format(".2f", this.debt);
         return debt;
+    }
+
+    public void transferFunds(double amount, Account toAccount) {
+        if (this.balance < amount) {
+            System.out.println("Insufficient balance to transfer funds.");
+            return;
+        }
+
+        this.balance -= amount;
+        toAccount.deposit(amount);
+    }
+
+    public static void main(String[] args) {
+        Account acc1 = new Account("accountno123", 1000, 0);
+        Account acc2 = new Account("accountno456", 500, 0);
+        acc1.transferFunds(200, acc2);
+        System.out.println(acc1.getBalance());  // Should print 800.00
+        System.out.println(acc2.getBalance());  // Should print 700.00
     }
 
 }   
