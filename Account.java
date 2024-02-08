@@ -1,14 +1,14 @@
 /*
  * Account class:
  * - account info handling (display & manage acc info like acc numbers and types)
- * - balance management (check balance, show current, remaining, available)
+ * - balance management (check balance, show current, available)
  * - account operations (deposit, withdraw)
  */
 
 public class Account {
     private String accountNum;
     private double balance;
-    private double debt; 
+    private double debt;
 
     /*
      * Input: account number, current balance, account debt (pulled from file)
@@ -22,14 +22,16 @@ public class Account {
     }
 
     /*
-     * Account number getter method
+     * Output: account number type String
      */
     public String getAccountNum() {
         return this.accountNum;
     }
 
     /*
-     * Account number setter method (might be useless)
+     * Input: new account number type String
+     * 
+     * Process: changes account number to new given number
      */
     public void setAccountNum(String newNum) {
         this.accountNum = newNum;
@@ -42,7 +44,7 @@ public class Account {
      */
     public void withdraw(double amount) {
         if ((this.balance - amount) < 0) {
-            System.out.println("Withdrawal limit reached. Remaining amount will be loaned.");
+            System.out.println("Withdrawal limit reached. Remaining amount will be loaned, and added to debt");
             this.debt += this.balance - amount;
             this.balance = 0.0;
         }
