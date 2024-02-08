@@ -99,17 +99,18 @@ public class Account {
         return debt;
     }
 
-    public void transferFunds(double amount, Account toAccount) {
-        if (this.balance < amount) {
-            System.out.println("Insufficient balance to transfer funds.");
-            return;
-        }
+    // See bank.java
+    // public void transferFunds(double amount, Account toAccount) {
+    //     if (this.balance < amount) {
+    //         System.out.println("Insufficient balance to transfer funds.");
+    //         return;
+    //     }
 
-        this.balance -= amount;
-        toAccount.deposit(amount);
-        this.history.add ("Transfered $" + convert(amount) + " to Account Number: " + toAccount.getAccountNum());
-        toAccount.history.add ("Received $" + convert(amount) + " from Account Number: " + this.accountNum);
-    }
+    //     this.balance -= amount;
+    //     toAccount.deposit(amount);
+    //     this.history.add ("Transfered $" + convert(amount) + " to Account Number: " + toAccount.getAccountNum());
+    //     toAccount.history.add ("Received $" + convert(amount) + " from Account Number: " + this.accountNum);
+    // }
     
     public void transactionHistory() {
         System.out.println(this.accountNum + " Transaction History:");
@@ -132,7 +133,7 @@ public class Account {
     public static void main(String[] args) {
         Account acc1 = new Account("accountno123", 1000, 0);
         Account acc2 = new Account("accountno456", 500, 0);
-        acc1.transferFunds(200, acc2);
+        // acc1.transferFunds(200, acc2);
         acc1.deposit(100);
         System.out.println(acc1.getBalance());  // Should print 800.00
         System.out.println(acc2.getBalance());  // Should print 700.00
