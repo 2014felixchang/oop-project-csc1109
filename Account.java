@@ -53,7 +53,7 @@ public class Account {
         }
         else {
             this.balance -= amount;
-            this.history.add ("Withdrawn: $" + convert(amount));
+            this.history.add ("Withdrawn: $" + convert2DP(amount));
         }
     }
 
@@ -64,15 +64,23 @@ public class Account {
      */
     public void deposit(double amount) {
         this.balance += amount;
-        this.history.add ("Deposited: $" + convert(amount));
+        this.history.add ("Deposited: $" + convert2DP(amount));
     }
 
     /*
      * Output: returns balance as String in 2 d.p, rounded up
      */
     public String getBalance() {
-        //double balance = this.balance;
-        return convert(balance);
+        return convert2DP(balance);
+    }
+
+    /*
+     * Input: new account balance amount, type double
+     * 
+     * Process: sets account balance to given amount
+     */
+    public void setBalance(double amount) {
+        this.balance = amount;   
     }
 
     /*
@@ -95,8 +103,38 @@ public class Account {
     * Output: returns debt as String in 2 d.p, rounded up
     */
     public String getDebt() {
-        String debt = String.format("%.2f", this.debt);
-        return debt;
+        return convert2DP(this.debt);
+    }
+
+    public void transactionHistory() {
+        System.out.println(this.accountNum + " Transaction History:");
+
+        for (int i = 0; i < this.history.size() ; i++) {
+            System.out.println(this.history.get(i));
+        }
+    }
+
+    public String convert2DP(double amount) {
+        String amt = String.format("%.2f", amount);
+        return amt;
+    }
+
+    public void displayAccountInfo() {
+        System.out.println("Account Number: " + accountNum);
+        System.out.println("Current Balance: $" + convert2DP(balance));
+        System.out.println("Debt: $" + convert2DP(debt));
+    }
+
+    public static void main(String[] args) {
+        Account acc1 = new Account("accountno123", 1000, 0);
+        Account acc2 = new Account("accountno456", 500, 0);
+        // acc1.transferFunds(200, acc2);
+        acc1.deposit(100);
+        System.out.println(acc1.getBalance());  // Should print 800.00
+        System.out.println(acc2.getBalance());  // Should print 700.00
+        acc1.transactionHistory();
+        acc2.transactionHistory();
+        acc1.displayAccountInfo();
     }
 
     // See bank.java
@@ -112,34 +150,4 @@ public class Account {
     //     toAccount.history.add ("Received $" + convert(amount) + " from Account Number: " + this.accountNum);
     // }
     
-    public void transactionHistory() {
-        System.out.println(this.accountNum + " Transaction History:");
-
-        for (int i = 0; i < this.history.size() ; i++) {
-            System.out.println(this.history.get(i));
-        }
-    }
-
-    public String convert(double amount) {
-        String amt = String.format("%.2f", amount);
-        return amt;
-    }
-
-    public void displayAccountInfo() {
-        System.out.println("Account Number: " + accountNum);
-        System.out.println("Current Balance: $" + convert(balance));
-        System.out.println("Debt: $" + convert(debt));
-    }
-    public static void main(String[] args) {
-        Account acc1 = new Account("accountno123", 1000, 0);
-        Account acc2 = new Account("accountno456", 500, 0);
-        // acc1.transferFunds(200, acc2);
-        acc1.deposit(100);
-        System.out.println(acc1.getBalance());  // Should print 800.00
-        System.out.println(acc2.getBalance());  // Should print 700.00
-        acc1.transactionHistory();
-        acc2.transactionHistory();
-        acc1.displayAccountInfo();
-    }
-
 }   
