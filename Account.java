@@ -70,8 +70,8 @@ public class Account {
     /*
      * Output: returns balance as String in 2 d.p, rounded up
      */
-    public String getBalance() {
-        return ("$" + convert2DP(balance));
+    public double getBalance() {
+        return balance;
     }
 
     /*

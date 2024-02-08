@@ -42,12 +42,12 @@ public class Bank {
         Account sourceAccount = getAccountObj(sourceAccountNum);
         Account destinationAccount = getAccountObj(destinationAccountNum);
 
-        if (Double.parseDouble(sourceAccount.getBalance()) < amount) {
+        if (sourceAccount.getBalance() < amount) {
             System.out.println("Insufficient balance to transfer funds.");
             return;
         }
-        sourceAccount.setBalance( (Double.parseDouble(sourceAccount.getBalance())) - amount);
-        destinationAccount.setBalance( (Double.parseDouble(destinationAccount.getBalance())) + amount);
+        sourceAccount.setBalance(sourceAccount.getBalance() - amount);
+        destinationAccount.setBalance(destinationAccount.getBalance() + amount);
         sourceAccount.addHistory("Transfered $" + amount + " to Account Number: " + destinationAccount.getAccountNum());
         destinationAccount.addHistory ("Received $" + amount + " from Account Number: " + sourceAccount.getAccountNum());
         // (Waiting for account to make addHistory())
@@ -95,4 +95,6 @@ public class Bank {
     public String getBankName(){
         return bankName;
     }
+
+    
 }
