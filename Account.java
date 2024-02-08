@@ -53,7 +53,7 @@ public class Account {
         }
         else {
             this.balance -= amount;
-            this.history.add ("Withdrawn: $" + convert2DP(amount));
+            this.addHistory ("Withdrawn: $" + convert2DP(amount));
         }
     }
 
@@ -64,14 +64,14 @@ public class Account {
      */
     public void deposit(double amount) {
         this.balance += amount;
-        this.history.add ("Deposited: $" + convert2DP(amount));
+        this.addHistory ("Deposited: $" + convert2DP(amount));
     }
 
     /*
      * Output: returns balance as String in 2 d.p, rounded up
      */
     public String getBalance() {
-        return convert2DP(balance);
+        return ("$" + convert2DP(balance));
     }
 
     /*
@@ -112,6 +112,14 @@ public class Account {
         for (int i = 0; i < this.history.size() ; i++) {
             System.out.println(this.history.get(i));
         }
+    }
+
+    public void clearHistory() {
+        this.history.clear();
+    }
+
+    public void addHistory(String transaction) {
+        this.history.add(transaction);
     }
 
     public String convert2DP(double amount) {

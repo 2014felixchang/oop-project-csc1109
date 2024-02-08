@@ -48,6 +48,8 @@ public class Bank {
         }
         sourceAccount.setBalance( (Double.parseDouble(sourceAccount.getBalance())) - amount);
         destinationAccount.setBalance( (Double.parseDouble(destinationAccount.getBalance())) + amount);
+        sourceAccount.addHistory("Transfered $" + amount + " to Account Number: " + destinationAccount.getAccountNum());
+        destinationAccount.addHistory ("Received $" + amount + " from Account Number: " + sourceAccount.getAccountNum());
         // (Waiting for account to make addHistory())
         // sourceAccount.addHistory("Transfered $" + amount + " to Account Number: " + destinationAccount.getAccountNum());
         // destinationAccount.addHistory ("Received $" + amount + " from Account Number: " + sourceAccount.getAccountNum());
