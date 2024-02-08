@@ -16,7 +16,8 @@ public class Bank {
 
     public static void main(String[] args) {
         Bank bank1 = new Bank("ABC Bank");
-
+        // Create a customer to test
+        Customer customer = new Customer(null, null, null, null, null, null, 0, bank1);
         // Make 3 accounts to test
         Account account1 = new Account("111", 50.00, 0);
         Account account2 = new Account("222", 50.00, 0);

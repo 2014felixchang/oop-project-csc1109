@@ -6,6 +6,7 @@ import java.util.Map;
 public class Customer {
     // Declare private fields for customer details
     private String name;
+    private Account account;
     private String address;
     private String phoneNumber;
     private String email;
@@ -17,7 +18,7 @@ public class Customer {
     private static Map<String, Customer> customers = new HashMap<>();
 
     // Constructor for the Customer class
-    public Customer(String name, String address, String phoneNumber, String email, String dateOfBirth, String username, int password) {
+    public Customer(String name, String address, String phoneNumber, String email, String dateOfBirth, String username, int password, Bank bank) {
         this.name = name;
         this.address = address;
         this.phoneNumber = phoneNumber;
@@ -25,6 +26,13 @@ public class Customer {
         this.dateOfBirth = dateOfBirth;
         this.username = username;
         this.password = password;
+
+        this.account = new Account("123", 10.0, 10);
+        bank.addAccount(this.account);
+    }
+
+    public Account getAccount() {
+        return this.account;
     }
 
     public static boolean loginCustomer(String username, int password) {
@@ -36,7 +44,7 @@ public class Customer {
 
     public static void registerCustomer(String name, String address, String phoneNumber, String email, String dateOfBirth, String username, int password) {
         // Create a new Customer object with the provided details
-        Customer customer = new Customer(name, address, phoneNumber, email, dateOfBirth, username, password);
+        Customer customer = new Customer(name, address, phoneNumber, email, dateOfBirth, username, password, new Bank("ABC Bank"));
         // Add the new customer to the customers map
         customers.put(username, customer);
         // Write the new customer's details to the CSV file
