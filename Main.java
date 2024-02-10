@@ -45,6 +45,7 @@ public class Main {
                     break;
                 case 3:
                     System.out.println("Exiting the application...");
+                    scanner.close();
                     System.exit(0);
                 default:
                     System.out.println("Invalid choice. Please enter a number between 1 and 3.");
