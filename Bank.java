@@ -36,15 +36,24 @@ public class Bank {
         // Logged in user sees this menu
         Scanner scanner = new Scanner(System.in);
         while (true){
+            System.out.println("------------------------------------");
             System.out.println("Welcome to " + bank1.getBankName() + "!");
-            System.out.println("1. Transfer Money");
-            System.out.println("2. xxxxx");
-            System.out.println("3. Logout");
+            System.out.println("Account number " + loggedInAccount.getAccountNum());
+            System.out.println("1. Check balance");
+            System.out.println("2. Transfer Money");
+            System.out.println("3. Deposit");
+            System.out.println("4. Withdraw");
+            System.out.println("5. Logout");
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
+            System.out.println("------------------------------------");
 
             switch (choice) {
                 case 1:
+                    System.out.println("Your balance: $" + loggedInAccount.getBalance());
+                    break;
+                
+                case 2:
                     System.out.println("Enter destination account number:");
                     String destinationAccount = scanner.next();
                     System.out.println("Enter amount to transfer ($): ");
@@ -65,16 +74,28 @@ public class Bank {
                         System.out.println("Transfer cancelled! Returning to menu...");
                         break;
                     }
-
-                case 2:
-                    // TBD
+                
+                case 3:
+                    System.out.println("Enter amount to deposit ($): ");
+                    double depositAmount = scanner.nextDouble();
+                    loggedInAccount.deposit(depositAmount);
+                    System.out.println("Amount deposited!");
+                    System.out.println("Your new balance: $" + loggedInAccount.getBalance());
                     break;
 
-                case 3:
+                case 4:
+                    System.out.println("Enter amount to withdraw ($): ");
+                    double withdrawAmount = scanner.nextDouble();
+                    loggedInAccount.withdraw(withdrawAmount);
+                    System.out.println("Amount withdrawn!");
+                    System.out.println("Your new balance: $" + loggedInAccount.getBalance());
+                    break; 
+                case 5:
                     // TBD
                     // This needs to return to the register/login menu
                     // for now it will jus exit the app
                     scanner.close();
+                    System.out.println("Goodbye!");
                     System.exit(0);
                     break;
 
