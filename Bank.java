@@ -16,28 +16,74 @@ public class Bank {
     }
 
     public static void main(String[] args) {
-        Bank bank1 = new Bank("ABC Bank");
-        // Create a customer to test
-        Customer customer = new Customer(null, null, null, null, null, null, 0, bank1);
-        // Make 3 accounts to test (there should be an X amount of pre-made accounts in the future csv)
-        Account account1 = new Account("111", 50.00, 0);
-        Account account2 = new Account("222", 50.00, 0);
-        Account account3 = new Account("333", 50.00, 0);
-        bank1.addAccount(account1);
-        bank1.addAccount(account2);
-        bank1.addAccount(account3);
-
-        // When customer success login to their account, need to have their current loggedInAccount
-        Account loggedInAccount = account1;
-
-        // Check if account added
-        // bank1.getAccountNumList();
-
-        // Logged in user sees this menu
+        Bank bank = new Bank("My Bank");
         Scanner scanner = new Scanner(System.in);
-        while (true){
+
+        while (true) {
+            System.out.println("1. Register");
+            System.out.println("2. Login");
+            System.out.println("3. Exit");
+            System.out.print("Enter your choice: ");
+            int choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    register(bank);
+                    break;
+                case 2:
+                    login(bank);
+                    break;
+                case 3:
+                    System.exit(0);
+                default:
+                    System.out.println("Invalid choice.");
+            }
+        }
+    }
+
+    
+    public static void register(Bank bank) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter name: ");
+        String name = scanner.next();
+        System.out.print("Enter address: ");
+        String address = scanner.next();
+        System.out.print("Enter phone number: ");
+        String phoneNumber = scanner.next();
+        System.out.print("Enter email: ");
+        String email = scanner.next();
+        System.out.print("Enter date of birth: ");
+        String dob = scanner.next();
+        System.out.print("Enter username: ");
+        String username = scanner.next();
+        System.out.print("Enter password: ");
+        int password = scanner.nextInt();
+
+        Customer.registerCustomer(name, address, phoneNumber, email, dob, username, password);
+        System.out.println("Registration successful!");
+    }
+
+    public static void login(Bank bank) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter username: ");
+        String loginUsername = scanner.next();
+        System.out.print("Enter password: ");
+        int loginPassword = scanner.nextInt();
+
+        Customer customer = new Customer(loginUsername, loginUsername, loginUsername, loginUsername, loginUsername, loginUsername, loginPassword, bank); // Create an instance of the Customer class
+        if (customer.loginCustomer(loginUsername, loginPassword)) {
+            Account loggedInAccount = customer.getAccount(); // Call getAccount() on the instance
+            userMenu(bank, loggedInAccount);
+        } else {
+            System.out.println("Invalid username or password.");
+        }
+    }
+
+    public static void userMenu(Bank bank, Account loggedInAccount) {
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
             System.out.println("------------------------------------");
-            System.out.println("Welcome to " + bank1.getBankName() + "!");
+            System.out.println("Welcome to " + bank.getBankName() + "!");
             System.out.println("Account number " + loggedInAccount.getAccountNum());
             System.out.println("1. Check balance");
             System.out.println("2. Transfer Money");
@@ -50,60 +96,38 @@ public class Bank {
 
             switch (choice) {
                 case 1:
-                    System.out.println("Your balance: $" + loggedInAccount.getBalance());
+                    // Check balance
+                    System.out.println("Your balance is: " + loggedInAccount.getBalance());
                     break;
-                
                 case 2:
-                    System.out.println("Enter destination account number:");
-                    String destinationAccount = scanner.next();
-                    System.out.println("Enter amount to transfer ($): ");
+                    // Transfer money
+                    System.out.print("Enter the account number to transfer money to: ");
+                    String transferAccountNum = scanner.next();
+                    System.out.print("Enter the amount to transfer: ");
                     double transferAmount = scanner.nextDouble();
-                    System.out.println("Confirm transfer $" + transferAmount + " to " + destinationAccount + "? [y/n]");
-                    String confirm = scanner.next();
-                    if (confirm.equals("y")){
-                        bank1.transferMoney(loggedInAccount.getAccountNum(), destinationAccount, transferAmount);
-                        System.out.println("Your new balance: $" + loggedInAccount.getBalance());
-                        System.out.println("Returning to menu...");
-
-                        // Check if transfer successful (DELETE THIS afterwards)
-                        // bank1.displayAccountInfo("111");
-                        // bank1.displayAccountInfo("222");
-
-                        break;
-                    }else if (confirm.equals("n")){
-                        System.out.println("Transfer cancelled! Returning to menu...");
-                        break;
-                    }
-                
+                    bank.transferMoney(loggedInAccount.getAccountNum(), transferAccountNum, transferAmount);
+                    break;
                 case 3:
-                    System.out.println("Enter amount to deposit ($): ");
+                    // Deposit
+                    System.out.print("Enter the amount to deposit: ");
                     double depositAmount = scanner.nextDouble();
                     loggedInAccount.deposit(depositAmount);
-                    System.out.println("Amount deposited!");
-                    System.out.println("Your new balance: $" + loggedInAccount.getBalance());
                     break;
-
                 case 4:
-                    System.out.println("Enter amount to withdraw ($): ");
+                    // Withdraw
+                    System.out.print("Enter the amount to withdraw: ");
                     double withdrawAmount = scanner.nextDouble();
                     loggedInAccount.withdraw(withdrawAmount);
-                    System.out.println("Amount withdrawn!");
-                    System.out.println("Your new balance: $" + loggedInAccount.getBalance());
-                    break; 
-                case 5:
-                    // TBD
-                    // This needs to return to the register/login menu
-                    // for now it will jus exit the app
-                    scanner.close();
-                    System.out.println("Goodbye!");
-                    System.exit(0);
                     break;
-
+                case 5:
+                    // Logout
+                    System.out.println("You have been logged out.");
+                    return;
                 default:
-                    System.out.println("Invalid choice. Returning to menu...");
+                    System.out.println("Invalid choice. Please try again.");
+                    break;
             }
         }
-
     }
 
     public void transferMoney(String sourceAccountNum, String destinationAccountNum, double amount){

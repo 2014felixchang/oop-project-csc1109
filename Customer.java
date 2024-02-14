@@ -58,6 +58,10 @@ public class Customer {
         return !customers.containsKey(username);
     }
     
+    public String getPassword() {
+        return String.valueOf(password);
+    }
+    
     // Getter methods for customer details
     public String getName() {
         return name;
