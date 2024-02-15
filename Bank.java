@@ -70,7 +70,7 @@ public class Bank {
         System.out.print("Enter password: ");
         int loginPassword = scanner.nextInt();
 
-        Customer customer = new Customer(loginUsername, loginUsername, loginUsername, loginUsername, loginUsername, loginUsername, loginPassword, bank); // Create an instance of the Customer class
+        Customer customer = new Customer("", "", "", "", "", loginUsername, loginPassword, bank); // Create an instance of the Customer class
         if (customer.loginCustomer(loginUsername, loginPassword)) {
             Account loggedInAccount = customer.getAccount(); // Call getAccount() on the instance
             userMenu(bank, loggedInAccount);
