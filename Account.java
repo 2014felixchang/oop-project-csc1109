@@ -4,6 +4,15 @@
  * - balance management (check balance, show current, available)
  * - account operations (deposit, withdraw)
  */
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.io.File;
 import java.util.ArrayList;
 
 public class Account {
@@ -13,9 +22,36 @@ public class Account {
     private ArrayList<String> history;
 
     /*
-     * Input: account number, current balance, account debt (pulled from file)
+     * Input: account number
      * 
-     * Process: initialize account object with pulled info
+     * Process: initialize account object with balance, debt & history (pulled from file)
+     */
+    public Account(String accNum) {
+        this.accountNum = accNum;
+
+        String record;
+        if ((record = this.retrieveRecord(accNum)) == null) {
+            this.balance = 0;
+            this.debt = 0;
+            this.history = new ArrayList<String>();
+        }
+        else {
+            String[] accountData = record.split(",");
+            this.balance = Double.parseDouble(accountData[1]);
+            this.debt = Double.parseDouble(accountData[2]);
+            try {
+                for (int i = 3; i < accountData.length; i++) {
+                    this.history.add(accountData[i]);
+                }
+            }
+            catch (NullPointerException e) {
+                this.history = new ArrayList<String>();
+            }
+        }
+    }
+
+    /*
+     * old constructor
      */
     public Account(String accNum, double balance, double debt) {
         this.accountNum = accNum;
@@ -53,7 +89,7 @@ public class Account {
         }
         else {
             this.balance -= amount;
-            this.addHistory ("Withdrawn: $" + convert2DP(amount));
+            this.addHistory("Withdrawn: $" + convert2DP(amount));
         }
     }
 
@@ -64,7 +100,7 @@ public class Account {
      */
     public void deposit(double amount) {
         this.balance += amount;
-        this.addHistory ("Deposited: $" + convert2DP(amount));
+        this.addHistory("Deposited: $" + convert2DP(amount));
     }
 
     /*
@@ -84,6 +120,13 @@ public class Account {
     }
 
     /*
+    * Output: returns debt as String in 2 d.p, rounded up
+    */
+    public String getDebt() {
+        return convert2DP(this.debt);
+    }
+
+    /*
     * Input: amount type double
     * 
     * Process: minus amount from debt, if amount more than debt, add excess to balance
@@ -97,13 +140,6 @@ public class Account {
         else {
             this.debt -= amount;
         }
-    }
-
-    /*
-    * Output: returns debt as String in 2 d.p, rounded up
-    */
-    public String getDebt() {
-        return convert2DP(this.debt);
     }
 
     public void transactionHistory() {
@@ -122,6 +158,10 @@ public class Account {
         this.history.add(transaction);
     }
 
+    public ArrayList<String> getHistory() {
+        return this.history;
+    }
+
     public String convert2DP(double amount) {
         String amt = String.format("%.2f", amount);
         return amt;
@@ -133,16 +173,110 @@ public class Account {
         System.out.println("Debt: $" + convert2DP(debt));
     }
 
+    /*
+     * Process: convert account attributes to a formatted string of comma-separated-values (CSV)
+     * 
+     * output: formatted string of account data
+     */
+    public String convertToCSV() {
+        String accountData = this.getAccountNum() + "," + convert2DP(this.getBalance()) + "," + this.getDebt();
+        try {
+            for (String i : this.getHistory()) {
+                accountData += "," + i;
+            }
+        }
+        catch (NullPointerException e) {
+            System.out.println("No account history");
+        }
+        return accountData;
+    }
+
+    /*
+     * Process: update existing account record in csv
+     */
+    public void updateRecord() {
+        String currentLine;
+        String accountData = this.convertToCSV();
+        
+        try (BufferedReader bR = new BufferedReader(new FileReader("Accounts.csv")); 
+        BufferedWriter bW = new BufferedWriter(new FileWriter("temp.csv", false))) 
+        {
+            while ((currentLine = bR.readLine()) != null) {
+                if (currentLine.contains(this.accountNum) == false) {
+                    // if current line not contain this account num, write line to temp file
+                    bW.write(currentLine, 0, currentLine.length());
+                    bW.newLine();
+                }
+                else {
+                    // else write new account info to temp file
+                    bW.write(accountData, 0, accountData.length());
+                    bW.newLine();
+                }
+            }
+        } 
+        catch (IOException e) {
+            System.err.println(e);
+        }
+
+        try {
+            Path accPath = Paths.get("Accounts.csv");
+            Path tempPath = Paths.get("temp.csv");
+            // delete old file and rename temp file to accounts.csvs
+            Files.delete(accPath);
+            Files.move(tempPath, accPath);
+            // File dump = new File("Accounts.csv");
+        }
+        catch (IOException e) {
+            System.out.println(e);
+        }
+    }
+
+    /*
+     * Process: add new account record to csv for new accounts
+     */
+    public void addRecord() {
+        File currentAccounts = new File("Accounts.csv");
+        try {
+            BufferedWriter bW = new BufferedWriter(new FileWriter(currentAccounts, true));
+            bW.newLine();
+            bW.write(this.convertToCSV());
+            bW.flush();
+            bW.close();
+        }   
+        catch (IOException e) {
+            System.out.println(e);
+        }
+    }
+
+    /*
+     * retrieve account record, if it exists in file, else return null
+     */
+    public String retrieveRecord(String accountNum) {
+        String currentLine;
+        try {
+            BufferedReader bR = new BufferedReader(new FileReader("Accounts.csv"));
+
+            while ((currentLine = bR.readLine()) != null) {
+                if (currentLine.contains(accountNum) == true) {
+                    return currentLine;
+                }
+            }
+
+            bR.close();
+        }
+        catch (IOException e) {
+            System.out.println(e);
+        }
+        return null;
+    }
+
     public static void main(String[] args) {
-        Account acc1 = new Account("accountno123", 1000, 0);
-        Account acc2 = new Account("accountno456", 500, 0);
+        Account acc1 = new Account("accountno123");
         // acc1.transferFunds(200, acc2);
         acc1.deposit(100);
         System.out.println(acc1.getBalance());  // Should print 800.00
-        System.out.println(acc2.getBalance());  // Should print 700.00
-        acc1.transactionHistory();
-        acc2.transactionHistory();
         acc1.displayAccountInfo();
+        acc1.updateRecord();
     }
 
     // See bank.java
