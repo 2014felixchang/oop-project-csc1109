@@ -150,6 +150,11 @@ public class Bank {
             return;
         }
 
+        if (sourceAccount.getTransLimit() < amount) {
+            System.out.println("Transfer amount exceeds account transfer limit. Please increase transfer limit before trying again.");
+            return;
+        }
+
         sourceAccount.setBalance(sourceAccount.getBalance() - amount);
         destinationAccount.setBalance(destinationAccount.getBalance() + amount);
         sourceAccount.addHistory("Transfered $" + amount + " to Account Number: " + destinationAccount.getAccountNum());
