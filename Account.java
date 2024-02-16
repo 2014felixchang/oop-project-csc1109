@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.io.File;
 import java.util.ArrayList;
 
 public class Account {
@@ -28,7 +27,8 @@ public class Account {
      */
     public Account(String accNum) {
         this.accountNum = accNum;
-
+        this.history = new ArrayList<String>();
+        
         String record;
         if ((record = this.retrieveRecord(accNum)) == null) {
             this.balance = 0;
@@ -39,13 +39,10 @@ public class Account {
             String[] accountData = record.split(",");
             this.balance = Double.parseDouble(accountData[1]);
             this.debt = Double.parseDouble(accountData[2]);
-            try {
+            if (accountData.length > 3) {
                 for (int i = 3; i < accountData.length; i++) {
                     this.history.add(accountData[i]);
                 }
-            }
-            catch (NullPointerException e) {
-                this.history = new ArrayList<String>();
             }
         }
     }
@@ -198,8 +195,10 @@ public class Account {
         String currentLine;
         String accountData = this.convertToCSV();
         
-        try (BufferedReader bR = new BufferedReader(new FileReader("Accounts.csv")); 
-        BufferedWriter bW = new BufferedWriter(new FileWriter("temp.csv", false))) 
+        try (
+            BufferedReader bR = new BufferedReader(new FileReader("Accounts.csv")); 
+            BufferedWriter bW = new BufferedWriter(new FileWriter("temp.csv", false))
+            ) 
         {
             while ((currentLine = bR.readLine()) != null) {
                 if (currentLine.contains(this.accountNum) == false) {
@@ -235,13 +234,9 @@ public class Account {
      * Process: add new account record to csv for new accounts
      */
     public void addRecord() {
-        File currentAccounts = new File("Accounts.csv");
-        try {
-            BufferedWriter bW = new BufferedWriter(new FileWriter(currentAccounts, true));
+        try (BufferedWriter bW = new BufferedWriter(new FileWriter("Accounts.csv", true))){
             bW.newLine();
             bW.write(this.convertToCSV());
-            bW.flush();
-            bW.close();
         }   
         catch (IOException e) {
             System.out.println(e);
@@ -252,17 +247,13 @@ public class Account {
      * retrieve account record, if it exists in file, else return null
      */
     public String retrieveRecord(String accountNum) {
-        String currentLine;
-        try {
-            BufferedReader bR = new BufferedReader(new FileReader("Accounts.csv"));
-
+        try (BufferedReader bR = new BufferedReader(new FileReader("Accounts.csv"))){
+            String currentLine;
             while ((currentLine = bR.readLine()) != null) {
                 if (currentLine.contains(accountNum) == true) {
                     return currentLine;
                 }
             }
-
-            bR.close();
         }
         catch (IOException e) {
             System.out.println(e);
