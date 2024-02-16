@@ -34,6 +34,7 @@ public class Bank {
                     login(bank);
                     break;
                 case 3:
+                    scanner.close();
                     System.exit(0);
                 default:
                     System.out.println("Invalid choice.");
@@ -61,6 +62,8 @@ public class Bank {
 
         Customer.registerCustomer(name, address, phoneNumber, email, dob, username, password);
         System.out.println("Registration successful!");
+
+        scanner.close();
     }
 
     public static void login(Bank bank) {
@@ -71,12 +74,14 @@ public class Bank {
         int loginPassword = scanner.nextInt();
 
         Customer customer = new Customer("", "", "", "", "", loginUsername, loginPassword, bank); // Create an instance of the Customer class
-        if (customer.loginCustomer(loginUsername, loginPassword)) {
+        if (Customer.loginCustomer(loginUsername, loginPassword)) {
             Account loggedInAccount = customer.getAccount(); // Call getAccount() on the instance
             userMenu(bank, loggedInAccount);
         } else {
             System.out.println("Invalid username or password.");
         }
+
+        scanner.close();
     }
 
     public static void userMenu(Bank bank, Account loggedInAccount) {
@@ -121,6 +126,7 @@ public class Bank {
                     break;
                 case 5:
                     // Logout
+                    scanner.close();
                     System.out.println("You have been logged out.");
                     return;
                 default:
@@ -129,15 +135,21 @@ public class Bank {
             }
         }
     }
-
+    
     public void transferMoney(String sourceAccountNum, String destinationAccountNum, double amount){
-        Account sourceAccount = getAccountObj(sourceAccountNum);
-        Account destinationAccount = getAccountObj(destinationAccountNum);
+        if ((Account.retrieveRecord(sourceAccountNum)) == null || Account.retrieveRecord(destinationAccountNum) == null ) {
+            System.out.println("Invalid account numbers given. Transfer process terminated.");
+            return;
+        }
+        
+        Account sourceAccount = new Account(sourceAccountNum);
+        Account destinationAccount = new Account(destinationAccountNum);
 
         if (sourceAccount.getBalance() < amount) {
             System.out.println("Insufficient balance to transfer funds.");
             return;
         }
+
         sourceAccount.setBalance(sourceAccount.getBalance() - amount);
         destinationAccount.setBalance(destinationAccount.getBalance() + amount);
         sourceAccount.addHistory("Transfered $" + amount + " to Account Number: " + destinationAccount.getAccountNum());
@@ -145,12 +157,12 @@ public class Bank {
         System.out.println("\nTransfer Successful!");
     }
 
-    public Account getAccountObj(String accountNum){
-        // need to check if account exists
-        int accountIndex = accountNums.indexOf(accountNum);
-        Account tempAccount = accounts.get(accountIndex);
-        return tempAccount;
-    }
+    // public Account getAccountObj(String accountNum){
+    //     // need to check if account exists
+    //     int accountIndex = accountNums.indexOf(accountNum);
+    //     Account tempAccount = accounts.get(accountIndex);
+    //     return tempAccount;
+    // }
 
     public List<String> getAccountNumList(){
         System.out.println(accountNums);
@@ -169,22 +181,20 @@ public class Bank {
     }
 
     public void displayAccountInfo(String accountNum){
-        Account tempAccount = getAccountObj(accountNum);
-        tempAccount.displayAccountInfo();
+        if ((Account.retrieveRecord(accountNum)) == null) {
+            Account tempAccount = new Account(accountNum);
+            tempAccount.displayAccountInfo();
+        }
     }
 
     public void setAccountTransferLimit(String accountNum, double newLimit){
-        // TO-BE IMPLEMENTED
         // Take in from CLI when customer enter the input and pass it onto their account's setting
-
-        // Account tempAccount = getAccount(accountNum);
-        // tempAccount.setAccountTransferLimit():
+        Account tempAccount = new Account(accountNum);
+        tempAccount.setTransferLimit(newLimit);
     }
-
 
     public String getBankName(){
         return bankName;
     }
-
     
 }
