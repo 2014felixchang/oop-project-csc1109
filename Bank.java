@@ -8,6 +8,7 @@ public class Bank {
     private String bankName;
     private List<Account> accounts;
     private List<String> accountNums;
+    private static Scanner scanner = new Scanner(System.in);
 
     public Bank(String bankName){
         this.bankName = bankName;
@@ -17,14 +18,15 @@ public class Bank {
 
     public static void main(String[] args) {
         Bank bank = new Bank("My Bank");
-        Scanner scanner = new Scanner(System.in);
-
+        
         while (true) {
+            System.out.println("------------------------------------");
             System.out.println("1. Register");
             System.out.println("2. Login");
             System.out.println("3. Exit");
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
+            scanner.nextLine();     // Consumes the \n after the integer
 
             switch (choice) {
                 case 1:
@@ -36,6 +38,7 @@ public class Bank {
                 case 3:
                     System.exit(0);
                 default:
+                    scanner.close();
                     System.out.println("Invalid choice.");
             }
         }
@@ -43,44 +46,43 @@ public class Bank {
 
     
     public static void register(Bank bank) {
-        Scanner scanner = new Scanner(System.in);
         System.out.print("Enter name: ");
-        String name = scanner.next();
+        String name = scanner.nextLine();
         System.out.print("Enter address: ");
-        String address = scanner.next();
+        String address = scanner.nextLine();
         System.out.print("Enter phone number: ");
-        String phoneNumber = scanner.next();
+        String phoneNumber = scanner.nextLine();
         System.out.print("Enter email: ");
-        String email = scanner.next();
+        String email = scanner.nextLine();
         System.out.print("Enter date of birth: ");
-        String dob = scanner.next();
+        String dob = scanner.nextLine();
         System.out.print("Enter username: ");
-        String username = scanner.next();
-        System.out.print("Enter password: ");
+        String username = scanner.nextLine();
+        System.out.print("Enter 6-digit password: ");
         int password = scanner.nextInt();
 
         Customer.registerCustomer(name, address, phoneNumber, email, dob, username, password);
         System.out.println("Registration successful!");
+
     }
 
     public static void login(Bank bank) {
-        Scanner scanner = new Scanner(System.in);
         System.out.print("Enter username: ");
         String loginUsername = scanner.next();
         System.out.print("Enter password: ");
         int loginPassword = scanner.nextInt();
 
         Customer customer = new Customer("", "", "", "", "", loginUsername, loginPassword, bank); // Create an instance of the Customer class
-        if (customer.loginCustomer(loginUsername, loginPassword)) {
+        if (Customer.loginCustomer(loginUsername, loginPassword)) {
             Account loggedInAccount = customer.getAccount(); // Call getAccount() on the instance
             userMenu(bank, loggedInAccount);
         } else {
             System.out.println("Invalid username or password.");
         }
+
     }
 
     public static void userMenu(Bank bank, Account loggedInAccount) {
-        Scanner scanner = new Scanner(System.in);
         while (true) {
             System.out.println("------------------------------------");
             System.out.println("Welcome to " + bank.getBankName() + "!");
@@ -92,6 +94,7 @@ public class Bank {
             System.out.println("5. Logout");
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
+            scanner.nextLine();     // Consumes the \n after the integer
             System.out.println("------------------------------------");
 
             switch (choice) {
@@ -140,15 +143,26 @@ public class Bank {
             }
         }
     }
-
+    
     public void transferMoney(String sourceAccountNum, String destinationAccountNum, double amount){
-        Account sourceAccount = getAccountObj(sourceAccountNum);
-        Account destinationAccount = getAccountObj(destinationAccountNum);
+        if ((Account.retrieveRecord(sourceAccountNum)) == null || Account.retrieveRecord(destinationAccountNum) == null ) {
+            System.out.println("Invalid account numbers given. Transfer process terminated.");
+            return;
+        }
+        
+        Account sourceAccount = new Account(sourceAccountNum);
+        Account destinationAccount = new Account(destinationAccountNum);
 
         if (sourceAccount.getBalance() < amount) {
             System.out.println("Insufficient balance to transfer funds.");
             return;
         }
+
+        if (sourceAccount.getTransLimit() < amount) {
+            System.out.println("Transfer amount exceeds account transfer limit. Please increase transfer limit before trying again.");
+            return;
+        }
+
         sourceAccount.setBalance(sourceAccount.getBalance() - amount);
         destinationAccount.setBalance(destinationAccount.getBalance() + amount);
         sourceAccount.addHistory("Transfered $" + amount + " to Account Number: " + destinationAccount.getAccountNum());
@@ -156,12 +170,12 @@ public class Bank {
         System.out.println("\nTransfer Successful!");
     }
 
-    public Account getAccountObj(String accountNum){
-        // need to check if account exists
-        int accountIndex = accountNums.indexOf(accountNum);
-        Account tempAccount = accounts.get(accountIndex);
-        return tempAccount;
-    }
+    // public Account getAccountObj(String accountNum){
+    //     // need to check if account exists
+    //     int accountIndex = accountNums.indexOf(accountNum);
+    //     Account tempAccount = accounts.get(accountIndex);
+    //     return tempAccount;
+    // }
 
     public List<String> getAccountNumList(){
         System.out.println(accountNums);
@@ -180,22 +194,20 @@ public class Bank {
     }
 
     public void displayAccountInfo(String accountNum){
-        Account tempAccount = getAccountObj(accountNum);
-        tempAccount.displayAccountInfo();
+        if ((Account.retrieveRecord(accountNum)) == null) {
+            Account tempAccount = new Account(accountNum);
+            tempAccount.displayAccountInfo();
+        }
     }
 
     public void setAccountTransferLimit(String accountNum, double newLimit){
-        // TO-BE IMPLEMENTED
         // Take in from CLI when customer enter the input and pass it onto their account's setting
-
-        // Account tempAccount = getAccount(accountNum);
-        // tempAccount.setAccountTransferLimit():
+        Account tempAccount = new Account(accountNum);
+        tempAccount.setTransferLimit(newLimit);
     }
-
 
     public String getBankName(){
         return bankName;
     }
-
     
 }

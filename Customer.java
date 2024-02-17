@@ -97,9 +97,8 @@ class CustomerCSVWriter {
         String[] data = customer.getDetails();
 
         try {
-            // Create a FileWriter in append mode
-            FileWriter fileWriter = new FileWriter("filename.csv", true); 
-            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+            // Create a BufferedWriter in append mode
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("CustomerInfo.csv", true));
             // Write the customer's details to the file, separated by commas
             bufferedWriter.write(String.join(",", data));
             // Add a new line to the file
