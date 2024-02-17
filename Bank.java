@@ -8,6 +8,7 @@ public class Bank {
     private String bankName;
     private List<Account> accounts;
     private List<String> accountNums;
+    private static Scanner scanner = new Scanner(System.in);
 
     public Bank(String bankName){
         this.bankName = bankName;
@@ -17,14 +18,15 @@ public class Bank {
 
     public static void main(String[] args) {
         Bank bank = new Bank("My Bank");
-        Scanner scanner = new Scanner(System.in);
-
+        
         while (true) {
+            System.out.println("------------------------------------");
             System.out.println("1. Register");
             System.out.println("2. Login");
             System.out.println("3. Exit");
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
+            scanner.nextLine();     // Consumes the \n after the integer
 
             switch (choice) {
                 case 1:
@@ -36,6 +38,7 @@ public class Bank {
                 case 3:
                     System.exit(0);
                 default:
+                    scanner.close();
                     System.out.println("Invalid choice.");
             }
         }
@@ -43,20 +46,19 @@ public class Bank {
 
     
     public static void register(Bank bank) {
-        Scanner scanner = new Scanner(System.in);
         System.out.print("Enter name: ");
-        String name = scanner.next();
+        String name = scanner.nextLine();
         System.out.print("Enter address: ");
-        String address = scanner.next();
+        String address = scanner.nextLine();
         System.out.print("Enter phone number: ");
-        String phoneNumber = scanner.next();
+        String phoneNumber = scanner.nextLine();
         System.out.print("Enter email: ");
-        String email = scanner.next();
+        String email = scanner.nextLine();
         System.out.print("Enter date of birth: ");
-        String dob = scanner.next();
+        String dob = scanner.nextLine();
         System.out.print("Enter username: ");
-        String username = scanner.next();
-        System.out.print("Enter password: ");
+        String username = scanner.nextLine();
+        System.out.print("Enter 6-digit password: ");
         int password = scanner.nextInt();
 
         Customer.registerCustomer(name, address, phoneNumber, email, dob, username, password);
@@ -65,7 +67,6 @@ public class Bank {
     }
 
     public static void login(Bank bank) {
-        Scanner scanner = new Scanner(System.in);
         System.out.print("Enter username: ");
         String loginUsername = scanner.next();
         System.out.print("Enter password: ");
@@ -82,7 +83,6 @@ public class Bank {
     }
 
     public static void userMenu(Bank bank, Account loggedInAccount) {
-        Scanner scanner = new Scanner(System.in);
         while (true) {
             System.out.println("------------------------------------");
             System.out.println("Welcome to " + bank.getBankName() + "!");
@@ -94,6 +94,7 @@ public class Bank {
             System.out.println("5. Logout");
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
+            scanner.nextLine();     // Consumes the \n after the integer
             System.out.println("------------------------------------");
 
             switch (choice) {
