@@ -34,7 +34,6 @@ public class Bank {
                     login(bank);
                     break;
                 case 3:
-                    scanner.close();
                     System.exit(0);
                 default:
                     System.out.println("Invalid choice.");
@@ -63,7 +62,6 @@ public class Bank {
         Customer.registerCustomer(name, address, phoneNumber, email, dob, username, password);
         System.out.println("Registration successful!");
 
-        scanner.close();
     }
 
     public static void login(Bank bank) {
@@ -81,7 +79,6 @@ public class Bank {
             System.out.println("Invalid username or password.");
         }
 
-        scanner.close();
     }
 
     public static void userMenu(Bank bank, Account loggedInAccount) {
@@ -126,7 +123,6 @@ public class Bank {
                     break;
                 case 5:
                     // Logout
-                    scanner.close();
                     System.out.println("You have been logged out.");
                     return;
                 default:
