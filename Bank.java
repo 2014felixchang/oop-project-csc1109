@@ -120,6 +120,17 @@ public class Bank {
                     loggedInAccount.withdraw(withdrawAmount);
                     break;
                 case 5:
+                    // Foreign Exchange (To do after account people add multiple currency)
+                    System.out.println("Enter the amount to exchange:");
+                    double amount = scanner.nextDouble();
+                    System.out.println("Enter the currency to convert from:");
+                    String fromCurrency = scanner.next();
+                    System.out.println("Enter the currency to convert to:");
+                    String toCurrency = scanner.next();
+
+                    ForeignExchange foreignExchange = new ForeignExchange();
+                    double convertedAmount = foreignExchange.convert(fromCurrency, toCurrency, amount);
+                case 6:
                     // Logout
                     System.out.println("You have been logged out.");
                     return;
