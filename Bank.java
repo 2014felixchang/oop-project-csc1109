@@ -60,6 +60,7 @@ public class Bank {
         String username = scanner.nextLine();
         System.out.print("Enter 6-digit password: ");
         int password = scanner.nextInt();
+        scanner.nextLine();     // Consumes the \n after the integer
 
         Customer.registerCustomer(name, address, phoneNumber, email, dob, username, password);
         System.out.println("Registration successful!");
@@ -71,6 +72,7 @@ public class Bank {
         String loginUsername = scanner.next();
         System.out.print("Enter password: ");
         int loginPassword = scanner.nextInt();
+        scanner.nextLine();     // Consumes the \n after the integer
 
         Customer customer = new Customer("", "", "", "", "", loginUsername, loginPassword, bank); // Create an instance of the Customer class
         if (Customer.loginCustomer(loginUsername, loginPassword)) {
@@ -91,7 +93,8 @@ public class Bank {
             System.out.println("2. Transfer Money");
             System.out.println("3. Deposit");
             System.out.println("4. Withdraw");
-            System.out.println("5. Logout");
+            System.out.println("5. Currency Exchange");
+            System.out.println("6. Logout");
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
             scanner.nextLine();     // Consumes the \n after the integer
@@ -100,7 +103,7 @@ public class Bank {
             switch (choice) {
                 case 1:
                     // Check balance
-                    System.out.println("Your balance is: " + loggedInAccount.getBalance());
+                    System.out.println("Your balance is: $" + loggedInAccount.getBalance());
                     break;
                 case 2:
                     // Transfer money
@@ -108,31 +111,36 @@ public class Bank {
                     String transferAccountNum = scanner.next();
                     System.out.print("Enter the amount to transfer: ");
                     double transferAmount = scanner.nextDouble();
+                    scanner.nextLine();     // Consumes the \n after the double
                     bank.transferMoney(loggedInAccount.getAccountNum(), transferAccountNum, transferAmount);
                     break;
                 case 3:
                     // Deposit
                     System.out.print("Enter the amount to deposit: ");
                     double depositAmount = scanner.nextDouble();
+                    scanner.nextLine();     // Consumes the \n after the double
                     loggedInAccount.deposit(depositAmount);
                     break;
                 case 4:
                     // Withdraw
                     System.out.print("Enter the amount to withdraw: ");
                     double withdrawAmount = scanner.nextDouble();
+                    scanner.nextLine();     // Consumes the \n after the double
                     loggedInAccount.withdraw(withdrawAmount);
                     break;
                 case 5:
                     // Foreign Exchange (To do after account people add multiple currency)
                     System.out.println("Enter the amount to exchange:");
                     double amount = scanner.nextDouble();
-                    System.out.println("Enter the currency to convert from:");
+                    scanner.nextLine();     // Consumes the \n after the double
+                    System.out.println("Enter the currency to convert from (SGD/USD):");
                     String fromCurrency = scanner.next();
-                    System.out.println("Enter the currency to convert to:");
+                    System.out.println("Enter the currency to convert to (SGD/USD):");
                     String toCurrency = scanner.next();
 
                     ForeignExchange foreignExchange = new ForeignExchange();
                     double convertedAmount = foreignExchange.convert(fromCurrency, toCurrency, amount);
+                    break;
                 case 6:
                     // Logout
                     System.out.println("You have been logged out.");
