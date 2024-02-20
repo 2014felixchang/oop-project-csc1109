@@ -1,7 +1,11 @@
 // need to add in validation check like does the account exist before transferring money or removing account etc
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Bank {
@@ -59,38 +63,71 @@ public class Bank {
         System.out.print("Enter username: ");
         String username = scanner.nextLine();
         System.out.print("Enter 6-digit password: ");
-        int password = scanner.nextInt();
+        String password = scanner.nextLine();
         scanner.nextLine();     // Consumes the \n after the integer
 
         Customer.registerCustomer(name, address, phoneNumber, email, dob, username, password);
-        System.out.println("Registration successful!");
 
+        System.out.println("Registration successful!");
     }
 
     public static void login(Bank bank) {
         System.out.print("Enter username: ");
-        String loginUsername = scanner.next();
+        String loginUsername = scanner.nextLine();
         System.out.print("Enter password: ");
-        int loginPassword = scanner.nextInt();
-        scanner.nextLine();     // Consumes the \n after the integer
+        String loginPassword = scanner.nextLine();
 
         Customer customer = new Customer("", "", "", "", "", loginUsername, loginPassword, bank); // Create an instance of the Customer class
         if (Customer.loginCustomer(loginUsername, loginPassword)) {
-            Account loggedInAccount = customer.getAccount(); // Call getAccount() on the instance
-            userMenu(bank, loggedInAccount);
+            // Account loggedInAccount = customer.getAccount(); // Call getAccount() on the instance
+            accountsMenu(bank, customer);
         } else {
             System.out.println("Invalid username or password.");
         }
-
     }
 
-    public static void userMenu(Bank bank, Account loggedInAccount) {
+    public static void accountsMenu(Bank bank, Customer customer) {
         while (true) {
+            String accounts[] = customer.getAccounts();
             System.out.println("------------------------------------");
             System.out.println("Welcome to " + bank.getBankName() + "!");
+            System.out.println("Which account would you like to view?");
+
+            int i = 1;
+            for (String acc : accounts) {
+                System.out.println(i++ + ". " + acc);
+            }
+
+            System.out.println("Enter the account number, or \"yes\" if you want to make a new bank account");
+            String choice = scanner.nextLine();
+
+            if (choice.equals("yes")) {
+                // call generate random acount num
+                String randomAccNum = Bank.generateAccNum();
+                // create new account obj, call account addRecord()
+                Account newAccount = new Account(randomAccNum);
+                newAccount.addRecord();
+                // update CustomerAccounts.csv with new account added to customer account info
+                customer.updateRecord(randomAccNum);
+            }
+            else{
+                for (String acc : accounts) {
+                    if (acc.equals(choice)) {
+                        Account loggedInAccount = new Account(choice);
+                        transactMenu(bank, loggedInAccount);
+                    }
+                }
+            }
+        }
+    }
+
+    public static void transactMenu(Bank bank, Account loggedInAccount) {
+        while (true) {
+            System.out.println("------------------------------------");
             System.out.println("Account number " + loggedInAccount.getAccountNum());
             System.out.println("1. Check balance");
             System.out.println("2. Transfer Money");
+            // need to add changing of transfer limit functionality
             System.out.println("3. Deposit");
             System.out.println("4. Withdraw");
             System.out.println("5. Currency Exchange");
@@ -144,7 +181,7 @@ public class Bank {
                 case 6:
                     // Logout
                     System.out.println("You have been logged out.");
-                    return;
+                    main(null);
                 default:
                     System.out.println("Invalid choice. Please try again.");
                     break;
@@ -218,4 +255,28 @@ public class Bank {
         return bankName;
     }
     
+    public static String generateAccNum() {
+        Random rand = new Random();
+        String randomAccNum = String.valueOf(rand.nextInt(9999999));
+        while (Bank.checkAccNumExists(randomAccNum) == true) {
+            randomAccNum = String.valueOf(rand.nextInt(9999999));
+        }
+        return randomAccNum;
+    }
+
+    public static boolean checkAccNumExists(String accNum) {
+        try (BufferedReader bR = new BufferedReader(new FileReader("CustomerAccounts.csv"))){
+            String currentLine;
+            while ((currentLine = bR.readLine()) != null) {
+                if (currentLine.contains(accNum) == true) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        catch (IOException e) {
+            System.out.println(e);
+            return false;
+        }
+    }
 }

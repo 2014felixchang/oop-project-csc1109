@@ -4,6 +4,7 @@
  * - balance management (check balance, show current, available)
  * - account operations (deposit, withdraw)
  */
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -16,29 +17,24 @@ import java.util.ArrayList;
 
 public class Account {
     private String accountNum;
-    private double balance;
-    private double debt;
-    private double transLimit;
-    private ArrayList<String> history;
+    private double balance = 0;
+    private double debt = 0;
+    private double transLimit = 1000.00;
+    private double interestRate = 0.1; //per year
+    private ArrayList<String> history = new ArrayList<String>();
 
     /*
      * Input: account number
      * 
-     * Process: if account number exists in records, initialize account object with transfer limit, balance, debt & history pulled from file (pre-existing account)
-     *          else initialize account object with default numbers for limit, balance, debt and no history (new account)
+     * Process: if account number exists in records, initialize account object with attributes pulled from file (pre-existing account)
+     *          else initialize account object with default values for attributes (new account)
      */
     public Account(String accNum) {
         this.accountNum = accNum;
-        this.history = new ArrayList<String>();
         
         String record;
-        if ((record = Account.retrieveRecord(accNum)) == null) {
-            this.balance = 0;
-            this.debt = 0;
-            this.transLimit = 1000.00; //default transfer limit
-            this.history = new ArrayList<String>();
-        }
-        else {
+
+        if ((record = Account.retrieveRecord(accNum)) != null) {
             String[] accountData = record.split(",");
             this.balance = Double.parseDouble(accountData[1]);
             this.debt = Double.parseDouble(accountData[2]);
@@ -49,16 +45,6 @@ public class Account {
                 }
             }
         }
-    }
-
-    /*
-     * old constructor
-     */
-    public Account(String accNum, double balance, double debt) {
-        this.accountNum = accNum;
-        this.balance = balance;
-        this.debt = debt;
-        this.history = new ArrayList<String>();
     }
 
     /*
@@ -157,6 +143,13 @@ public class Account {
         else {
             this.debt -= amount;
         }
+    }
+
+    /*
+     * Output: returns interest rate of account
+     */
+    public double getInterest() {
+        return this.interestRate;
     }
 
     public void transactionHistory() {
