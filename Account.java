@@ -95,6 +95,7 @@ public class Account {
             this.balance -= amount;
             this.addHistory("Withdrawn: $" + convert2DP(amount));
         }
+        this.updateRecord();
     }
 
     /*
@@ -105,6 +106,7 @@ public class Account {
     public void deposit(double amount) {
         this.balance += amount;
         this.addHistory("Deposited: $" + convert2DP(amount));
+        this.updateRecord();
     }
 
     /*
@@ -143,6 +145,7 @@ public class Account {
         else {
             this.debt -= amount;
         }
+        this.updateRecord();
     }
 
     /*
@@ -166,6 +169,7 @@ public class Account {
 
     public void addHistory(String transaction) {
         this.history.add(transaction);
+        updateRecord();
     }
 
     public ArrayList<String> getHistory() {
@@ -206,7 +210,7 @@ public class Account {
      */
     public void updateRecord() {
         String currentLine;
-        String accountData = this.convertToCSV();
+        String accountInfo = this.convertToCSV();
         
         try (
             BufferedReader bR = new BufferedReader(new FileReader("Accounts.csv")); 
@@ -214,14 +218,15 @@ public class Account {
             ) 
         {
             while ((currentLine = bR.readLine()) != null) {
-                if (currentLine.contains(this.accountNum) == false) {
-                    // if current line not contain this account num, write line to temp file
+                String accountData[] = currentLine.split(",");
+                if (accountData[0].equals(accountNum) == false) {
+                    // if current line is NOT the account to update, write line to temp file
                     bW.write(currentLine, 0, currentLine.length());
                     bW.newLine();
                 }
                 else {
                     // else write new account info to temp file
-                    bW.write(accountData, 0, accountData.length());
+                    bW.write(accountInfo, 0, accountInfo.length());
                     bW.newLine();
                 }
             }
@@ -263,7 +268,8 @@ public class Account {
         try (BufferedReader bR = new BufferedReader(new FileReader("Accounts.csv"))){
             String currentLine;
             while ((currentLine = bR.readLine()) != null) {
-                if (currentLine.contains(accountNum) == true) {
+                String accountData[] = currentLine.split(",");
+                if (accountData[0].equals(accountNum) == true) {
                     return currentLine;
                 }
             }

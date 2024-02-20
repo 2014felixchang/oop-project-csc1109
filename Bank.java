@@ -113,16 +113,17 @@ public class Bank {
             else{
                 for (String acc : accounts) {
                     if (acc.equals(choice)) {
-                        Account loggedInAccount = new Account(choice);
-                        transactMenu(bank, loggedInAccount);
+                        transactMenu(bank, choice);
                     }
                 }
             }
         }
     }
 
-    public static void transactMenu(Bank bank, Account loggedInAccount) {
+    public static void transactMenu(Bank bank, String accNum) {
         while (true) {
+            Account loggedInAccount = new Account(accNum);
+
             System.out.println("------------------------------------");
             System.out.println("Account number " + loggedInAccount.getAccountNum());
             System.out.println("1. Check balance");
@@ -210,8 +211,12 @@ public class Bank {
 
         sourceAccount.setBalance(sourceAccount.getBalance() - amount);
         destinationAccount.setBalance(destinationAccount.getBalance() + amount);
-        sourceAccount.addHistory("Transfered $" + amount + " to Account Number: " + destinationAccount.getAccountNum());
-        destinationAccount.addHistory ("Received $" + amount + " from Account Number: " + sourceAccount.getAccountNum());
+        sourceAccount.addHistory("Transfered $" + amount + " to Account: " + destinationAccount.getAccountNum());
+        destinationAccount.addHistory ("Received $" + amount + " from Account: " + sourceAccount.getAccountNum());
+
+        sourceAccount.updateRecord();
+        destinationAccount.updateRecord();
+
         System.out.println("\nTransfer Successful!");
     }
 

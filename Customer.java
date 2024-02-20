@@ -41,7 +41,8 @@ public class Customer {
             String currentLine;
 
             while ((currentLine = bR.readLine()) != null) {
-                if (currentLine.contains(username) == true) {
+                String accountData[] = currentLine.split(",");
+                if (accountData[0].equals(username) == true) {
                     String[] data = currentLine.split(",");
                     accounts = new String[data.length-1];
 
@@ -123,37 +124,7 @@ public class Customer {
         return new String[] {name, address, phoneNumber, email, dateOfBirth, username, password};
     }
 
-    // method to get customer info
-    public static String retrieveCustomerRecord(String username) {
-        try (BufferedReader bR = new BufferedReader(new FileReader("CustomerInfo.csv"))){
-            String currentLine;
-            while ((currentLine = bR.readLine()) != null) {
-                if (currentLine.contains(username) == true) {
-                    return currentLine;
-                }
-            }
-        }
-        catch (IOException e) {
-            System.out.println(e);
-        }
-        return null;
-    }
-
-    // method to get customer accounts info
-    public static String retrieveCustomerAccounts(String username) {
-        try (BufferedReader bR = new BufferedReader(new FileReader("CustomerAccounts.csv"))){
-            String currentLine;
-            while ((currentLine = bR.readLine()) != null) {
-                if (currentLine.contains(username) == true) {
-                    return currentLine;
-                }
-            }
-        }
-        catch (IOException e) {
-            System.out.println(e);
-        }
-        return null;
-    }
+   
 
     /*
      * Process: update existing account record in csv
@@ -168,13 +139,12 @@ public class Customer {
             ) 
         {
             while ((currentLine = bR.readLine()) != null) {
-                if (currentLine.contains(this.username) == false) {
-                    // if current line not contain this account num, write line to temp file
+                String accountData[] = currentLine.split(",");
+                if (accountData[0].equals(this.username) == true) {
                     bW.write(currentLine, 0, currentLine.length());
                     bW.newLine();
                 }
                 else {
-                    // else write new account info to temp file
                     bW.write(newAccInfo, 0, newAccInfo.length());
                     bW.newLine();
                 }
@@ -197,6 +167,40 @@ public class Customer {
         }
     }
 
+    
+    // static method to get customer accounts info
+    public static String retrieveCustomerAccounts(String username) {
+        try (BufferedReader bR = new BufferedReader(new FileReader("CustomerAccounts.csv"))){
+            String currentLine;
+            while ((currentLine = bR.readLine()) != null) {
+                String accountData[] = currentLine.split(",");
+                if (accountData[0].equals(username) == true) {
+                    return currentLine;
+                }
+            }
+        }
+        catch (IOException e) {
+            System.out.println(e);
+        }
+        return null;
+    }
+
+     // static method to get customer info
+     public static String retrieveCustomerRecord(String username) {
+        try (BufferedReader bR = new BufferedReader(new FileReader("CustomerInfo.csv"))){
+            String currentLine;
+            while ((currentLine = bR.readLine()) != null) {
+                String accountData[] = currentLine.split(",");
+                if (accountData[0].equals(username) == true) {
+                    return currentLine;
+                }
+            }
+        }
+        catch (IOException e) {
+            System.out.println(e);
+        }
+        return null;
+    }
 }
 
 // Define a class to write Customer data to a CSV file

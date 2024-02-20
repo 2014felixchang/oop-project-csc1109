@@ -1,2 +1,2 @@
-1234567,80.00,0.00,1000.00,Deposited: $100.00,Withdrawn: $10.00,Withdrawn: $10.00
-8461774,0.00,0.00,1000.00
+1234567,80.00,0.00,1000.00,Transfered $10.0 to Account: 8461774,Deposited: $10.00,Withdrawn: $20.00
+8461774,30.00,0.00,1000.00,Received $10.0 from Account: 1234567,Received $10.0 from Account: 1234567,Received $10.0 from Account: 1234567
