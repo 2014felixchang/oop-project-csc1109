@@ -97,7 +97,7 @@ public class Customer {
     
     public void setPassword(String password) {
         this.password = PasswordHasher.hashPassword(password);
-        updatePasswordRecord();
+        updateCustomerRecord();
     }
 
     public String getPassword() {
@@ -172,8 +172,20 @@ public class Customer {
             System.out.println(e);
         }
     }
-
-    public void updatePasswordRecord() {
+    
+    public static Customer retrieveFullCustomerDetails(String username) {
+        String customerRecord = retrieveCustomerRecord(username);
+        if (customerRecord != null && !customerRecord.isEmpty()) {
+            String[] details = customerRecord.split(",");
+            if (details.length >= 7) {
+                // Assuming the constructor and the order of details align with the CSV structure
+                return new Customer(details[0], details[1], details[2], details[3], details[4], details[5], details[6], null); // 'null' for the Bank parameter or handle accordingly
+            }
+        }
+        return null;
+    }
+    
+    public void updateCustomerRecord() {
         String currentLine;
         String newCustomerInfo = String.join(",", getDetails());
 

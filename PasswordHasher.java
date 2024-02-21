@@ -3,18 +3,31 @@ import java.security.NoSuchAlgorithmException;
 import java.math.BigInteger;
 
 public class PasswordHasher {
+    // Method to hash a password using SHA-256
     public static String hashPassword(String password) {
         try {
+            // Get an instance of MessageDigest that implements SHA-256
             MessageDigest md = MessageDigest.getInstance("SHA-256");
+            
+            // Digest the password bytes and get the hash
             byte[] messageDigest = md.digest(password.getBytes());
+            
+            // Convert the hash bytes into a BigInteger
             BigInteger no = new BigInteger(1, messageDigest);
+            
+            // Convert the BigInteger to a hexadecimal string
             String hashtext = no.toString(16);
+            
+            // Prepend zeros to the hexadecimal string until it is 32 characters long
             while (hashtext.length() < 32) {
                 hashtext = "0" + hashtext;
             }
+            
+            // Return the hashed password
             return hashtext;
         } 
         catch (NoSuchAlgorithmException e) {
+            // If the algorithm doesn't exist, throw a RuntimeException
             throw new RuntimeException(e);
         }
     }

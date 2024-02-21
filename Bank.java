@@ -75,15 +75,20 @@ public class Bank {
         String loginUsername = scanner.nextLine();
         System.out.print("Enter password: ");
         String loginPassword = scanner.nextLine();
-
-        Customer customer = new Customer("", "", "", "", "", loginUsername, loginPassword, bank); // Create an instance of the Customer class
+    
         if (Customer.loginCustomer(loginUsername, loginPassword)) {
-            // Account loggedInAccount = customer.getAccount(); // Call getAccount() on the instance
-            accountsMenu(bank, customer);
+            // Retrieve the full customer details after successful authentication
+            Customer customer = Customer.retrieveFullCustomerDetails(loginUsername);
+            if (customer != null) {
+                accountsMenu(bank, customer);
+            } else {
+                System.out.println("Failed to retrieve customer details.");
+            }
         } else {
             System.out.println("Invalid username or password.");
         }
     }
+    
 
     public static void accountsMenu(Bank bank, Customer customer) {
         while (true) {
