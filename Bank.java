@@ -13,11 +13,23 @@ public class Bank {
     private List<Account> accounts;
     private List<String> accountNums;
     private static Scanner scanner = new Scanner(System.in);
+    
 
     public Bank(String bankName){
         this.bankName = bankName;
         this.accounts = new ArrayList<>();
         this.accountNums = new ArrayList<>();
+        this.customers = new ArrayList<>();
+    }
+
+    private List<Customer> customers;
+
+    public Bank() {
+        this.customers = new ArrayList<>();
+    }
+
+    public List<Customer> getCustomers() {
+        return this.customers;
     }
 
     public static void main(String[] args) {
@@ -50,22 +62,16 @@ public class Bank {
 
     
     public static void register(Bank bank) {
-        System.out.print("Enter name: ");
-        String name = scanner.nextLine();
-        System.out.print("Enter address: ");
-        String address = scanner.nextLine();
-        System.out.print("Enter phone number: ");
-        String phoneNumber = scanner.nextLine();
-        System.out.print("Enter email: ");
-        String email = scanner.nextLine();
-        System.out.print("Enter date of birth: ");
-        String dateOfBirth = scanner.nextLine();
         System.out.print("Enter username: ");
         String username = scanner.nextLine();
-        System.out.print("Enter 6-digit password: ");
+        System.out.print("Enter password: ");
         String password = scanner.nextLine();
+        System.out.print("Enter role: ");
+        String role = scanner.nextLine();
+        System.out.print("Enter ID: ");
+        String id = scanner.nextLine();
 
-        Customer.registerCustomer(name, address, phoneNumber, email, dateOfBirth, username, password);
+        Customer.registerCustomer(username, password, role, id);
 
         System.out.println("Registration successful!");
     }
@@ -75,17 +81,82 @@ public class Bank {
         String loginUsername = scanner.nextLine();
         System.out.print("Enter password: ");
         String loginPassword = scanner.nextLine();
-    
+
         if (Customer.loginCustomer(loginUsername, loginPassword)) {
             // Retrieve the full customer details after successful authentication
             Customer customer = Customer.retrieveFullCustomerDetails(loginUsername);
             if (customer != null) {
-                accountsMenu(bank, customer);
+                if ("Admin".equals(customer.getRole())) {
+                    adminMenu(bank, customer);
+                } else {
+                    accountsMenu(bank, customer);
+                }
             } else {
                 System.out.println("Failed to retrieve customer details.");
             }
         } else {
             System.out.println("Invalid username or password.");
+        }
+    }
+
+    public static void adminMenu(Bank bank, Customer admin) {
+        while (true) {
+            System.out.println("Welcome to the admin menu, " + admin.getUsername() + "!");
+            System.out.println("1. View all customers");
+            System.out.println("2. Add a new customer");
+            System.out.println("3. Remove a customer");
+            System.out.println("4. Logout");
+            System.out.print("Enter your choice: ");
+            String choice = scanner.nextLine();
+    
+            switch (choice) {
+                case "1":
+                    // Implement the logic to view all customers
+                    viewAllCustomers();
+                    break;
+                case "2":
+                    // Implement the logic to add a new customer
+                    register(bank);
+                    break;
+                case "3":
+                    // Implement the logic to remove a customer
+                    System.out.print("Enter the username of the customer to remove: ");
+                    String usernameToRemove = scanner.nextLine();
+                    bank.removeCustomer(usernameToRemove);
+                    break;
+                case "4":
+                    System.out.println("Logging out...");
+                    return;
+                default:
+                    System.out.println("Invalid choice. Please enter 1, 2, 3, or 4.");
+                    break;
+            }
+        }
+    }
+
+    public void removeCustomer(String username) {
+        for (int i = 0; i < customers.size(); i++) {
+            if (customers.get(i).getUsername().equals(username)) {
+                customers.remove(i);
+                System.out.println("Customer " + username + " removed successfully.");
+                return;
+            }
+        }
+        System.out.println("Customer " + username + " not found.");
+    }
+
+    public static void viewAllCustomers() {
+        try (BufferedReader reader = new BufferedReader(new FileReader("CustomerInfo.csv"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length > 0) {
+                    String username = parts[0];
+                    System.out.println(username);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading CustomerInfo.csv: " + e.getMessage());
         }
     }
     

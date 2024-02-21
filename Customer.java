@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -7,27 +8,25 @@ import java.util.Map;
 
 // Define a Customer class
 public class Customer {
-    // Declare private fields for customer details
+
+    private String username;
+    private String password;
+    private String role;
+    private String id;
     private String name;
-    // private Account account;
     private String address;
     private String phoneNumber;
     private String email;
     private String dateOfBirth;
-    private String username;
-    private String password;
 
     // Static map to store all customers
     private static Map<String, Customer> customers = new HashMap<>();
 
     // Constructor for the Customer class
-    public Customer(String name, String address, String phoneNumber, String email, String dateOfBirth, String username, String password, Bank bank) {
-        this.name = name;
-        this.address = address;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-        this.dateOfBirth = dateOfBirth;
+    public Customer(String username, String password,String role, String id, Bank bank) {
         this.username = username;
+        this.role = role;
+        this.id = id;
         setPassword(password);
 
         // this.account = new Account("123", 10.0, 10);
@@ -68,7 +67,7 @@ public class Customer {
         }
         else {
             String data[] = user.split(",");
-            String storedHash = data[6];
+            String storedHash = data[1];
             String passwordHash = PasswordHasher.hashPassword(password);
             if (storedHash.equals(passwordHash)) {
                 return true;
@@ -79,9 +78,9 @@ public class Customer {
         }
     }
 
-    public static void registerCustomer(String name, String address, String phoneNumber, String email, String dateOfBirth, String username, String password) {
+    public static void registerCustomer(String username, String password, String role, String id) {
         // Create a new Customer object with the provided details
-        Customer customer = new Customer(name, address, phoneNumber, email, dateOfBirth, username, password, new Bank("ABC Bank"));
+        Customer customer = new Customer(username, password, role, id, null);
         // Add the new customer to the customers map
         customers.put(username, customer);
         // Write the new customer's details to the CSV file
@@ -98,6 +97,14 @@ public class Customer {
     public void setPassword(String password) {
         this.password = PasswordHasher.hashPassword(password);
         updateCustomerRecord();
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getRole() {
+        return role;
     }
 
     public String getPassword() {
@@ -127,7 +134,7 @@ public class Customer {
 
     // Method to return all customer details as an array
     public String[] getDetails() {
-        return new String[] {name, address, phoneNumber, email, dateOfBirth, username, password};
+        return new String[] {username, password, role, id};
     }
 
    
@@ -172,14 +179,14 @@ public class Customer {
             System.out.println(e);
         }
     }
-    
+ 
     public static Customer retrieveFullCustomerDetails(String username) {
         String customerRecord = retrieveCustomerRecord(username);
         if (customerRecord != null && !customerRecord.isEmpty()) {
             String[] details = customerRecord.split(",");
-            if (details.length >= 7) {
+            if (details.length >= 4) {
                 // Assuming the constructor and the order of details align with the CSV structure
-                return new Customer(details[0], details[1], details[2], details[3], details[4], details[5], details[6], null); // 'null' for the Bank parameter or handle accordingly
+                return new Customer(details[0], details[1], details[2], details[3], null);
             }
         }
         return null;
@@ -196,7 +203,7 @@ public class Customer {
         {
             while ((currentLine = bR.readLine()) != null) {
                 String customerData[] = currentLine.split(",");
-                if (!customerData[5].equals(this.username)) {
+                if (!customerData[0].equals(this.username)) {
                     bW.write(currentLine, 0, currentLine.length());
                     bW.newLine();
                 }
@@ -246,7 +253,7 @@ public class Customer {
             String currentLine;
             while ((currentLine = bR.readLine()) != null) {
                 String accountData[] = currentLine.split(",");
-                if (accountData[5].equals(username) == true) {
+                if (accountData[0].equals(username) == true) {
                     return currentLine;
                 }
             }
@@ -271,7 +278,7 @@ class CustomerCSVWriter {
             BufferedWriter custAccWriter = new BufferedWriter(new FileWriter("CustomerAccounts.csv", true));
             // Write the customer's details to the file, separated by commas
             custInfoWriter.write(String.join(",", data));
-            custAccWriter.write(data[5]);
+            custAccWriter.write(data[0]);
             // Add a new line to the file
             custInfoWriter.newLine(); 
             custAccWriter.newLine();
