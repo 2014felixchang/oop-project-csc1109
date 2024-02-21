@@ -59,14 +59,13 @@ public class Bank {
         System.out.print("Enter email: ");
         String email = scanner.nextLine();
         System.out.print("Enter date of birth: ");
-        String dob = scanner.nextLine();
+        String dateOfBirth = scanner.nextLine();
         System.out.print("Enter username: ");
         String username = scanner.nextLine();
         System.out.print("Enter 6-digit password: ");
         String password = scanner.nextLine();
-        scanner.nextLine();     // Consumes the \n after the integer
 
-        Customer.registerCustomer(name, address, phoneNumber, email, dob, username, password);
+        Customer.registerCustomer(name, address, phoneNumber, email, dateOfBirth, username, password);
 
         System.out.println("Registration successful!");
     }
