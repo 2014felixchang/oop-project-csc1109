@@ -140,7 +140,7 @@ public class Customer {
         {
             while ((currentLine = bR.readLine()) != null) {
                 String accountData[] = currentLine.split(",");
-                if (accountData[0].equals(this.username) == true) {
+                if (accountData[0].equals(this.username) == false) {
                     bW.write(currentLine, 0, currentLine.length());
                     bW.newLine();
                 }
@@ -191,7 +191,7 @@ public class Customer {
             String currentLine;
             while ((currentLine = bR.readLine()) != null) {
                 String accountData[] = currentLine.split(",");
-                if (accountData[0].equals(username) == true) {
+                if (accountData[5].equals(username) == true) {
                     return currentLine;
                 }
             }
@@ -212,13 +212,17 @@ class CustomerCSVWriter {
 
         try {
             // Create a BufferedWriter in append mode
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("CustomerInfo.csv", true));
+            BufferedWriter custInfoWriter = new BufferedWriter(new FileWriter("CustomerInfo.csv", true));
+            BufferedWriter custAccWriter = new BufferedWriter(new FileWriter("CustomerAccounts.csv", true));
             // Write the customer's details to the file, separated by commas
-            bufferedWriter.write(String.join(",", data));
+            custInfoWriter.write(String.join(",", data));
+            custAccWriter.write(data[5]);
             // Add a new line to the file
-            bufferedWriter.newLine(); 
+            custInfoWriter.newLine(); 
+            custAccWriter.newLine();
             // Close the BufferedWriter
-            bufferedWriter.close();
+            custInfoWriter.close();
+            custAccWriter.close();
         } catch (IOException e) {
             // Handle any exceptions that occur
             System.out.println("An error occurred.");
