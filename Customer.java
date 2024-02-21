@@ -50,7 +50,7 @@ public class Customer {
         // Add the new customer to the customers map
         customers.put(username, customer);
         // Write the new customer's details to the CSV file
-        CSVHandler.appendCustomerToCSV(customer);
+        CSVHandler.addCustomerToCSV(customer);
 
         // call generate random acount num
         String randomAccNum = Bank.generateAccNum();

@@ -9,24 +9,23 @@ import java.nio.file.Paths;
 
 public class CSVHandler {
 
-    // Method to append a customer's details to a CSV file
-    public static void appendCustomerToCSV(Customer customer) {
+    // Method to add a customer's details and default account to CSVs
+    public static void addCustomerToCSV(Customer customer) {
         // Get the customer's details as an array
         String[] data = customer.getDetails();
-        try {
-            // Create a BufferedWriter in append mode
+        try (
             BufferedWriter custInfoWriter = new BufferedWriter(new FileWriter("CustomerInfo.csv", true));
             BufferedWriter custAccWriter = new BufferedWriter(new FileWriter("CustomerAccounts.csv", true));
+            )
+        {
             // Write the customer's details to the file, separated by commas
             custInfoWriter.write(String.join(",", data));
             custAccWriter.write(data[0]);
             // Add a new line to the file
             custInfoWriter.newLine(); 
             custAccWriter.newLine();
-            // Close the BufferedWriter
-            custInfoWriter.close();
-            custAccWriter.close();
-        } catch (IOException e) {
+        } 
+        catch (IOException e) {
             // Handle any exceptions that occur
             System.out.println("An error occurred.");
             e.printStackTrace();
