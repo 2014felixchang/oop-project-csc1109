@@ -14,14 +14,13 @@ public class Bank {
     private List<String> accountNums;
     private static Scanner scanner = new Scanner(System.in);
     
-
     public Bank(String bankName){
         this.bankName = bankName;
         this.accounts = new ArrayList<>();
         this.accountNums = new ArrayList<>();
         this.customers = new ArrayList<>();
     }
-
+    
     private List<Customer> customers;
 
     public Bank() {
@@ -59,7 +58,6 @@ public class Bank {
             }
         }
     }
-
     
     public static void register(Bank bank) {
         System.out.print("Enter username: ");
@@ -71,6 +69,7 @@ public class Bank {
         System.out.print("Enter ID: ");
         String id = scanner.nextLine();
 
+        password = PasswordHasher.hashPassword(password);
         Customer.registerCustomer(username, password, role, id);
 
         System.out.println("Registration successful!");
@@ -84,7 +83,7 @@ public class Bank {
 
         if (Customer.loginCustomer(loginUsername, loginPassword)) {
             // Retrieve the full customer details after successful authentication
-            Customer customer = Customer.retrieveFullCustomerDetails(loginUsername);
+            Customer customer  = CSVHandler.retrieveCustomer(loginUsername);
             if (customer != null) {
                 if ("Admin".equals(customer.getRole())) {
                     adminMenu(bank, customer);
@@ -160,10 +159,9 @@ public class Bank {
         }
     }
     
-
     public static void accountsMenu(Bank bank, Customer customer) {
         while (true) {
-            String accounts[] = customer.getAccounts();
+            String accounts[] = customer.getCustomerAccounts();
             System.out.println("------------------------------------");
             System.out.println("Welcome to " + bank.getBankName() + "!");
             System.out.println("Which account would you like to view?");
@@ -181,9 +179,10 @@ public class Bank {
                 String randomAccNum = Bank.generateAccNum();
                 // create new account obj, call account addRecord()
                 Account newAccount = new Account(randomAccNum);
-                newAccount.addRecord();
+                CSVHandler.addAccountToCSV(newAccount);
                 // update CustomerAccounts.csv with new account added to customer account info
-                customer.updateRecord(randomAccNum);
+                String newCustomerRecord = CSVHandler.getCustAccsFromCSV(customer.getUsername()) + randomAccNum;
+                CSVHandler.updateCSV(customer.getUsername(), "CustomerAccounts.csv", newCustomerRecord);
             }
             else{
                 for (String acc : accounts) {
@@ -266,7 +265,7 @@ public class Bank {
     }
     
     public void transferMoney(String sourceAccountNum, String destinationAccountNum, double amount){
-        if ((Account.retrieveRecord(sourceAccountNum)) == null || Account.retrieveRecord(destinationAccountNum) == null ) {
+        if ((CSVHandler.getAccountFromCSV(sourceAccountNum)) == null || CSVHandler.getAccountFromCSV(destinationAccountNum) == null ) {
             System.out.println("Invalid account numbers given. Transfer process terminated.");
             return;
         }
@@ -289,8 +288,8 @@ public class Bank {
         sourceAccount.addHistory("Transfered $" + amount + " to Account: " + destinationAccount.getAccountNum());
         destinationAccount.addHistory ("Received $" + amount + " from Account: " + sourceAccount.getAccountNum());
 
-        sourceAccount.updateRecord();
-        destinationAccount.updateRecord();
+        CSVHandler.updateCSV(sourceAccount.getAccountNum(), "Accounts.csv", sourceAccount.convertToCSV());
+        CSVHandler.updateCSV(destinationAccount.getAccountNum(), "Accounts.csv", destinationAccount.convertToCSV());
 
         System.out.println("\nTransfer Successful!");
     }
@@ -319,7 +318,7 @@ public class Bank {
     }
 
     public void displayAccountInfo(String accountNum){
-        if ((Account.retrieveRecord(accountNum)) == null) {
+        if ((CSVHandler.getAccountFromCSV(accountNum)) == null) {
             Account tempAccount = new Account(accountNum);
             tempAccount.displayAccountInfo();
         }

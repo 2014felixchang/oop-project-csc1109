@@ -4,15 +4,6 @@
  * - balance management (check balance, show current, available)
  * - account operations (deposit, withdraw)
  */
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class Account {
@@ -31,10 +22,8 @@ public class Account {
      */
     public Account(String accNum) {
         this.accountNum = accNum;
-        
-        String record;
-
-        if ((record = Account.retrieveRecord(accNum)) != null) {
+        String record = CSVHandler.getAccountFromCSV(accNum);
+        if (record != null) {
             String[] accountData = record.split(",");
             this.balance = Double.parseDouble(accountData[1]);
             this.debt = Double.parseDouble(accountData[2]);
@@ -95,7 +84,7 @@ public class Account {
             this.balance -= amount;
             this.addHistory("Withdrawn: $" + convert2DP(amount));
         }
-        this.updateRecord();
+        CSVHandler.updateCSV(accountNum, "Accounts.csv", this.convertToCSV());
     }
 
     /*
@@ -106,7 +95,7 @@ public class Account {
     public void deposit(double amount) {
         this.balance += amount;
         this.addHistory("Deposited: $" + convert2DP(amount));
-        this.updateRecord();
+        CSVHandler.updateCSV(accountNum, "Accounts.csv", this.convertToCSV());
     }
 
     /*
@@ -145,7 +134,7 @@ public class Account {
         else {
             this.debt -= amount;
         }
-        this.updateRecord();
+        CSVHandler.updateCSV(accountNum, "Accounts.csv", this.convertToCSV());
     }
 
     /*
@@ -169,7 +158,7 @@ public class Account {
 
     public void addHistory(String transaction) {
         this.history.add(transaction);
-        updateRecord();
+        CSVHandler.updateCSV(accountNum, "Accounts.csv", this.convertToCSV());
     }
 
     public ArrayList<String> getHistory() {
@@ -195,98 +184,12 @@ public class Account {
      */
     public String convertToCSV() {
         String accountData = this.getAccountNum() + "," + convert2DP(this.getBalance()) + "," + convert2DP(this.getDebt()) + "," + convert2DP(this.getTransLimit());
-
         if (this.getHistory() != null) {
             for (String i : this.getHistory()) {
                 accountData += "," + i;
             }
         }
-
         return accountData;
-    }
-
-    /*
-     * Process: update existing account record in csv
-     */
-    public void updateRecord() {
-        String currentLine;
-        String accountInfo = this.convertToCSV();
-        
-        try (
-            BufferedReader bR = new BufferedReader(new FileReader("Accounts.csv")); 
-            BufferedWriter bW = new BufferedWriter(new FileWriter("temp.csv", false))
-            ) 
-        {
-            while ((currentLine = bR.readLine()) != null) {
-                String accountData[] = currentLine.split(",");
-                if (accountData[0].equals(accountNum) == false) {
-                    // if current line is NOT the account to update, write line to temp file
-                    bW.write(currentLine, 0, currentLine.length());
-                    bW.newLine();
-                }
-                else {
-                    // else write new account info to temp file
-                    bW.write(accountInfo, 0, accountInfo.length());
-                    bW.newLine();
-                }
-            }
-        } 
-        catch (IOException e) {
-            System.err.println(e);
-        }
-
-        try {
-            Path accPath = Paths.get("Accounts.csv");
-            Path tempPath = Paths.get("temp.csv");
-            // delete old file and rename temp file to accounts.csvs
-            Files.delete(accPath);
-            Files.move(tempPath, accPath);
-            // File dump = new File("Accounts.csv");
-        }
-        catch (IOException e) {
-            System.out.println(e);
-        }
-    }
-
-    /*
-     * Process: append new account record to csv for new accounts
-     */
-    public void addRecord() {
-        try (BufferedWriter bW = new BufferedWriter(new FileWriter("Accounts.csv", true))){
-            bW.write(this.convertToCSV());
-            bW.newLine();
-        }   
-        catch (IOException e) {
-            System.out.println(e);
-        }
-    }
-
-    /*
-     * Process: retrieve account record, if it exists in file, else return null
-     */
-    public static String retrieveRecord(String accountNum) {
-        try (BufferedReader bR = new BufferedReader(new FileReader("Accounts.csv"))){
-            String currentLine;
-            while ((currentLine = bR.readLine()) != null) {
-                String accountData[] = currentLine.split(",");
-                if (accountData[0].equals(accountNum) == true) {
-                    return currentLine;
-                }
-            }
-        }
-        catch (IOException e) {
-            System.out.println(e);
-        }
-        return null;
-    }
-
-    public static void main(String[] args) {
-        Account acc1 = new Account("1234567");
-        // acc1.transferFunds(200, acc2);
-        // acc1.deposit(100);
-        acc1.withdraw(10);
-        acc1.displayAccountInfo();
-        acc1.updateRecord();
     }
 
     // See bank.java

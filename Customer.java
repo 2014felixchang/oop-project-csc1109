@@ -1,8 +1,3 @@
-import java.io.*;
-import java.util.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,51 +18,22 @@ public class Customer {
     private static Map<String, Customer> customers = new HashMap<>();
 
     // Constructor for the Customer class
-    public Customer(String username, String password,String role, String id, Bank bank) {
+    public Customer(String username, String password, String role, String id) {
         this.username = username;
         this.role = role;
         this.id = id;
-        setPassword(password);
-
-        // this.account = new Account("123", 10.0, 10);
-        // bank.addAccount(this.account);
-    }
-
-    public String[] getAccounts() {
-        String accounts[] = new String[0];
-
-        try (BufferedReader bR = new BufferedReader(new FileReader("CustomerAccounts.csv"))){
-            String currentLine;
-
-            while ((currentLine = bR.readLine()) != null) {
-                String accountData[] = currentLine.split(",");
-                if (accountData[0].equals(username) == true) {
-                    String[] data = currentLine.split(",");
-                    accounts = new String[data.length-1];
-
-                    for (int i = 1; i < data.length; i++) {
-                        accounts[i-1] = data[i];
-                    }
-                }
-                return accounts;
-            }
-        }
-        catch (IOException e) {
-            System.out.println(e);
-        }
-        return accounts;
+        this.password = password;
     }
 
     public static boolean loginCustomer(String username, String password) {
         // Retrieve the Customer object for the provided username
-        String user = Customer.retrieveCustomerRecord(username);
+        Customer customer = CSVHandler.retrieveCustomer(username);
         // Check if the customer exists
-        if (user == null) {
+        if (customer == null) {
             return false;
         }
         else {
-            String data[] = user.split(",");
-            String storedHash = data[1];
+            String storedHash = customer.getPassword();
             String passwordHash = PasswordHasher.hashPassword(password);
             if (storedHash.equals(passwordHash)) {
                 return true;
@@ -80,13 +46,21 @@ public class Customer {
 
     public static void registerCustomer(String username, String password, String role, String id) {
         // Create a new Customer object with the provided details
-        Customer customer = new Customer(username, password, role, id, null);
+        Customer customer = new Customer(username, password, role, id);
         // Add the new customer to the customers map
         customers.put(username, customer);
         // Write the new customer's details to the CSV file
-        CustomerCSVWriter.appendCustomerToCSV(customer);
-    }
+        CSVHandler.appendCustomerToCSV(customer);
 
+        // call generate random acount num
+        String randomAccNum = Bank.generateAccNum();
+        // create new account obj, save account to csv
+        Account newAccount = new Account(randomAccNum);
+        CSVHandler.addAccountToCSV(newAccount);
+        // update CustomerAccounts.csv with new account added to customer account info
+        String newCustomerRecord = CSVHandler.getCustAccsFromCSV(customer.getUsername()) + "," + randomAccNum;
+        CSVHandler.updateCSV(customer.getUsername(), "CustomerAccounts.csv", newCustomerRecord);
+    }
 
     // Method to check if a username is available
     public static boolean isUsernameAvailable(String username) {
@@ -96,7 +70,6 @@ public class Customer {
     
     public void setPassword(String password) {
         this.password = PasswordHasher.hashPassword(password);
-        updateCustomerRecord();
     }
 
     public String getUsername() {
@@ -136,160 +109,17 @@ public class Customer {
     public String[] getDetails() {
         return new String[] {username, password, role, id};
     }
+    
+    // Returns a String array of only the customer's accounts' numbers
+    public String[] getCustomerAccounts() {
+        String custAccInfo[] = CSVHandler.getCustAccsFromCSV(this.username).split(",");
+        String accounts[] = new String[0];
 
-   
-
-    /*
-     * Process: update existing account record in csv
-     */
-    public void updateRecord(String newAccNum) {
-        String currentLine;
-        String newAccInfo = retrieveCustomerAccounts(username) + "," + newAccNum;
+        for (int i = 1; i < custAccInfo.length; i++) {
+            accounts = new String[custAccInfo.length-1];
+            accounts[i-1] = custAccInfo[i];
+        }
         
-        try (
-            BufferedReader bR = new BufferedReader(new FileReader("CustomerAccounts.csv")); 
-            BufferedWriter bW = new BufferedWriter(new FileWriter("temp.csv", false))
-            ) 
-        {
-            while ((currentLine = bR.readLine()) != null) {
-                String accountData[] = currentLine.split(",");
-                if (accountData[0].equals(this.username) == false) {
-                    bW.write(currentLine, 0, currentLine.length());
-                    bW.newLine();
-                }
-                else {
-                    bW.write(newAccInfo, 0, newAccInfo.length());
-                    bW.newLine();
-                }
-            }
-        } 
-        catch (IOException e) {
-            System.err.println(e);
-        }
-
-        try {
-            Path accPath = Paths.get("CustomerAccounts.csv");
-            Path tempPath = Paths.get("temp.csv");
-            // delete old file and rename temp file to accounts.csvs
-            Files.delete(accPath);
-            Files.move(tempPath, accPath);
-            // File dump = new File("Accounts.csv");
-        }
-        catch (IOException e) {
-            System.out.println(e);
-        }
+        return accounts;
     }
- 
-    public static Customer retrieveFullCustomerDetails(String username) {
-        String customerRecord = retrieveCustomerRecord(username);
-        if (customerRecord != null && !customerRecord.isEmpty()) {
-            String[] details = customerRecord.split(",");
-            if (details.length >= 4) {
-                // Assuming the constructor and the order of details align with the CSV structure
-                return new Customer(details[0], details[1], details[2], details[3], null);
-            }
-        }
-        return null;
-    }
-    
-    public void updateCustomerRecord() {
-        String currentLine;
-        String newCustomerInfo = String.join(",", getDetails());
-
-        try (
-            BufferedReader bR = new BufferedReader(new FileReader("CustomerInfo.csv")); 
-            BufferedWriter bW = new BufferedWriter(new FileWriter("temp.csv", false))
-        ) 
-        {
-            while ((currentLine = bR.readLine()) != null) {
-                String customerData[] = currentLine.split(",");
-                if (!customerData[0].equals(this.username)) {
-                    bW.write(currentLine, 0, currentLine.length());
-                    bW.newLine();
-                }
-                else {
-                    bW.write(newCustomerInfo, 0, newCustomerInfo.length());
-                    bW.newLine();
-                }
-            }
-        } 
-        catch (IOException e) {
-            System.err.println(e);
-        }
-
-        try {
-            Path customerInfoPath = Paths.get("CustomerInfo.csv");
-            Path tempPath = Paths.get("temp.csv");
-            // delete old file and rename temp file to CustomerInfo.csv
-            Files.delete(customerInfoPath);
-            Files.move(tempPath, customerInfoPath);
-        }
-        catch (IOException e) {
-            System.out.println(e);
-        }
-    }
-
-    
-    // static method to get customer accounts info
-    public static String retrieveCustomerAccounts(String username) {
-        try (BufferedReader bR = new BufferedReader(new FileReader("CustomerAccounts.csv"))){
-            String currentLine;
-            while ((currentLine = bR.readLine()) != null) {
-                String accountData[] = currentLine.split(",");
-                if (accountData[0].equals(username) == true) {
-                    return currentLine;
-                }
-            }
-        }
-        catch (IOException e) {
-            System.out.println(e);
-        }
-        return null;
-    }
-
-     // static method to get customer info
-     public static String retrieveCustomerRecord(String username) {
-        try (BufferedReader bR = new BufferedReader(new FileReader("CustomerInfo.csv"))){
-            String currentLine;
-            while ((currentLine = bR.readLine()) != null) {
-                String accountData[] = currentLine.split(",");
-                if (accountData[0].equals(username) == true) {
-                    return currentLine;
-                }
-            }
-        }
-        catch (IOException e) {
-            System.out.println(e);
-        }
-        return null;
-    }
-}
-
-// Define a class to write Customer data to a CSV file
-class CustomerCSVWriter {
-    // Method to append a customer's details to a CSV file
-    public static void appendCustomerToCSV(Customer customer) {
-        // Get the customer's details as an array
-        String[] data = customer.getDetails();
-
-        try {
-            // Create a BufferedWriter in append mode
-            BufferedWriter custInfoWriter = new BufferedWriter(new FileWriter("CustomerInfo.csv", true));
-            BufferedWriter custAccWriter = new BufferedWriter(new FileWriter("CustomerAccounts.csv", true));
-            // Write the customer's details to the file, separated by commas
-            custInfoWriter.write(String.join(",", data));
-            custAccWriter.write(data[0]);
-            // Add a new line to the file
-            custInfoWriter.newLine(); 
-            custAccWriter.newLine();
-            // Close the BufferedWriter
-            custInfoWriter.close();
-            custAccWriter.close();
-        } catch (IOException e) {
-            // Handle any exceptions that occur
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
-    }
-    
 }
