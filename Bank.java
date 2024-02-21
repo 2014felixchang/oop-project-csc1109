@@ -52,18 +52,52 @@ public class Bank {
     public static void register(Bank bank) {
         System.out.print("Enter name: ");
         String name = scanner.nextLine();
+        if (name.isEmpty()) {
+            System.out.println("Name cannot be empty.");
+            return;
+        }
+
         System.out.print("Enter address: ");
         String address = scanner.nextLine();
+        if (address.isEmpty()) {
+            System.out.println("Address cannot be empty.");
+            return;
+        }
+
         System.out.print("Enter phone number: ");
         String phoneNumber = scanner.nextLine();
+        if (phoneNumber.isEmpty() || !phoneNumber.matches("\\d+")) {
+            System.out.println("Phone number must be valid");
+            return;
+        }
+
         System.out.print("Enter email: ");
         String email = scanner.nextLine();
+        if (email.isEmpty() || !email.matches("^[\\w-]+@[\\w-]+\\.[\\w-]+$")) {
+            System.out.println("Email must be valid");
+            return;
+        }
+
         System.out.print("Enter date of birth: ");
         String dateOfBirth = scanner.nextLine();
+        if (dateOfBirth.isEmpty()) {
+            System.out.println("Date of birth cannot be empty.");
+            return;
+        }
+
         System.out.print("Enter username: ");
         String username = scanner.nextLine();
+        if (username.isEmpty()) {
+            System.out.println("Username cannot be empty.");
+            return;
+        }
+
         System.out.print("Enter 6-digit password: ");
         String password = scanner.nextLine();
+        if (password.isEmpty() || password.length() != 6) {
+            System.out.println("Password must be 6 digits");
+            return;
+        }
 
         Customer.registerCustomer(name, address, phoneNumber, email, dateOfBirth, username, password);
 
