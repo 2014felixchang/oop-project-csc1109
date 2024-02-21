@@ -28,7 +28,7 @@ public class Customer {
         this.email = email;
         this.dateOfBirth = dateOfBirth;
         this.username = username;
-        this.password = password;
+        setPassword(password);
 
         // this.account = new Account("123", 10.0, 10);
         // bank.addAccount(this.account);
@@ -68,8 +68,9 @@ public class Customer {
         }
         else {
             String data[] = user.split(",");
-            String pswd = data[6];
-            if (password.equals(pswd)) {
+            String storedHash = data[6];
+            String passwordHash = PasswordHasher.hashPassword(password);
+            if (storedHash.equals(passwordHash)) {
                 return true;
             }
             else {
@@ -94,6 +95,11 @@ public class Customer {
         return !customers.containsKey(username);
     }
     
+    public void setPassword(String password) {
+        this.password = PasswordHasher.hashPassword(password);
+        updatePasswordRecord();
+    }
+
     public String getPassword() {
         return String.valueOf(password);
     }
@@ -161,6 +167,43 @@ public class Customer {
             Files.delete(accPath);
             Files.move(tempPath, accPath);
             // File dump = new File("Accounts.csv");
+        }
+        catch (IOException e) {
+            System.out.println(e);
+        }
+    }
+
+    public void updatePasswordRecord() {
+        String currentLine;
+        String newCustomerInfo = String.join(",", getDetails());
+
+        try (
+            BufferedReader bR = new BufferedReader(new FileReader("CustomerInfo.csv")); 
+            BufferedWriter bW = new BufferedWriter(new FileWriter("temp.csv", false))
+        ) 
+        {
+            while ((currentLine = bR.readLine()) != null) {
+                String customerData[] = currentLine.split(",");
+                if (!customerData[5].equals(this.username)) {
+                    bW.write(currentLine, 0, currentLine.length());
+                    bW.newLine();
+                }
+                else {
+                    bW.write(newCustomerInfo, 0, newCustomerInfo.length());
+                    bW.newLine();
+                }
+            }
+        } 
+        catch (IOException e) {
+            System.err.println(e);
+        }
+
+        try {
+            Path customerInfoPath = Paths.get("CustomerInfo.csv");
+            Path tempPath = Paths.get("temp.csv");
+            // delete old file and rename temp file to CustomerInfo.csv
+            Files.delete(customerInfoPath);
+            Files.move(tempPath, customerInfoPath);
         }
         catch (IOException e) {
             System.out.println(e);
