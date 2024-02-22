@@ -191,18 +191,5 @@ public class Account {
         }
         return accountData;
     }
-
-    // See bank.java
-    // public void transferFunds(double amount, Account toAccount) {
-    //     if (this.balance < amount) {
-    //         System.out.println("Insufficient balance to transfer funds.");
-    //         return;
-    //     }
-
-    //     this.balance -= amount;
-    //     toAccount.deposit(amount);
-    //     this.history.add ("Transfered $" + convert(amount) + " to Account Number: " + toAccount.getAccountNum());
-    //     toAccount.history.add ("Received $" + convert(amount) + " from Account Number: " + this.accountNum);
-    // }
     
 }   
