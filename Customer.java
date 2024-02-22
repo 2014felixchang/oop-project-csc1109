@@ -17,6 +17,8 @@ public class Customer {
     private String phoneNumber;
     private String email;
     private String dateOfBirth;
+    private int failedAttempts = 0;
+    private boolean locked = false;
 
     // Static map to store all customers
     private static Map<String, Customer> customers = new HashMap<>();
@@ -50,23 +52,54 @@ public class Customer {
         return new String[] {username, password, role, id};
     }
 
+    public boolean isLocked() {
+        return this.locked;
+    }
+
+    public int getFailedAttempts() {
+        return this.failedAttempts;
+    }
+
+    public void setFailedAttempts(int attempts) {
+        this.failedAttempts = attempts;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
+    }
+
     public static boolean loginCustomer(String username, String password) {
-        // Retrieve the Customer object for the provided username
         Customer customer = CSVHandler.retrieveCustomer(username);
-        // Check if the customer exists
         if (customer == null) {
+            return false;
+        }
+        else if (customer.isLocked()) {
+            System.out.println("The account is locked and cannot be accessed.");
             return false;
         }
         else {
             String storedHash = customer.getPassword();
             String passwordHash = PasswordHasher.hashPassword(password);
             if (storedHash.equals(passwordHash)) {
+                customer.setFailedAttempts(0);
+                CSVHandler.updateCustomer(customer); // Update the customer in the CSV file
                 return true;
             }
             else {
+                customer.setFailedAttempts(customer.getFailedAttempts() + 1);
+                if (customer.getFailedAttempts() >= 3) {
+                    customer.setLocked(true);
+                }
+                CSVHandler.updateCustomer(customer); // Update the customer in the CSV file
                 return false;
             }
         }
+    }
+
+
+    public void unlockAccount() {
+        this.locked = false;
+        this.failedAttempts = 0;
     }
 
     public static void registerCustomer(String username, String password, String role, String id) {

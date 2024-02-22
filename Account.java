@@ -84,7 +84,7 @@ public class Account {
             this.balance -= amount;
             this.addHistory("Withdrawn: $" + convert2DP(amount));
         }
-        CSVHandler.updateCSV(accountNum, "Accounts.csv", this.convertToCSV());
+        CSVHandler.updateCSV(accountNum, "Accounts.csv", this.convertToCSV(), false, 0);
     }
 
     /*
@@ -95,7 +95,7 @@ public class Account {
     public void deposit(double amount) {
         this.balance += amount;
         this.addHistory("Deposited: $" + convert2DP(amount));
-        CSVHandler.updateCSV(accountNum, "Accounts.csv", this.convertToCSV());
+        CSVHandler.updateCSV(accountNum, "Accounts.csv", this.convertToCSV(), false, 0);
     }
 
     /*
@@ -134,7 +134,7 @@ public class Account {
         else {
             this.debt -= amount;
         }
-        CSVHandler.updateCSV(accountNum, "Accounts.csv", this.convertToCSV());
+        CSVHandler.updateCSV(accountNum, "Accounts.csv", this.convertToCSV(), false, 0);
     }
 
     /*
@@ -158,7 +158,7 @@ public class Account {
 
     public void addHistory(String transaction) {
         this.history.add(transaction);
-        CSVHandler.updateCSV(accountNum, "Accounts.csv", this.convertToCSV());
+        CSVHandler.updateCSV(accountNum, "Accounts.csv", this.convertToCSV(), false, 0);
     }
 
     public ArrayList<String> getHistory() {
@@ -190,6 +190,16 @@ public class Account {
             }
         }
         return accountData;
+    }
+
+    public boolean isLocked() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'isLocked'");
+    }
+
+    public int getFailedAttempts() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getFailedAttempts'");
     }
     
 }   

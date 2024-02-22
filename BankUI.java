@@ -33,17 +33,18 @@ public class BankUI {
         System.out.print("Enter password: ");
         String loginPassword = scanner.nextLine();
 
+        Customer customer = CSVHandler.retrieveCustomer(loginUsername);
+        if (customer != null && customer.isLocked()) {
+            System.out.println("The account is locked and cannot be accessed.");
+            return;
+        }
+
         if (Customer.loginCustomer(loginUsername, loginPassword)) {
             // Retrieve the full customer details after successful authentication
-            Customer customer = CSVHandler.retrieveCustomer(loginUsername);
-            if (customer != null) {
-                if ("Admin".equals(customer.getRole())) {
-                    adminMenu(bank, customer);
-                } else {
-                    accountsMenu(bank, customer);
-                }
+            if ("Admin".equals(customer.getRole())) {
+                adminMenu(bank, customer);
             } else {
-                System.out.println("Failed to retrieve customer details.");
+                accountsMenu(bank, customer);
             }
         } else {
             System.out.println("Invalid username or password.");
@@ -56,10 +57,11 @@ public class BankUI {
             System.out.println("1. View all customers");
             System.out.println("2. Add a new customer");
             System.out.println("3. Remove a customer");
-            System.out.println("4. Logout");
+            System.out.println("4. Unlock a customer account");
+            System.out.println("5. Logout");
             System.out.print("Enter your choice: ");
             String choice = scanner.nextLine();
-    
+
             switch (choice) {
                 case "1":
                     // Implement the logic to view all customers
@@ -76,6 +78,18 @@ public class BankUI {
                     
                     break;
                 case "4":
+                    System.out.print("Enter the username of the customer to unlock: ");
+                    String usernameToUnlock = scanner.nextLine();
+                    Customer customerToUnlock = CSVHandler.retrieveCustomer(usernameToUnlock);
+                    if (customerToUnlock != null) {
+                        customerToUnlock.unlockAccount();
+                        CSVHandler.updateCustomerLockStatus(usernameToUnlock, "0");
+                        System.out.println("Account unlocked successfully.");
+                    } else {
+                        System.out.println("Customer not found.");
+                    }
+                    break;
+                case "5":
                     System.out.println("Logging out...");
                     return;
                 default:
@@ -86,6 +100,11 @@ public class BankUI {
     }
 
     public static void accountsMenu(Bank bank, Customer customer) {
+        if (customer.isLocked()) {
+            System.out.println("The account is locked and cannot be accessed.");
+            return;
+        }
+        
         while (true) {
             String accounts[] = customer.getCustomerAccounts();
             System.out.println("------------------------------------");
@@ -121,6 +140,7 @@ public class BankUI {
     }
 
     public static void transactMenu(Bank bank, String accNum) {
+        
         while (true) {
             Account loggedInAccount = new Account(accNum);
 
