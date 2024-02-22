@@ -82,7 +82,6 @@ public class BankUI {
                     String usernameToUnlock = scanner.nextLine();
                     Customer customerToUnlock = CSVHandler.retrieveCustomer(usernameToUnlock);
                     if (customerToUnlock != null) {
-                        customerToUnlock.unlockAccount();
                         CSVHandler.updateCustomerLockStatus(usernameToUnlock, "0");
                         System.out.println("Account unlocked successfully.");
                     } else {

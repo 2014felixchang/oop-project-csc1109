@@ -96,12 +96,6 @@ public class Customer {
         }
     }
 
-
-    public void unlockAccount() {
-        this.locked = false;
-        this.failedAttempts = 0;
-    }
-
     public static void registerCustomer(String username, String password, String role, String id) {
         // Create a new Customer object with the provided details
         Customer customer = new Customer(username, password, role, id);
