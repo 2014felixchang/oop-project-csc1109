@@ -216,5 +216,43 @@ public class CSVHandler {
             System.out.println(e);
         }
     }
-
+    public static void removeCustomer(String username) {
+        String currentLine;
+        try (
+            BufferedReader bR = new BufferedReader(new FileReader("CustomerInfo.csv")); 
+            BufferedWriter bW = new BufferedWriter(new FileWriter("temp.csv", false))
+        ) 
+        {
+            while ((currentLine = bR.readLine()) != null) {
+                String data[] = currentLine.split(",");
+                // If the username in a line doesn't match the given username, write the line to the temp file
+                if (!data[0].equals(username)) {
+                    bW.write(currentLine, 0, currentLine.length());
+                    bW.newLine();
+                }
+            }
+        } 
+        catch (IOException e) {
+            System.err.println(e);
+        }
+        try {
+            Path accPath = Paths.get("CustomerInfo.csv");
+            Path tempPath = Paths.get("temp.csv");
+            // delete old file and rename temp file to CustomerInfo.csv
+            Files.delete(accPath);
+            Files.move(tempPath, accPath);
+        }
+        catch (IOException e) {
+            System.out.println(e);
+        }
+    }
+    public static void addCustomerDetailsToCSV(String username, String name, String address, String phoneNumber, String email, String dateOfBirth) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("CustomerDetails.csv", true))) {
+            String record = String.join(",", username, name, address, phoneNumber, email, dateOfBirth);
+            writer.write(record);
+            writer.newLine();
+        } catch (IOException e) {
+            System.out.println("Error writing to CustomerDetails.csv: " + e.getMessage());
+        }
+    }
 }

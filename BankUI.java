@@ -27,6 +27,31 @@ public class BankUI {
         System.out.println("Registration successful!");
     }
 
+    public static void addNewCustomer() {
+        System.out.print("Enter username: ");
+        String username = scanner.nextLine();
+        System.out.print("Enter password: ");
+        String password = scanner.nextLine();
+        System.out.print("Enter role: ");
+        String role = scanner.nextLine();
+        System.out.print("Enter id: ");
+        String id = scanner.nextLine();
+        password = PasswordHasher.hashPassword(password);
+        Customer.registerCustomer(username, password, role, id);
+        System.out.print("Enter name: ");
+        String name = scanner.nextLine();
+        System.out.print("Enter address: ");
+        String address = scanner.nextLine();
+        System.out.print("Enter phone number: ");
+        String phoneNumber = scanner.nextLine();
+        System.out.print("Enter email: ");
+        String email = scanner.nextLine();
+        System.out.print("Enter date of birth: ");
+        String dateOfBirth = scanner.nextLine();
+        CSVHandler.addCustomerDetailsToCSV(username, name, address, phoneNumber, email, dateOfBirth);
+        System.out.println("Customer added successfully.");
+    }
+
     public static void login(Bank bank) {
         System.out.print("Enter username: ");
         String loginUsername = scanner.nextLine();
@@ -68,14 +93,14 @@ public class BankUI {
                     Customer.viewAllCustomers();
                     break;
                 case "2":
-                    // Implement the logic to add a new customer
-                    register(bank);
+                    addNewCustomer();
                     break;
                 case "3":
                     // Implement the logic to remove a customer
                     System.out.print("Enter the username of the customer to remove: ");
                     String usernameToRemove = scanner.nextLine();
-                    
+                    CSVHandler.removeCustomer(usernameToRemove);
+                    System.out.println("Customer removed successfully."); 
                     break;
                 case "4":
                     System.out.print("Enter the username of the customer to unlock: ");
