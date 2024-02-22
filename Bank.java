@@ -12,6 +12,7 @@ public class Bank {
     private String bankName;
     private List<Account> accounts;
     private List<String> accountNums;
+    private List<Customer> customers;
     private static Scanner scanner = new Scanner(System.in);
     
     public Bank(String bankName){
@@ -20,15 +21,9 @@ public class Bank {
         this.accountNums = new ArrayList<>();
         this.customers = new ArrayList<>();
     }
-    
-    private List<Customer> customers;
 
-    public Bank() {
-        this.customers = new ArrayList<>();
-    }
-
-    public List<Customer> getCustomers() {
-        return this.customers;
+    public String getBankName(){
+        return bankName;
     }
 
     public static void main(String[] args) {
@@ -83,7 +78,7 @@ public class Bank {
 
         if (Customer.loginCustomer(loginUsername, loginPassword)) {
             // Retrieve the full customer details after successful authentication
-            Customer customer  = CSVHandler.retrieveCustomer(loginUsername);
+            Customer customer = CSVHandler.retrieveCustomer(loginUsername);
             if (customer != null) {
                 if ("Admin".equals(customer.getRole())) {
                     adminMenu(bank, customer);
@@ -292,46 +287,6 @@ public class Bank {
         CSVHandler.updateCSV(destinationAccount.getAccountNum(), "Accounts.csv", destinationAccount.convertToCSV());
 
         System.out.println("\nTransfer Successful!");
-    }
-
-    // public Account getAccountObj(String accountNum){
-    //     // need to check if account exists
-    //     int accountIndex = accountNums.indexOf(accountNum);
-    //     Account tempAccount = accounts.get(accountIndex);
-    //     return tempAccount;
-    // }
-
-    public List<String> getAccountNumList(){
-        System.out.println(accountNums);
-        return accountNums;
-    }
-
-    public void addAccount(Account account){
-        accounts.add(account);
-        accountNums.add(account.getAccountNum());
-    }
-
-    public void removeAccount(String accountNum){
-        // need to check if account exists for it to be removed
-        int accountIndex = accountNums.indexOf(accountNum);
-        accounts.remove(accountIndex);
-    }
-
-    public void displayAccountInfo(String accountNum){
-        if ((CSVHandler.getAccountFromCSV(accountNum)) == null) {
-            Account tempAccount = new Account(accountNum);
-            tempAccount.displayAccountInfo();
-        }
-    }
-
-    public void setAccountTransferLimit(String accountNum, double newLimit){
-        // Take in from CLI when customer enter the input and pass it onto their account's setting
-        Account tempAccount = new Account(accountNum);
-        tempAccount.setTransferLimit(newLimit);
-    }
-
-    public String getBankName(){
-        return bankName;
     }
     
     public static String generateAccNum() {
