@@ -73,7 +73,7 @@ public class BankUI {
                     // Implement the logic to remove a customer
                     System.out.print("Enter the username of the customer to remove: ");
                     String usernameToRemove = scanner.nextLine();
-                    Customer.removeCustomer(usernameToRemove);
+                    
                     break;
                 case "4":
                     System.out.println("Logging out...");
