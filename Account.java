@@ -22,7 +22,7 @@ public class Account {
      */
     public Account(String accNum) {
         this.accountNum = accNum;
-        String record = CSVHandler.getAccountFromCSV(accNum);
+        String record = CSVHandler.getRecord(accNum, "Accounts.csv");
         if (record != null) {
             String[] accountData = record.split(",");
             this.balance = Double.parseDouble(accountData[1]);

@@ -45,7 +45,7 @@ public class Bank {
 
     
     public void transferMoney(String sourceAccountNum, String destinationAccountNum, double amount){
-        if ((CSVHandler.getAccountFromCSV(sourceAccountNum)) == null || CSVHandler.getAccountFromCSV(destinationAccountNum) == null ) {
+        if ((CSVHandler.getRecord(sourceAccountNum, "Accounts.csv")) == null || (CSVHandler.getRecord(sourceAccountNum, "Accounts.csv")) == null ) {
             System.out.println("Invalid account numbers given. Transfer process terminated.");
             return;
         }

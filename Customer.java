@@ -47,9 +47,21 @@ public class Customer {
         return id;
     }
 
-    // Method to return all customer details as an array
-    public String[] getDetails() {
-        return new String[] {username, password, role, id};
+    // // Method to return all customer details as an array
+    // public String[] getDetails() {
+    //     return new String[] {username, password, role, id};
+    // }
+
+    // Method to return customer's administrative info as a comma-separated string
+    public String customerInfoToCSV() {
+        String custRecord = username+","+password+","+role+","+id+","+failedAttempts+","+locked;
+        return custRecord;
+    }
+
+    // Method to return customer's personal details as a comma-separated string
+    public String personalDetailsToCSV() {
+        String custRecord = username+","+name+","+address+","+phoneNumber+","+email+","+dateOfBirth;
+        return custRecord;
     }
 
     public boolean isLocked() {
@@ -80,17 +92,20 @@ public class Customer {
         else {
             String storedHash = customer.getPassword();
             String passwordHash = PasswordHasher.hashPassword(password);
+            // successful login
             if (storedHash.equals(passwordHash)) {
                 customer.setFailedAttempts(0);
-                CSVHandler.updateCustomer(customer); // Update the customer in the CSV file
+                // Update failed attempts 
+                CSVHandler.updateCSV(username, "CustomerInfo.csv", customer.customerInfoToCSV()); 
                 return true;
             }
+            // unsuccessful login, increment failed attempts and lock if attempts > 3
             else {
                 customer.setFailedAttempts(customer.getFailedAttempts() + 1);
                 if (customer.getFailedAttempts() >= 3) {
                     customer.setLocked(true);
                 }
-                CSVHandler.updateCustomer(customer); // Update the customer in the CSV file
+                CSVHandler.updateCSV(username, "CustomerInfo.csv", customer.customerInfoToCSV()); 
                 return false;
             }
         }
@@ -98,34 +113,35 @@ public class Customer {
 
     public static void registerCustomer(String username, String password, String role, String id) {
         // Create a new Customer object with the provided details
-        Customer customer = new Customer(username, password, role, id);
+        Customer newCustomer = new Customer(username, password, role, id);
         // Add the new customer to the customers map
-        customers.put(username, customer);
-        // Write the new customer's details to the CSV file
-        CSVHandler.addCustomerToCSV(customer);
+        customers.put(username, newCustomer);
+        // Write the new customer's administrative info to CustomerInfo csv
+        CSVHandler.addRecord("CustomerInfo.csv", newCustomer.customerInfoToCSV());
+        // Write the new customer's personal details to CustomerDetails csv
+        // CSVHandler.addRecord("CustomerDetails.csv", customer.personalDetailsToCSV());
 
-        // call generate random acount num
-        String randomAccNum = Bank.generateAccNum();
-        // create new account obj, save account to csv
-        Account newAccount = new Account(randomAccNum);
-        CSVHandler.addAccountToCSV(newAccount);
-        // update CustomerAccounts.csv with new account added to customer account info
-        String newCustomerRecord = CSVHandler.getCustAccsFromCSV(customer.getUsername()) + "," + randomAccNum;
-        CSVHandler.updateCSV(customer.getUsername(), "CustomerAccounts.csv", newCustomerRecord);
+        String newAccNum = Bank.generateAccNum();
+        Account newAccount = new Account(newAccNum);
+        CSVHandler.addRecord("Accounts.csv", newAccount.convertToCSV());
+        
+        // update CustomerAccounts.csv with new account added to customer
+        String newCustAccounts = username+","+newAccNum;
+        CSVHandler.addRecord("CustomerAccounts.csv", newCustAccounts);
     }
     
     // Returns a String array of only the customer's accounts' numbers
-    public String[] getCustomerAccounts() {
-        String custAccInfo = CSVHandler.getCustAccsFromCSV(this.username);
-        if (custAccInfo == null) {
-            return new String[0]; // return an empty array if no accounts found
-        }
-        String[] accounts = custAccInfo.split(",");
-        for (int i = 1; i < accounts.length; i++) {
-            accounts[i-1] = accounts[i];
-        }
-        return Arrays.copyOf(accounts, accounts.length - 1);
-    }
+    // public String[] getCustomerAccounts() {
+    //     String custAccInfo = CSVHandler.getCustAccsFromCSV(this.username);
+    //     if (custAccInfo == null) {
+    //         return new String[0]; // return an empty array if no accounts found
+    //     }
+    //     String[] accounts = custAccInfo.split(",");
+    //     for (int i = 1; i < accounts.length; i++) {
+    //         accounts[i-1] = accounts[i];
+    //     }
+    //     return Arrays.copyOf(accounts, accounts.length - 1);
+    // }
 
     public static void viewAllCustomers() {
         try (BufferedReader reader = new BufferedReader(new FileReader("CustomerInfo.csv"))) {

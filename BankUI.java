@@ -99,17 +99,29 @@ public class BankUI {
                     // Implement the logic to remove a customer
                     System.out.print("Enter the username of the customer to remove: ");
                     String usernameToRemove = scanner.nextLine();
-                    CSVHandler.removeCustomer(usernameToRemove);
+
+                    String accountsToRemove = CSVHandler.getRecord(usernameToRemove, "Accounts.csv");
+                    String[] accountsToRemoveArray = accountsToRemove.split(",");
+                    // start from the second column, index 1, since first col is username
+                    for (int i = 1; i < accountsToRemoveArray.length; i++) {
+                        CSVHandler.removeRecord(accountsToRemoveArray[i], "Accounts.csv");
+                    }
+                    CSVHandler.removeRecord(usernameToRemove, "CustomerInfo.csv");
+                    CSVHandler.removeRecord(usernameToRemove, "CustomerAccounts.csv");
                     System.out.println("Customer removed successfully."); 
                     break;
                 case "4":
+                    // unlock customer account given the customer's username
                     System.out.print("Enter the username of the customer to unlock: ");
                     String usernameToUnlock = scanner.nextLine();
                     Customer customerToUnlock = CSVHandler.retrieveCustomer(usernameToUnlock);
                     if (customerToUnlock != null) {
-                        CSVHandler.updateCustomerLockStatus(usernameToUnlock, "0");
+                        customerToUnlock.setLocked(false);
+                        // CSVHandler.updateCustomerLockStatus(usernameToUnlock, "0");
+                        CSVHandler.updateCSV(usernameToUnlock, "CustomerInfo.csv", customerToUnlock.customerInfoToCSV());
                         System.out.println("Account unlocked successfully.");
-                    } else {
+                    } 
+                    else {
                         System.out.println("Customer not found.");
                     }
                     break;
@@ -130,14 +142,14 @@ public class BankUI {
         }
         
         while (true) {
-            String accounts[] = customer.getCustomerAccounts();
+            String custAccountsRecord = CSVHandler.getRecord(customer.getUsername(), "CustomerAccounts.csv");
+            String[] accounts = custAccountsRecord.split(",");
             System.out.println("------------------------------------");
             System.out.println("Welcome to " + bank.getBankName() + "!");
             System.out.println("Which account would you like to view?");
 
-            int i = 1;
-            for (String acc : accounts) {
-                System.out.println(i++ + ". " + acc);
+            for (int i = 0; i < accounts.length; i++) {
+                System.out.println(++i + ". " + accounts[i]);
             }
 
             System.out.println("Enter the account number, or \"yes\" if you want to make a new bank account");
@@ -148,9 +160,9 @@ public class BankUI {
                 String randomAccNum = Bank.generateAccNum();
                 // create new account obj, call account addRecord()
                 Account newAccount = new Account(randomAccNum);
-                CSVHandler.addAccountToCSV(newAccount);
+                CSVHandler.addRecord("Accounts.csv", newAccount.convertToCSV());
                 // update CustomerAccounts.csv with new account added to customer account info
-                String newCustomerRecord = CSVHandler.getCustAccsFromCSV(customer.getUsername()) + randomAccNum;
+                String newCustomerRecord = custAccountsRecord + "," + randomAccNum;
                 CSVHandler.updateCSV(customer.getUsername(), "CustomerAccounts.csv", newCustomerRecord);
             }
             else{
