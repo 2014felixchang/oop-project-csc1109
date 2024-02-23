@@ -126,7 +126,7 @@ public class Account {
     * 
     * Process: minus amount from debt, if amount more than debt, add excess to balance
     */
-    public void setDebt(double amount) {
+    public void minusDebt(double amount) {
         if (amount > this.debt) {
             this.debt = 0.0;
             this.balance += amount - debt;
