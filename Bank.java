@@ -38,7 +38,8 @@ public class Bank {
                 case 3:
                     System.exit(0);
                 default:
-                    System.out.println("Invalid choice.");
+                    System.out.println("Invalid choice. Try again.");
+                    break;
             }
         }
     }

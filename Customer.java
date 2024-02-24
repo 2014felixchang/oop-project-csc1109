@@ -47,6 +47,10 @@ public class Customer {
         return id;
     }
 
+    public String getName() {
+        return name;
+    }
+
     // // Method to return all customer details as an array
     // public String[] getDetails() {
     //     return new String[] {username, password, role, id};

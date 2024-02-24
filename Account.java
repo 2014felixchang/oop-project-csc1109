@@ -128,8 +128,8 @@ public class Account {
     */
     public void minusDebt(double amount) {
         if (amount > this.debt) {
-            this.debt = 0.0;
             this.balance += amount - debt;
+            this.debt = 0.0;
         }
         else {
             this.debt -= amount;
