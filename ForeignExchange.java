@@ -1,4 +1,4 @@
-package src;
+
 /**
  * Description: The ForeignExchange class represents the available exchange rates within a Bank 
  * and handles the conversion of currency

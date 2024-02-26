@@ -1,4 +1,4 @@
-package src;
+
 /*
  * Account class:
  * - account info handling (display & manage acc info like acc numbers and types)
