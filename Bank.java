@@ -1,5 +1,10 @@
 // need to add in validation check like does the account exist before transferring money or removing account etc
 
+/**
+ * Description: The Bank class represents a bank that manages the Customers and Accounts
+ * and handles financial operations. Houses the main method to run for demo.
+ */
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
