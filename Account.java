@@ -1,12 +1,11 @@
+import java.util.ArrayList;
 
-/*
+/**
  * Account class:
- * - account info handling (display & manage acc info like acc numbers and types)
+ * - account info handling (display and manage acc info like acc numbers and types)
  * - balance management (check balance, show current, available)
  * - account operations (deposit, withdraw)
  */
-import java.util.ArrayList;
-
 public class Account {
     private String accountNum;
     private double balance = 0;
@@ -15,11 +14,11 @@ public class Account {
     private double interestRate = 0.1; //per year
     private ArrayList<String> history = new ArrayList<String>();
 
-    /*
-     * Input: account number
-     * 
-     * Process: if account number exists in records, initialize account object with attributes pulled from file (pre-existing account)
-     *          else initialize account object with default values for attributes (new account)
+    /**
+     * Constructs an Account object with existing information corresponding to given account number if existing info exists in file.
+     * Else, an account object with default values for attributes are used.
+     *
+     * @param accNum the account number of an account
      */
     public Account(String accNum) {
         this.accountNum = accNum;
@@ -37,42 +36,43 @@ public class Account {
         }
     }
 
-    /*
-     * Output: account number type String
+    /**
+     * @return account number of account object type String
      */
     public String getAccountNum() {
         return this.accountNum;
     }
 
-    /*
-     * Input: new account number type String
+    /**
+     * Changes account number of an account object to new given number (not likely to be used because account number should not change)
      * 
-     * Process: changes account number to new given number
+     * @param newNum the new account number
      */
     public void setAccountNum(String newNum) {
         this.accountNum = newNum;
     }
 
-    /*
-     * Output: account transfer limit type double
+    /**
+     * @return an account's transfer limit type double
      */
     public double getTransLimit() {
         return this.transLimit;
     }
 
-    /*
-     * Input: new limit amount type double
+    /**
+     * Changes account transfer limit to new given limit
      * 
-     * Process: changes account limit to new given limit
+     * @param newLimit the new transfer limit for an account
      */
     public void setTransferLimit(double newLimit) {
         this.transLimit = newLimit;
     }
     
-    /*
-     * Input: withdraw amount type double
+    /**
+     * Minuses withdrawal amount from account balance. If amount exceeds balance, bank loans remaining funds required.
+     * Loan amount is added to account's debt.
      * 
-     * Process: if amount exceeds balance, loan remaining fund. Else minus amount from balance.
+     * @param amount the amount to be withdrawn from the account
      */
     public void withdraw(double amount) {
         if ((this.balance - amount) < 0) {
@@ -88,10 +88,10 @@ public class Account {
         CSVHandler.updateCSV(accountNum, "Accounts.csv", this.convertToCSV());
     }
 
-    /*
-     * Input: deposit amount type double
+    /**
+     * Adds deposited amount to account balance. 
      * 
-     * Process: adds amount to balance
+     * @param amount the amount to be deposited into the account
      */
     public void deposit(double amount) {
         this.balance += amount;
@@ -99,34 +99,36 @@ public class Account {
         CSVHandler.updateCSV(accountNum, "Accounts.csv", this.convertToCSV());
     }
 
-    /*
-     * Output: returns balance as String in 2 d.p, rounded up
+    /**
+     * Gets account balance
+     * 
+     * @return the account balance as String in 2 d.p, rounded up
      */
     public double getBalance() {
         return this.balance;
     }
 
-    /*
-     * Input: new account balance amount, type double
+    /**
+     * Sets account balance, used in funds transfer process
      * 
-     * Process: sets account balance to given amount
+     * @param amount the amount to set an account's balance to
      */
     public void setBalance(double amount) {
         this.balance = amount;   
     }
 
-    /*
-    * Output: returns debt as String in 2 d.p, rounded up
-    */
+    /**
+     * @return account's debt as String in 2 d.p, rounded up
+     */
     public double getDebt() {
         return this.debt;
     }
 
-    /*
-    * Input: amount type double
-    * 
-    * Process: minus amount from debt, if amount more than debt, add excess to balance
-    */
+    /**
+     * Minus amount from debt, if amount more than debt, add excess to balance
+     * 
+     * @param amount the amount of money to be deducted from account's debt
+     */
     public void minusDebt(double amount) {
         if (amount > this.debt) {
             this.balance += amount - debt;
@@ -138,13 +140,16 @@ public class Account {
         CSVHandler.updateCSV(accountNum, "Accounts.csv", this.convertToCSV());
     }
 
-    /*
-     * Output: returns interest rate of account
+    /**
+     * @return the interest rate of account
      */
     public double getInterest() {
         return this.interestRate;
     }
-
+    
+    /**
+     * Prints an account's transaction history
+     */
     public void transactionHistory() {
         System.out.println(this.accountNum + " Transaction History:");
 
@@ -153,24 +158,44 @@ public class Account {
         }
     }
 
+    /**
+     * Clears an account's transaction history
+     */
     public void clearHistory() {
         this.history.clear();
     }
 
+    /**
+     * Adds a single transaction to an account's history
+     * 
+     * @param transaction the transaction performed on the account
+     */
     public void addHistory(String transaction) {
         this.history.add(transaction);
         CSVHandler.updateCSV(accountNum, "Accounts.csv", this.convertToCSV());
     }
 
+    /**
+     * @return an account's transaction history in an ArrayList of type String
+     */
     public ArrayList<String> getHistory() {
         return this.history;
     }
 
+    /**
+     * Converts a double value into a String with 2 decimal point precision
+     * 
+     * @param amount the amount to be converted
+     * @return the converted value 
+     */
     public String convert2DP(double amount) {
         String amt = String.format("%.2f", amount);
         return amt;
     }
 
+    /**
+     * Prints an account's number, balance, debt and transfer limit. 
+     */
     public void displayAccountInfo() {
         System.out.println("Account Number: " + accountNum);
         System.out.println("Current Balance: $" + convert2DP(balance));
@@ -178,10 +203,10 @@ public class Account {
         System.out.println("Transfer Limit: " + convert2DP(transLimit));
     }
 
-    /*
-     * Process: convert account attributes to comma-separated string of format accountNum,balance,debt,transLimit,history...
+    /**
+     * Converts an account's attributes into a string of comma-separated-values (CSV)
      * 
-     * output: formatted string of account data
+     * @return the account's attributes as a CSV string
      */
     public String convertToCSV() {
         String accountData = this.getAccountNum() + "," + convert2DP(this.getBalance()) + "," + convert2DP(this.getDebt()) + "," + convert2DP(this.getTransLimit());
