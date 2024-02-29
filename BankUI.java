@@ -297,12 +297,10 @@ public class BankUI {
         int premiumFrequencyIndex = scanner.nextInt();
         System.out.println("Enter policy start date (yyyy-MM-dd): ");
         String startDateString = scanner.next();
-        System.out.println("Enter policy end date (yyyy-MM-dd): ");
-        String endDateString = scanner.next();
         System.out.println("Create policy successfully!");
         System.out.println("------------------------------------");
 
-        Insurance insurance = new Insurance(policyTypeIndex, startDateString, endDateString, coverageOptionIndex, policyTenureIndex, premiumFrequencyIndex);
+        Insurance insurance = new Insurance(policyTypeIndex, startDateString, coverageOptionIndex, policyTenureIndex, premiumFrequencyIndex);
         // Display the policy details
         insurance.displayPolicyDetails();
         
