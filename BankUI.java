@@ -284,60 +284,31 @@ public class BankUI {
             }
         }
     }
+    //create policy
     public static void createNewInsurancePolicy() {
-        System.out.print("Enter policy number: ");
-        String policyNumber = scanner.nextLine();
-        System.out.print("Enter coverage amount: ");
-        double coverageAmount = scanner.nextDouble();
-        System.out.print("Enter premium: ");
-        double premium = scanner.nextDouble();
 
-        System.out.print("Enter policy start date (yyyy-MM-dd): ");
+        System.out.println("Enter policy type (1 for LIFE, 2 for HEALTH, 3 for ACCIDENT): ");
+        int policyTypeIndex = scanner.nextInt();
+        System.out.println("Enter coverage option (1 for BASIC($1000), 2 for STANDARD($2000), 3 for PREMIUM($3000)): ");
+        int coverageOptionIndex = scanner.nextInt();
+        System.out.println("Enter policy tenure (1 for FIVE_YEARS, 2 for TEN_YEARS, 3 for FIFTEEN_YEARS, 4 for TWENTY_YEARS): ");
+        int policyTenureIndex = scanner.nextInt();
+        System.out.println("Enter premium frequency (1 for MONTHLY, 2 for QUARTERLY, 3 for SEMI_ANNUALLY, 4 for ANNUALLY): ");
+        int premiumFrequencyIndex = scanner.nextInt();
+        System.out.println("Enter policy start date (yyyy-MM-dd): ");
         String startDateString = scanner.next();
-
-        System.out.print("Enter policy end date (yyyy-MM-dd): ");
+        System.out.println("Enter policy end date (yyyy-MM-dd): ");
         String endDateString = scanner.next();
+        System.out.println("Create policy successfully!");
+        System.out.println("------------------------------------");
 
-        System.out.print("Enter policy type: ");
-        String policyType = scanner.next();
-
-        // Parse the start and end dates with the "Asia/Singapore" timezone
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        dateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Singapore"));
-        Date startDate = null;
-        Date endDate = null;
-        try {
-            startDate = dateFormat.parse(startDateString);
-            endDate = dateFormat.parse(endDateString);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        // Get the current time
-        LocalTime currentTime = LocalTime.now();
-
-        // Add the current time to the start and end dates
-        Instant startInstant = LocalDateTime.ofInstant(startDate.toInstant(), ZoneId.systemDefault())
-                .toLocalDate()
-                .atTime(currentTime)
-                .atZone(ZoneId.systemDefault())
-                .toInstant();
-
-        Instant endInstant = LocalDateTime.ofInstant(endDate.toInstant(), ZoneId.systemDefault())
-                .toLocalDate()
-                .atTime(currentTime)
-                .atZone(ZoneId.systemDefault())
-                .toInstant();
-        // Create a new Insurance object
-        Insurance insurance = new Insurance(policyNumber, coverageAmount, premium, policyType);
-        insurance.setPolicyStartDate(startInstant);
-        insurance.setPolicyEndDate(endInstant);
-        insurancePolicies.put(policyNumber, insurance);
-
-        System.out.println("Insurance policy created successfully!");
+        Insurance insurance = new Insurance(policyTypeIndex, startDateString, endDateString, coverageOptionIndex, policyTenureIndex, premiumFrequencyIndex);
+        // Display the policy details
         insurance.displayPolicyDetails();
+        
     }
-    
+
+   
     public static int getUserChoice() {
         try {
             String choice = scanner.nextLine();
