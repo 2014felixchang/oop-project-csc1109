@@ -1,15 +1,27 @@
 
-import java.util.InputMismatchException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
+import java.util.TimeZone;
+
+
 
 public class BankUI {
     private static Scanner scanner = new Scanner(System.in);
+    private static Map<String, Insurance> insurancePolicies = new HashMap<>();
 
     public static void displayMainMenu() {
         System.out.println("------------------------------------");
         System.out.println("1. Register");
         System.out.println("2. Login");
-        System.out.println("3. Exit");
+           System.out.println("3. Exit");
         System.out.print("Enter your choice: ");
     }
 
@@ -200,8 +212,9 @@ public class BankUI {
             System.out.println("3. Withdraw");
             System.out.println("4. Currency Exchange");
             System.out.println("5. Pay debt");
-            System.out.println("6. Go back to accounts menu");
-            System.out.println("7. Logout");
+            System.out.println("6. Create Insurance Policy");
+            System.out.println("7. Go back to accounts menu");
+            System.out.println("8. Logout");
             System.out.print("Enter your choice: ");
             int choice = scanner.nextInt();
             scanner.nextLine();     // Consumes the \n after the integer
@@ -255,10 +268,13 @@ public class BankUI {
                     loggedInAccount.minusDebt(debtAmount);
                     break;
                 case 6:
+                    BankUI.createNewInsurancePolicy();
+                    break;
+                case 7:
                     // go back to accounts menu
                     accountsMenu(bank, customer);
                     break;
-                case 7:
+                case 8:
                     // Logout
                     System.out.println("You have been logged out.");
                     Bank.main(null);
@@ -268,7 +284,60 @@ public class BankUI {
             }
         }
     }
+    public static void createNewInsurancePolicy() {
+        System.out.print("Enter policy number: ");
+        String policyNumber = scanner.nextLine();
+        System.out.print("Enter coverage amount: ");
+        double coverageAmount = scanner.nextDouble();
+        System.out.print("Enter premium: ");
+        double premium = scanner.nextDouble();
 
+        System.out.print("Enter policy start date (yyyy-MM-dd): ");
+        String startDateString = scanner.next();
+
+        System.out.print("Enter policy end date (yyyy-MM-dd): ");
+        String endDateString = scanner.next();
+
+        System.out.print("Enter policy type: ");
+        String policyType = scanner.next();
+
+        // Parse the start and end dates with the "Asia/Singapore" timezone
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Singapore"));
+        Date startDate = null;
+        Date endDate = null;
+        try {
+            startDate = dateFormat.parse(startDateString);
+            endDate = dateFormat.parse(endDateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        // Get the current time
+        LocalTime currentTime = LocalTime.now();
+
+        // Add the current time to the start and end dates
+        Instant startInstant = LocalDateTime.ofInstant(startDate.toInstant(), ZoneId.systemDefault())
+                .toLocalDate()
+                .atTime(currentTime)
+                .atZone(ZoneId.systemDefault())
+                .toInstant();
+
+        Instant endInstant = LocalDateTime.ofInstant(endDate.toInstant(), ZoneId.systemDefault())
+                .toLocalDate()
+                .atTime(currentTime)
+                .atZone(ZoneId.systemDefault())
+                .toInstant();
+        // Create a new Insurance object
+        Insurance insurance = new Insurance(policyNumber, coverageAmount, premium, policyType);
+        insurance.setPolicyStartDate(startInstant);
+        insurance.setPolicyEndDate(endInstant);
+        insurancePolicies.put(policyNumber, insurance);
+
+        System.out.println("Insurance policy created successfully!");
+        insurance.displayPolicyDetails();
+    }
+    
     public static int getUserChoice() {
         try {
             String choice = scanner.nextLine();
