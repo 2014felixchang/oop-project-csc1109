@@ -15,8 +15,8 @@ public class Account {
     private ArrayList<String> history = new ArrayList<String>();
 
     /**
-     * Constructs an Account object with existing information corresponding to given account number if existing info exists in file.
-     * Else, an account object with default values for attributes are used.
+     * Constructs an Account object with existing information given the account number exists in file.
+     * Else, an account object with default values for attributes are created.
      *
      * @param accNum the account number of an account
      */
