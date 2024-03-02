@@ -249,17 +249,39 @@ public class BankUI {
                     loggedInAccount.withdraw(withdrawAmount);
                     break;
                 case 4:
-                    // Foreign Exchange (To do after account people add multiple currency)
-                    System.out.println("Enter the amount to exchange:");
-                    double exchangeAmount = scanner.nextDouble();
-                    scanner.nextLine();     // Consumes the \n after the double
-                    System.out.println("Enter the currency to convert from (SGD/USD):");
+                    // Foreign Exchange
+                    ForeignExchange foreignExchange = new ForeignExchange();
+                    foreignExchange.displayRates();
+                    System.out.println("Enter the currency to convert from (SGD/USD/JPY):");
                     String fromCurrency = scanner.next();
-                    System.out.println("Enter the currency to convert to (SGD/USD):");
+                    double exchangeAmount;
+                    if (fromCurrency == "SGD"){
+                        System.out.println("Enter the amount to exchange:");
+                        exchangeAmount = scanner.nextDouble();
+                        scanner.nextLine();     // Consumes the \n after the double
+                        if(loggedInAccount.getBalance() < exchangeAmount){
+                            System.out.println("Not enough money in balance!");
+                            break;
+                        }
+                        loggedInAccount.setBalance(loggedInAccount.getBalance() - exchangeAmount);
+                    }else{
+                        System.out.println("Please insert foreign cash into the machine");
+                        System.out.println("Amount: ");
+                        exchangeAmount = scanner.nextDouble();
+                        scanner.nextLine();     // Consumes the \n after the double
+                    }
+                    System.out.println("Enter the currency to convert to (SGD/USD/JPY):");
                     String toCurrency = scanner.next();
 
-                    ForeignExchange foreignExchange = new ForeignExchange();
                     double convertedAmount = foreignExchange.convert(fromCurrency, toCurrency, exchangeAmount);
+                    if(toCurrency == "SGD"){
+                        System.out.println("Converted amount: " + convertedAmount + " SGD");
+                        System.out.println("Adding to balance...");
+                        loggedInAccount.setBalance(loggedInAccount.getBalance() + convertedAmount);
+                    }else{
+                        System.out.println("Converted amount: " + convertedAmount + " " + toCurrency);
+                        System.out.println("Dispensing amount...");
+                    }
                     break;
                 case 5:
                     // paying off debt
