@@ -27,27 +27,6 @@ public class Branch {
         this.closingTime = closingTime;
     }
 
-    /**
-     * Constructor to create a branch object based on existing branch info in Branches.csv
-     * 
-     * @param branchID
-     */
-    public Branch(int branchID) {
-        String branchString = CSVHandler.getRecord(branchName, "Branches.csv");
-        if (branchString != null) {
-            String branchData[] = branchString.split(",");
-            this.branchID = Integer.valueOf(branchData[0]);
-            this.branchName = branchData[1];
-            this.address = branchData[2];
-            this.openingTime = Integer.valueOf(branchData[3]);
-            this.closingTime = Integer.valueOf(branchData[4]);
-        }
-        else {
-            System.out.println("Invalid branch ID");
-            return;
-        }
-    }
-
     public int getBranchID() {
         return this.branchID;
     }
