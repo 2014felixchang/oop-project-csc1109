@@ -2,9 +2,9 @@ import java.util.ArrayList;
 
 /**
  * Account class:
- * - account info handling (display and manage acc info like acc numbers and types)
- * - balance management (check balance, show current, available)
- * - account operations (deposit, withdraw)
+ * Account info handling (display and manage acc info like acc numbers and types).
+ * Balance management (check balance, show current, available).
+ * Account operations (deposit, withdraw).
  */
 public class Account {
     private String accountNum;
@@ -37,7 +37,9 @@ public class Account {
     }
 
     /**
-     * @return account number of account object type String
+     * Gets the account's number
+     * 
+     * @return the account number
      */
     public String getAccountNum() {
         return this.accountNum;
@@ -53,7 +55,9 @@ public class Account {
     }
 
     /**
-     * @return an account's transfer limit type double
+     * Gets the account's transfer limit
+     * 
+     * @return the account's transfer limit
      */
     public double getTransLimit() {
         return this.transLimit;
@@ -100,12 +104,12 @@ public class Account {
     }
 
     /**
-     * Gets account balance
+     * Gets the account's balance
      * 
-     * @return the account balance as String in 2 d.p, rounded up
+     * @return the account balance
      */
     public double getBalance() {
-        return this.balance;
+        return balance;
     }
 
     /**
@@ -118,10 +122,12 @@ public class Account {
     }
 
     /**
-     * @return account's debt as String in 2 d.p, rounded up
+     * Gets the account's debt
+     * 
+     * @return the account's debt
      */
     public double getDebt() {
-        return this.debt;
+        return debt;
     }
 
     /**
@@ -141,6 +147,8 @@ public class Account {
     }
 
     /**
+     * Gets the interest rate of the account
+     * 
      * @return the interest rate of account
      */
     public double getInterest() {
@@ -176,6 +184,8 @@ public class Account {
     }
 
     /**
+     * Gets the transaction history of the account
+     * 
      * @return an account's transaction history in an ArrayList of type String
      */
     public ArrayList<String> getHistory() {
@@ -188,7 +198,7 @@ public class Account {
      * @param amount the amount to be converted
      * @return the converted value 
      */
-    public String convert2DP(double amount) {
+    public static String convert2DP(double amount) {
         String amt = String.format("%.2f", amount);
         return amt;
     }

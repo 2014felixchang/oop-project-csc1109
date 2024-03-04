@@ -7,6 +7,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.InputMismatchException;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.TimeZone;
@@ -17,28 +18,74 @@ public class BankUI {
     private static Scanner scanner = new Scanner(System.in);
     private static Map<String, Insurance> insurancePolicies = new HashMap<>();
 
-    public static void displayMainMenu() {
-        System.out.println("------------------------------------");
-        System.out.println("1. Register");
-        System.out.println("2. Login");
-           System.out.println("3. Exit");
-        System.out.print("Enter your choice: ");
+    public static void displayMainMenu(Bank bank) {
+        while (true) {
+            System.out.println("------------------------------------");
+            System.out.println("Welcome to " + bank.getBankName() + "! Please give us your money!");
+            System.out.println("1. Register");
+            System.out.println("2. Login");
+            System.out.println("3. Exit");
+            System.out.println("------------------------------------");
+            System.out.print("Enter your choice: ");
+
+            int choice = BankUI.getUserChoice();
+            switch (choice) {
+                case 1:
+                    BankUI.register(bank);
+                    break;
+                case 2:
+                    BankUI.login(bank);
+                    break;
+                case 3:
+                    System.exit(0);
+                default:
+                    BankUI.printInvalid();
+                    break;
+            }
+        }
     }
 
     public static void register(Bank bank) {
-        System.out.print("Enter username: ");
-        String username = scanner.nextLine();
-        System.out.print("Enter password: ");
-        String password = scanner.nextLine();
-        System.out.print("Enter role: ");
-        String role = scanner.nextLine();
-        System.out.print("Enter ID: ");
-        String id = scanner.nextLine();
+        while (true) {
+            System.out.println("------------------------------------");
+            System.out.print("Enter username: ");
+            String username = scanner.nextLine();
 
-        password = PasswordHasher.hashPassword(password);
-        Customer.registerCustomer(username, password, role, id);
+            // validate username entered, check if username already exists
+            String customerString = CSVHandler.getRecord(username, "CustomerInfo.csv");
+            if (customerString != null) {
+                System.out.println("Username already exists. Please try again.");
+                continue;
+            }
 
-        System.out.println("Registration successful!");
+            System.out.print("Enter 6 digit PIN: ");
+            String password = scanner.nextLine();
+
+            // validate PIN entered, first check if is numerical, then check if length is 6 digits
+            int pin;
+            try {
+                pin = Integer.parseInt(password);
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid password entered. Please try again.");
+                continue;
+            }
+            if (password.length() != 6) {
+                System.out.println("Invalid password entered. Please try again.");
+                continue;
+            }
+            else {
+                password = PasswordHasher.hashPassword(String.valueOf(pin));
+            }
+
+            System.out.print("Enter role: ");
+            String role = scanner.nextLine();
+            System.out.print("Enter ID: ");
+            String id = scanner.nextLine();
+        
+            Customer customer = Customer.registerCustomer(username, password, role, id);
+            System.out.println("Registration successful!");
+            accountsMenu(bank, customer);
+        }
     }
 
     public static void addNewCustomer() {
@@ -67,6 +114,7 @@ public class BankUI {
     }
 
     public static void login(Bank bank) {
+        System.out.println("------------------------------------");
         System.out.print("Enter username: ");
         String loginUsername = scanner.nextLine();
         System.out.print("Enter password: ");
@@ -92,12 +140,14 @@ public class BankUI {
 
     public static void adminMenu(Bank bank, Customer admin) {
         while (true) {
+            System.out.println("------------------------------------");
             System.out.println("Welcome to the admin menu, " + admin.getUsername() + "!");
             System.out.println("1. View all customers");
             System.out.println("2. Add a new customer");
             System.out.println("3. Remove a customer");
             System.out.println("4. Unlock a customer account");
             System.out.println("5. Logout");
+            System.out.println("------------------------------------");
             System.out.print("Enter your choice: ");
             String choice = scanner.nextLine();
 
@@ -163,92 +213,131 @@ public class BankUI {
         while (true) {
             String custAccountsRecord = CSVHandler.getRecord(customer.getUsername(), "CustomerAccounts.csv");
             String[] accounts = custAccountsRecord.split(",");
+            String choice = "";
+
             System.out.println("------------------------------------");
             System.out.println("Welcome " + customer.getUsername() + "!");
             System.out.println("Which account would you like to view?");
-            
-            // accounts[0] contains username, to iterate through accounts start index at 1
+            // accounts[0] contains username, so to iterate through account numbers, start index at 1
             int i = 1;
             for (; i < accounts.length; i++) {
                 System.out.println(i + ". " + accounts[i]);
             }
             System.out.println(i + ". Make new bank account");
-
-            System.out.print("Enter your choice:");
-            String choice = scanner.nextLine();
-
-            if (Integer.parseInt(choice) == i) {
-                // call generate random acount num
-                String randomAccNum = Bank.generateAccNum();
-                // create new account obj, call account addRecord()
-                Account newAccount = new Account(randomAccNum);
-                CSVHandler.addRecord("Accounts.csv", newAccount.convertToCSV());
-                // update CustomerAccounts.csv with new account added to customer account info
-                String newCustomerRecord = custAccountsRecord + "," + randomAccNum;
-                CSVHandler.updateCSV(customer.getUsername(), "CustomerAccounts.csv", newCustomerRecord);
-            }
-            else {
-                for (int j = 1; j < accounts.length; j++) {
-                    if (Integer.parseInt(choice) == j) {
-                        transactMenu(bank, customer, accounts[j]);
-                    }
+            System.err.println((i+1) + ". Logout");
+            System.out.println("------------------------------------");
+            System.out.print("Enter your choice: ");
+            
+            try {
+                choice = scanner.nextLine();
+                if (Integer.parseInt(choice) == (i+1)) { // i + 1 corresponds to logout option
+                    return;
                 }
-                System.out.println("Account number entered does not exist");
+                else if (Integer.parseInt(choice) == i) { // i corresponds to make new bank account option
+                    // call generate random acount num
+                    String randomAccNum = Bank.generateAccNum();
+                    // create new account obj, call account addRecord()
+                    Account newAccount = new Account(randomAccNum);
+                    CSVHandler.addRecord("Accounts.csv", newAccount.convertToCSV());
+                    // update CustomerAccounts.csv with new account added to customer account info
+                    String newCustomerRecord = custAccountsRecord + "," + randomAccNum;
+                    CSVHandler.updateCSV(customer.getUsername(), "CustomerAccounts.csv", newCustomerRecord);
+                }
+                else {
+                    // go through all accounts and see if user choice entered corresponds with any existing accounts
+                    for (int j = 1; j < accounts.length; j++) {
+                        if (Integer.parseInt(choice) == j) {
+                            transactMenu(bank, customer, accounts[j]);
+                            continue;
+                        }
+                    }
+                    // if the option number the user entered does not correspond to an existing account number, then print below
+                    BankUI.printInvalid();
+                }
+            } catch (InputMismatchException e) {
+                BankUI.printInvalid();
+                continue;
+            } catch (NumberFormatException e) {
+                BankUI.printInvalid();
+                continue;
             }
         }
     }
 
     public static void transactMenu(Bank bank, Customer customer, String accNum) {
-        
         while (true) {
             Account loggedInAccount = new Account(accNum);
+            int choice = 0;
 
             System.out.println("------------------------------------");
             System.out.println("Account number: " + loggedInAccount.getAccountNum());
-            System.out.println("Balance: " + loggedInAccount.getBalance() + ",  Debt: " + loggedInAccount.getDebt());
-            System.out.println("1. Transfer Money");
-            // need to add changing of transfer limit functionality
-            System.out.println("2. Deposit");
-            System.out.println("3. Withdraw");
-            System.out.println("4. Currency Exchange");
-            System.out.println("5. Pay debt");
-            System.out.println("6. Create Insurance Policy");
-            System.out.println("7. Go back to accounts menu");
-            System.out.println("8. Logout");
-            System.out.print("Enter your choice: ");
-            int choice = scanner.nextInt();
-            scanner.nextLine();     // Consumes the \n after the integer
+            System.out.println("Balance: " + Account.convert2DP(loggedInAccount.getBalance()) + ",  Debt: " + Account.convert2DP(loggedInAccount.getDebt()));
+            System.out.println("1. Transfer Funds");
+            System.out.println("2. Change transfer limit");
+            System.out.println("3. Deposit");
+            System.out.println("4. Withdraw");
+            System.out.println("5. Currency Exchange");
+            System.out.println("6. Pay debt");
+            System.out.println("7. Create Insurance Policy");
+            System.out.println("8. Go back to accounts menu");
+            System.out.println("9. Logout");
             System.out.println("------------------------------------");
+            System.out.print("Enter your choice: ");
+
+            try {
+                choice = scanner.nextInt();
+                scanner.nextLine();     // Consumes the \n after the integer
+            } catch (InputMismatchException e) {
+                BankUI.printInvalid();
+                continue;
+            }
 
             switch (choice) {
-                // case 1:
-                //     // Check balance
-                //     System.out.println("Your balance is: $" + loggedInAccount.getBalance());
-                //     break;
                 case 1:
                     // Transfer money
                     System.out.print("Enter the account number to transfer money to: ");
                     String transferAccountNum = scanner.next();
-                    System.out.print("Enter the amount to transfer: ");
+                    System.out.print("Enter the amount to transfer: $");
                     double transferAmount = scanner.nextDouble();
                     scanner.nextLine();     // Consumes the \n after the double
                     bank.transferMoney(loggedInAccount.getAccountNum(), transferAccountNum, transferAmount);
                     break;
                 case 2:
+                    while (true) {
+                        System.out.println("------------------------------------");
+                        System.out.println("Current transfer limit: $" + Account.convert2DP(loggedInAccount.getTransLimit()));
+                        System.out.print("Enter new transfer limit: $");
+                        try {
+                            String newTransLimitStr = scanner.nextLine();
+                            double newTransLimit = Double.parseDouble(newTransLimitStr);
+                            loggedInAccount.setTransferLimit(newTransLimit);
+                            CSVHandler.updateCSV(loggedInAccount.getAccountNum(), "Accounts.csv", loggedInAccount.convertToCSV());
+                        } catch (InputMismatchException e) {
+                            BankUI.printInvalid();
+                            continue;
+                        } catch (NumberFormatException e) {
+                            BankUI.printInvalid();
+                            continue;
+                        }
+                        break;
+                    }
+                    System.out.println("Transfer limit changed successfully!");
+                    break;
+                case 3:
                     // Deposit
-                    System.out.print("Enter the amount to deposit: ");
+                    System.out.print("Enter the amount to deposit: $");
                     double depositAmount = scanner.nextDouble();
                     scanner.nextLine();     // Consumes the \n after the double
                     loggedInAccount.deposit(depositAmount);
                     break;
-                case 3:
+                case 4:
                     // Withdraw
-                    System.out.print("Enter the amount to withdraw: ");
+                    System.out.print("Enter the amount to withdraw: $");
                     double withdrawAmount = scanner.nextDouble();
                     scanner.nextLine();     // Consumes the \n after the double
                     loggedInAccount.withdraw(withdrawAmount);
                     break;
-                case 4:
+                case 5:
                     // Foreign Exchange
                     ForeignExchange foreignExchange = new ForeignExchange();
                     foreignExchange.displayRates();
@@ -256,7 +345,7 @@ public class BankUI {
                     String fromCurrency = scanner.next();
                     double exchangeAmount;
                     if (fromCurrency == "SGD"){
-                        System.out.println("Enter the amount to exchange:");
+                        System.out.println("Enter the amount to exchange: ");
                         exchangeAmount = scanner.nextDouble();
                         scanner.nextLine();     // Consumes the \n after the double
                         if(loggedInAccount.getBalance() < exchangeAmount){
@@ -283,25 +372,30 @@ public class BankUI {
                         System.out.println("Dispensing amount...");
                     }
                     break;
-                case 5:
-                    // paying off debt
-                    System.out.println("Enter amount of debt you are paying off:");
-                    double debtAmount = scanner.nextDouble();
-                    loggedInAccount.minusDebt(debtAmount);
-                    break;
                 case 6:
+                    // paying off debt
+                    if (loggedInAccount.getDebt() == 0) {
+                        System.out.println("This account has no debt!");
+                        break;
+                    }
+                    else {
+                        System.out.println("Enter amount of debt you are paying off: $");
+                        double debtAmount = scanner.nextDouble();
+                        loggedInAccount.minusDebt(debtAmount);
+                        break;
+                    }
+                case 7:
                     BankUI.createNewInsurancePolicy();
                     break;
-                case 7:
-                    // go back to accounts menu
-                    accountsMenu(bank, customer);
-                    break;
                 case 8:
+                    // go back to accounts menu
+                    return;
+                case 9:
                     // Logout
                     System.out.println("You have been logged out.");
                     Bank.main(null);
                 default:
-                    System.out.println("Invalid choice. Please try again.");
+                    BankUI.printInvalid();
                     break;
             }
         }
@@ -328,6 +422,10 @@ public class BankUI {
         
     }
 
+    public static void printInvalid() {
+        System.out.println("------------------------------------");
+        System.out.println("Invalid input. Please try again.");
+    }
    
     public static int getUserChoice() {
         try {

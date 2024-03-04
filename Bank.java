@@ -40,24 +40,25 @@ public class Bank {
     public static void main(String[] args) {
         Bank bank = new Bank("My Bank");
         
-        while (true) {
-            BankUI.displayMainMenu();
-            int choice = BankUI.getUserChoice();
+        BankUI.displayMainMenu(bank);
+        // while (true) {
+        //     BankUI.displayMainMenu();
+        //     int choice = BankUI.getUserChoice();
 
-            switch (choice) {
-                case 1:
-                    BankUI.register(bank);
-                    break;
-                case 2:
-                    BankUI.login(bank);
-                    break;
-                case 3:
-                    System.exit(0);
-                default:
-                    System.out.println("Invalid choice. Try again.");
-                    break;
-            }
-        }
+        //     switch (choice) {
+        //         case 1:
+        //             BankUI.register(bank);
+        //             break;
+        //         case 2:
+        //             BankUI.login(bank);
+        //             break;
+        //         case 3:
+        //             System.exit(0);
+        //         default:
+        //             System.out.println("Invalid choice. Try again.");
+        //             break;
+        //     }
+        // }
     }
 
     /**

@@ -116,7 +116,7 @@ public class Customer {
         }
     }
 
-    public static void registerCustomer(String username, String password, String role, String id) {
+    public static Customer registerCustomer(String username, String password, String role, String id) {
         // Create a new Customer object with the provided details
         Customer newCustomer = new Customer(username, password, role, id);
         // Add the new customer to the customers map
@@ -133,6 +133,8 @@ public class Customer {
         // update CustomerAccounts.csv with new account added to customer
         String newCustAccounts = username+","+newAccNum;
         CSVHandler.addRecord("CustomerAccounts.csv", newCustAccounts);
+
+        return newCustomer;
     }
     
     // Returns a String array of only the customer's accounts' numbers

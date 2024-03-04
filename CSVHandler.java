@@ -13,10 +13,10 @@ import java.nio.file.Paths;
 public class CSVHandler {
 
     /**
-     * Writes a new line of info to file given it's filepath.
+     * Appends a new record to the csv file specified
      * 
-     * @param filepath
-     * @param newRecord
+     * @param filepath the csv file name
+     * @param newRecord the new record
      */
     public static void addRecord(String filepath, String newRecord) {
         try (
@@ -37,8 +37,8 @@ public class CSVHandler {
     /**
      * Returns an existing Customer object given a username. If username does not exist in file CustomerInfo.csv, then return null.
      * 
-     * @param username
-     * @return
+     * @param username the username of the customer
+     * @return the customer object
      */
     public static Customer retrieveCustomer(String username) {
         try (BufferedReader bR = new BufferedReader(new FileReader("CustomerInfo.csv"))){
@@ -61,10 +61,10 @@ public class CSVHandler {
     }
 
     /**
-     * Given a key and filepath, finds and retrieves the line in the file if it's first column value is equal to key.
+     * Finds and returns the record that has a first column value equal to key in the CSV file
      * 
-     * @param key
-     * @param filepath
+     * @param key the identifier for a record
+     * @param filepath the CSV file name
      * @return
      */
     public static String getRecord(String key, String filepath) {
@@ -84,11 +84,11 @@ public class CSVHandler {
     }
 
     /**
-     * Given a key, the filepath and a new line of info, updates the line in the file at filepath with the same first column value as the key.
+     * Finds the record in the file with the same first column value as the key, and updates that record
      * 
-     * @param key
-     * @param filepath
-     * @param newRecord
+     * @param key the identifier for a record
+     * @param filepath the CSV file name
+     * @param newRecord the new string of info to be updated
      */
     public static void updateCSV(String key, String filepath, String newRecord) {
         String currentLine;
@@ -126,10 +126,10 @@ public class CSVHandler {
     }
 
     /**
-     * Given a key and filepath, removes the line from the file at filepath that has a first column value equal to the key.
+     * Removes a record that has a first column value equal to key from the csv file
      * 
-     * @param key
-     * @param filepath
+     * @param key the identifier for a record
+     * @param filepath the CSV file name
      */
     public static void removeRecord(String key, String filepath) {
         String currentLine;
