@@ -1,7 +1,7 @@
 {
     "java.project.sourcePaths": [
         ".",
-        "lib"
+        "bin"
     ],
     "java.dependency.packagePresentation": "hierarchical",
 }

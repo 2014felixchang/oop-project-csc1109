@@ -2,6 +2,7 @@ import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Map;
 import java.util.Scanner;
+import java.time.LocalDate;
 
 public class BankUI {
     private static Scanner scanner = new Scanner(System.in);
@@ -362,17 +363,27 @@ public class BankUI {
                     }
                     break;
                 case 6:
-                    // get a loan (implement 506/507)
+                    // get a loan (implement 506)
+                    // have not implemented saving loan info to file and linking it to account
                     try {
-                        System.out.println("How much would you like to loan?: ");
+                        System.out.print("Loan amount: ");
                         float principal = Float.parseFloat(scanner.nextLine());
+                        System.out.print("Loan term (1 to 7 years): ");
+                        int loanTermMonths = Integer.parseInt(scanner.nextLine()) * 12;
+                        LocalDate date = LocalDate.now();
+                        // hard coded annual flat rate of 6.0%
+                        double interestRate = 0.06;
+                        G16_LON loan = new G16_LON(principal, interestRate, date, loanTermMonths);
+                        loan.displayLoanDetails();
+                        break;
                     }
                     catch (NumberFormatException e) {
-                        System.out.println(e);
+                        BankUI.printInvalid();
+                        continue;
                     }
                 case 7:
                     // paying back a loan (implement 506/507)
-                    
+                    break;
                 case 8:
                     BankUI.createNewInsurancePolicy();
                     break;
