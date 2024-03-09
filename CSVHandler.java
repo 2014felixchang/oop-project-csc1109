@@ -6,30 +6,26 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 
+/**
+ * Handles reading and writing information to and from file
+ */
 public class CSVHandler {
 
-    // Method to add a customer's details and default account to CSVs
-    public static void addCustomerToCSV(Customer customer) {
-        // Get the customer's details as an array
-        String[] data = customer.getDetails();
-        // Add locked status and failed attempts to the data array
-        data = Arrays.copyOf(data, data.length + 2);
-        data[data.length - 2] = String.valueOf(customer.getFailedAttempts());
-        data[data.length - 1] = customer.isLocked() ? "1" : "0";
-
+    /**
+     * Appends a new record to the csv file specified
+     * 
+     * @param filepath the csv file name
+     * @param newRecord the new record
+     */
+    public static void addRecord(String filepath, String newRecord) {
         try (
-            BufferedWriter custInfoWriter = new BufferedWriter(new FileWriter("CustomerInfo.csv", true));
-            BufferedWriter custAccWriter = new BufferedWriter(new FileWriter("CustomerAccounts.csv", true));
-        )
-        {
+            BufferedWriter bW = new BufferedWriter(new FileWriter(filepath, true));
+        ) {
             // Write the customer's details to the file, separated by commas
-            custInfoWriter.write(String.join(",", data));
-            custAccWriter.write(data[0]);
+            bW.write(newRecord);
             // Add a new line to the file
-            custInfoWriter.newLine(); 
-            custAccWriter.newLine();
+            bW.newLine();
         } 
         catch (IOException e) {
             // Handle any exceptions that occur
@@ -37,8 +33,13 @@ public class CSVHandler {
             e.printStackTrace();
         }
     }
-    
-    // Returns a customer object given a username
+
+    /**
+     * Returns an existing Customer object given a username. If username does not exist in file CustomerInfo.csv, then return null.
+     * 
+     * @param username the username of the customer
+     * @return the customer object
+     */
     public static Customer retrieveCustomer(String username) {
         try (BufferedReader bR = new BufferedReader(new FileReader("CustomerInfo.csv"))){
             String currentLine;
@@ -59,41 +60,19 @@ public class CSVHandler {
         return null;
     }
 
-    // Append new account to CSV
-    public static void addAccountToCSV(Account account) {
-        try (BufferedWriter bW = new BufferedWriter(new FileWriter("Accounts.csv", true))){
-            bW.write(account.convertToCSV());
-            bW.newLine();
-        }   
-        catch (IOException e) {
-            System.out.println(e);
-        }
-    }
-
-    // Retrieve account, if it exists in file, else return null
-    public static String getAccountFromCSV(String accountNum) {
-        try (BufferedReader bR = new BufferedReader(new FileReader("Accounts.csv"))){
+    /**
+     * Finds and returns the record that has a first column value equal to key in the CSV file
+     * 
+     * @param key the identifier for a record
+     * @param filepath the CSV file name
+     * @return
+     */
+    public static String getRecord(String key, String filepath) {
+        try (BufferedReader bR = new BufferedReader(new FileReader(filepath))){
             String currentLine;
             while ((currentLine = bR.readLine()) != null) {
                 String accountData[] = currentLine.split(",");
-                if (accountData[0].equals(accountNum) == true) {
-                    return currentLine;
-                }
-            }
-        }
-        catch (IOException e) {
-            System.out.println(e);
-        }
-        return null;
-    }
-    
-    // Returns string of a customer's accounts' numbers
-    public static String getCustAccsFromCSV(String username) {
-        try (BufferedReader bR = new BufferedReader(new FileReader("CustomerAccounts.csv"))){
-            String currentLine;
-            while ((currentLine = bR.readLine()) != null) {
-                String accountData[] = currentLine.split(",");
-                if (accountData[0].equals(username) == true) {
+                if (accountData[0].equals(key) == true) {
                     return currentLine;
                 }
             }
@@ -104,7 +83,13 @@ public class CSVHandler {
         return null;
     }
 
-    // General function to update a CSV given a filepath, new record and a key (string)
+    /**
+     * Finds the record in the file with the same first column value as the key, and updates that record
+     * 
+     * @param key the identifier for a record
+     * @param filepath the CSV file name
+     * @param newRecord the new string of info to be updated
+     */
     public static void updateCSV(String key, String filepath, String newRecord) {
         String currentLine;
         try (
@@ -140,112 +125,52 @@ public class CSVHandler {
         }
     }
 
-    public static void updateCustomer(Customer customer) {
+    /**
+     * Removes a record that has a first column value equal to key from the csv file
+     * 
+     * @param key the identifier for a record
+     * @param filepath the CSV file name
+     */
+    public static void removeRecord(String key, String filepath) {
         String currentLine;
         try (
-            BufferedReader bR = new BufferedReader(new FileReader("CustomerInfo.csv")); 
+            BufferedReader bR = new BufferedReader(new FileReader(filepath));
             BufferedWriter bW = new BufferedWriter(new FileWriter("temp.csv", false))
-        ) 
-        {
-            while ((currentLine = bR.readLine()) != null) {
-                String data[] = currentLine.split(",");
-                if (!data[0].equals(customer.getUsername())) {
-                    bW.write(currentLine, 0, currentLine.length());
-                    bW.newLine();
-                }
-                else {
-                    // Get the customer's details as an array
-                    String[] newData = customer.getDetails();
-                    // Add locked status and failed attempts to the data array
-                    newData = Arrays.copyOf(newData, newData.length + 2);
-                    newData[newData.length - 2] = String.valueOf(customer.getFailedAttempts());
-                    newData[newData.length - 1] = customer.isLocked() ? "1" : "0";
-                    String newRecord = String.join(",", newData);
-                    bW.write(newRecord, 0, newRecord.length());
-                    bW.newLine();
-                }
-            }
-        } 
-        catch (IOException e) {
-            System.err.println(e);
-        }
-        try {
-            Path accPath = Paths.get("CustomerInfo.csv");
-            Path tempPath = Paths.get("temp.csv");
-            // delete old file and rename temp file to CustomerInfo.csv
-            Files.delete(accPath);
-            Files.move(tempPath, accPath);
-        }
-        catch (IOException e) {
-            System.out.println(e);
-        }
-    }
-    public static void updateCustomerLockStatus(String username, String newLockStatus) {
-        String currentLine;
-        try (
-            BufferedReader bR = new BufferedReader(new FileReader("CustomerInfo.csv")); 
-            BufferedWriter bW = new BufferedWriter(new FileWriter("temp.csv", false))
-        ) 
-        {
-            while ((currentLine = bR.readLine()) != null) {
-                String data[] = currentLine.split(",");
-                if (!data[0].equals(username)) {
-                    bW.write(currentLine, 0, currentLine.length());
-                    bW.newLine();
-                }
-                else {
-                    // Update the lock status of the customer
-                    data[data.length - 1] = newLockStatus;
-                    String newRecord = String.join(",", data);
-                    bW.write(newRecord, 0, newRecord.length());
-                    bW.newLine();
-                }
-            }
-        } 
-        catch (IOException e) {
-            System.err.println(e);
-        }
-        try {
-            Path accPath = Paths.get("CustomerInfo.csv");
-            Path tempPath = Paths.get("temp.csv");
-            // delete old file and rename temp file to CustomerInfo.csv
-            Files.delete(accPath);
-            Files.move(tempPath, accPath);
-        }
-        catch (IOException e) {
-            System.out.println(e);
-        }
-    }
-    public static void removeCustomer(String username) {
-        String currentLine;
-        try (
-            BufferedReader bR = new BufferedReader(new FileReader("CustomerInfo.csv")); 
-            BufferedWriter bW = new BufferedWriter(new FileWriter("temp.csv", false))
-        ) 
-        {
+        ) {
             while ((currentLine = bR.readLine()) != null) {
                 String data[] = currentLine.split(",");
                 // If the username in a line doesn't match the given username, write the line to the temp file
-                if (!data[0].equals(username)) {
+                if (!data[0].equals(key)) {
                     bW.write(currentLine, 0, currentLine.length());
                     bW.newLine();
                 }
             }
-        } 
+        }
         catch (IOException e) {
             System.err.println(e);
         }
         try {
-            Path accPath = Paths.get("CustomerInfo.csv");
+            Path givenPath = Paths.get(filepath);
             Path tempPath = Paths.get("temp.csv");
             // delete old file and rename temp file to CustomerInfo.csv
-            Files.delete(accPath);
-            Files.move(tempPath, accPath);
+            Files.delete(givenPath);
+            Files.move(tempPath, givenPath);
         }
         catch (IOException e) {
             System.out.println(e);
         }
     }
+    
+    /**
+     * Appends a customer's personal details to CustomerDetails.csv
+     * 
+     * @param username
+     * @param name
+     * @param address
+     * @param phoneNumber
+     * @param email
+     * @param dateOfBirth
+     */
     public static void addCustomerDetailsToCSV(String username, String name, String address, String phoneNumber, String email, String dateOfBirth) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("CustomerDetails.csv", true))) {
             String record = String.join(",", username, name, address, phoneNumber, email, dateOfBirth);

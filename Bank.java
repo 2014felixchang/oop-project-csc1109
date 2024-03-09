@@ -8,44 +8,68 @@ import java.util.List;
 import java.util.Random;
 
 
+/**
+ * Description: The Bank class represents a bank that manages the Customers and Accounts
+ * and handles financial operations. Houses the main method to run for demo.
+ */
 public class Bank {
     private String bankName;
     private List<Customer> customers;
+    
     
     public Bank(String bankName){
         this.bankName = bankName;
         this.customers = new ArrayList<>();
     }
 
+    /**
+     * Get the bank name
+     * 
+     * @return Bank name
+     */
     public String getBankName(){
         return bankName;
     }
 
+    /**
+     * The main method of the whole application. 
+     * Initiates the Bank and starts the application UI
+     * 
+     * @param args
+     */
     public static void main(String[] args) {
         Bank bank = new Bank("My Bank");
         
-        while (true) {
-            BankUI.displayMainMenu();
-            int choice = BankUI.getUserChoice();
+        BankUI.displayMainMenu(bank);
+        // while (true) {
+        //     BankUI.displayMainMenu();
+        //     int choice = BankUI.getUserChoice();
 
-            switch (choice) {
-                case 1:
-                    BankUI.register(bank);
-                    break;
-                case 2:
-                    BankUI.login(bank);
-                    break;
-                case 3:
-                    System.exit(0);
-                default:
-                    System.out.println("Invalid choice.");
-            }
-        }
+        //     switch (choice) {
+        //         case 1:
+        //             BankUI.register(bank);
+        //             break;
+        //         case 2:
+        //             BankUI.login(bank);
+        //             break;
+        //         case 3:
+        //             System.exit(0);
+        //         default:
+        //             System.out.println("Invalid choice. Try again.");
+        //             break;
+        //     }
+        // }
     }
 
-    
+    /**
+     * Transfers money from one account to another
+     * 
+     * @param sourceAccountNum The source account number
+     * @param destinationAccountNum The destination account number
+     * @param amount The amount to be transferred
+     */
     public void transferMoney(String sourceAccountNum, String destinationAccountNum, double amount){
-        if ((CSVHandler.getAccountFromCSV(sourceAccountNum)) == null || CSVHandler.getAccountFromCSV(destinationAccountNum) == null ) {
+        if ((CSVHandler.getRecord(sourceAccountNum, "Accounts.csv")) == null || (CSVHandler.getRecord(sourceAccountNum, "Accounts.csv")) == null ) {
             System.out.println("Invalid account numbers given. Transfer process terminated.");
             return;
         }
@@ -74,6 +98,11 @@ public class Bank {
         System.out.println("\nTransfer Successful!");
     }
     
+    /**
+     * Generates an account number for new accounts
+     * 
+     * @return The generated account number
+     */
     public static String generateAccNum() {
         Random rand = new Random();
         String randomAccNum = String.valueOf(rand.nextInt(9999999));
@@ -83,6 +112,12 @@ public class Bank {
         return randomAccNum;
     }
 
+    /**
+     * Checks if the account number already exists
+     * 
+     * @param accNum The account number that is to be checked
+     * @return True or False whether the account number already exists
+     */
     public static boolean checkAccNumExists(String accNum) {
         try (BufferedReader bR = new BufferedReader(new FileReader("CustomerAccounts.csv"))){
             String currentLine;
