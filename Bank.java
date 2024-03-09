@@ -41,24 +41,7 @@ public class Bank {
         Bank bank = new Bank("My Bank");
         
         BankUI.displayMainMenu(bank);
-        // while (true) {
-        //     BankUI.displayMainMenu();
-        //     int choice = BankUI.getUserChoice();
 
-        //     switch (choice) {
-        //         case 1:
-        //             BankUI.register(bank);
-        //             break;
-        //         case 2:
-        //             BankUI.login(bank);
-        //             break;
-        //         case 3:
-        //             System.exit(0);
-        //         default:
-        //             System.out.println("Invalid choice. Try again.");
-        //             break;
-        //     }
-        // }
     }
 
     /**
