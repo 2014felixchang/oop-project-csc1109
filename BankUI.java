@@ -1,18 +1,7 @@
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.TimeZone;
-
-
 
 public class BankUI {
     private static Scanner scanner = new Scanner(System.in);
@@ -271,16 +260,16 @@ public class BankUI {
 
             System.out.println("------------------------------------");
             System.out.println("Account number: " + loggedInAccount.getAccountNum());
-            System.out.println("Balance: " + Account.convert2DP(loggedInAccount.getBalance()) + ",  Debt: " + Account.convert2DP(loggedInAccount.getDebt()));
+            System.out.println("Balance: " + Account.convert2DP(loggedInAccount.getBalance()));
             System.out.println("1. Transfer Funds");
             System.out.println("2. Change transfer limit");
             System.out.println("3. Deposit");
             System.out.println("4. Withdraw");
             System.out.println("5. Currency Exchange");
-            System.out.println("6. Pay debt");
-            System.out.println("7. Create Insurance Policy");
-            System.out.println("8. Go back to accounts menu");
-            System.out.println("9. Logout");
+            System.out.println("6. Get a loan");
+            System.out.println("7. Pay loan");
+            System.out.println("8. Create Insurance Policy");
+            System.out.println("9. Go back to accounts menu");
             System.out.println("------------------------------------");
             System.out.print("Enter your choice: ");
 
@@ -373,27 +362,23 @@ public class BankUI {
                     }
                     break;
                 case 6:
-                    // paying off debt
-                    if (loggedInAccount.getDebt() == 0) {
-                        System.out.println("This account has no debt!");
-                        break;
+                    // get a loan (implement 506/507)
+                    try {
+                        System.out.println("How much would you like to loan?: ");
+                        float principal = Float.parseFloat(scanner.nextLine());
                     }
-                    else {
-                        System.out.println("Enter amount of debt you are paying off: $");
-                        double debtAmount = scanner.nextDouble();
-                        loggedInAccount.minusDebt(debtAmount);
-                        break;
+                    catch (NumberFormatException e) {
+                        System.out.println(e);
                     }
                 case 7:
+                    // paying back a loan (implement 506/507)
+                    
+                case 8:
                     BankUI.createNewInsurancePolicy();
                     break;
-                case 8:
+                case 9:
                     // go back to accounts menu
                     return;
-                case 9:
-                    // Logout
-                    System.out.println("You have been logged out.");
-                    Bank.main(null);
                 default:
                     BankUI.printInvalid();
                     break;

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class Account {
     private String accountNum;
     private double balance = 0;
-    private double debt = 0;
+    // private double debt = 0;
     private double transLimit = 1000.00;
     private double interestRate = 0.1; //per year
     private ArrayList<String> history = new ArrayList<String>();
@@ -26,7 +26,7 @@ public class Account {
         if (record != null) {
             String[] accountData = record.split(",");
             this.balance = Double.parseDouble(accountData[1]);
-            this.debt = Double.parseDouble(accountData[2]);
+            // this.debt = Double.parseDouble(accountData[2]);
             this.transLimit = Double.parseDouble(accountData[3]);
             if (accountData.length > 4) {
                 for (int i = 4; i < accountData.length; i++) {
@@ -81,7 +81,7 @@ public class Account {
     public void withdraw(double amount) {
         if ((this.balance - amount) < 0) {
             System.out.println("Withdrawal limit reached. Remaining amount will be loaned, and added to debt");
-            this.debt += amount - this.balance; //May not be the right idea as there is no auto loan irl
+            // this.debt += amount - this.balance; //May not be the right idea as there is no auto loan irl
             this.balance = 0.0;
             this.addHistory("Withdrawn: $" + convert2DP(amount));
         }
@@ -121,37 +121,37 @@ public class Account {
         this.balance = amount;   
     }
 
-    /**
-     * Gets the account's debt
-     * 
-     * @return the account's debt
-     */
-    public double getDebt() {
-        return debt;
-    }
+    // /**
+    //  * Gets the account's debt
+    //  * 
+    //  * @return the account's debt
+    //  */
+    // public double getDebt() {
+    //     return debt;
+    // }
 
-    /**
-     * Minus amount from debt, if amount more than debt, add excess to balance
-     * 
-     * @param amount the amount of money to be deducted from account's debt
-     */
-    public void minusDebt(double amount) {
-        if (amount > this.debt) {
-            this.balance += amount - debt;
-            this.debt = 0.0;
-        }
-        else {
-            this.debt -= amount;
-        }
-        CSVHandler.updateCSV(accountNum, "Accounts.csv", this.convertToCSV());
-    }
+    // /**
+    //  * Minus amount from debt, if amount more than debt, add excess to balance
+    //  * 
+    //  * @param amount the amount of money to be deducted from account's debt
+    //  */
+    // public void minusDebt(double amount) {
+    //     if (amount > this.debt) {
+    //         this.balance += amount - debt;
+    //         this.debt = 0.0;
+    //     }
+    //     else {
+    //         this.debt -= amount;
+    //     }
+    //     CSVHandler.updateCSV(accountNum, "Accounts.csv", this.convertToCSV());
+    // }
 
     /**
      * Gets the interest rate of the account
      * 
      * @return the interest rate of account
      */
-    public double getInterest() {
+    public double getInterestRate() {
         return this.interestRate;
     }
     
@@ -209,7 +209,7 @@ public class Account {
     public void displayAccountInfo() {
         System.out.println("Account Number: " + accountNum);
         System.out.println("Current Balance: $" + convert2DP(balance));
-        System.out.println("Debt: $" + convert2DP(debt));
+        // System.out.println("Debt: $" + convert2DP(debt));
         System.out.println("Transfer Limit: " + convert2DP(transLimit));
     }
 
@@ -219,7 +219,7 @@ public class Account {
      * @return the account's attributes as a CSV string
      */
     public String convertToCSV() {
-        String accountData = this.getAccountNum() + "," + convert2DP(this.getBalance()) + "," + convert2DP(this.getDebt()) + "," + convert2DP(this.getTransLimit());
+        String accountData = this.getAccountNum() + "," + convert2DP(this.getBalance()) + "," + convert2DP(this.getInterestRate()) + "," + convert2DP(this.getTransLimit());
         if (this.getHistory() != null) {
             for (String i : this.getHistory()) {
                 accountData += "," + i;
