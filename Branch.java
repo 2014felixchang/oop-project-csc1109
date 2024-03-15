@@ -1,3 +1,5 @@
+import java.time.LocalTime;
+
 /**
  * Branch class:
  * Represents the bank's retail branches (branch id, branch name, address, opening time, closing time).
@@ -7,8 +9,8 @@ public class Branch {
     private int branchID;
     private String branchName;
     private String address;
-    private int openingTime;
-    private int closingTime;
+    private LocalTime openingTime;
+    private LocalTime closingTime;
     
     /**
      * Constructor to create new branch objects
@@ -19,12 +21,16 @@ public class Branch {
      * @param openingTime The time that the branch opens
      * @param closingTime The time that the branch closes
      */
-    public Branch(int branchID, String branchName, String address, int openingTime, int closingTime) {
-        this.branchID = branchID;
-        this.branchName = branchName;
-        this.address = address;
-        this.openingTime = openingTime;
-        this.closingTime = closingTime;
+    public Branch(int branchID, String branchName, String address, LocalTime openingTime, LocalTime closingTime) {
+        try {
+            this.branchID = branchID;
+            this.branchName = branchName;
+            this.address = address;
+            this.openingTime = openingTime;
+            this.closingTime = closingTime;
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException("Invalid parameters given");
+        }
     }
 
     /**
@@ -55,7 +61,7 @@ public class Branch {
      * Getter method to get branch opening time
      * @return the branch opening time
      */
-    public int getOpeningTime() {
+    public LocalTime getOpeningTime() {
         return this.openingTime;
     }
 
@@ -63,7 +69,7 @@ public class Branch {
      * Getter method to get branch closing time
      * @return the branch closing time
      */
-    public int getClosingTime() {
+    public LocalTime getClosingTime() {
         return this.closingTime;
     }
 
@@ -95,7 +101,7 @@ public class Branch {
      * Setter method to set branch opening time
      * @param newTime the new timing that the branch will open at
      */
-    public void setOpeningTime(int newTime) {
+    public void setOpeningTime(LocalTime newTime) {
         this.openingTime = newTime;
     }
 
@@ -103,7 +109,7 @@ public class Branch {
      * Setter method to set branch closing time
      * @param newTime the new timing that the branch will close at
      */
-    public void setClosingTime(int newTime) {
+    public void setClosingTime(LocalTime newTime) {
         this.closingTime = newTime;
     }
 

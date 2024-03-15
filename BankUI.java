@@ -2,7 +2,12 @@ import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 public class BankUI {
     private static Scanner scanner = new Scanner(System.in);
@@ -15,10 +20,12 @@ public class BankUI {
             System.out.println("1. Register");
             System.out.println("2. Login");
             System.out.println("3. Exit");
+            System.out.println("4. Branches");
             System.out.println("------------------------------------");
             System.out.print("Enter your choice: ");
 
             int choice = BankUI.getUserChoice();
+
             switch (choice) {
                 case 1:
                     BankUI.register(bank);
@@ -28,6 +35,10 @@ public class BankUI {
                     break;
                 case 3:
                     System.exit(0);
+                    break;
+                case 4:
+                    BankUI.viewBranches(bank);
+                    break;
                 default:
                     BankUI.printInvalid();
                     break;
@@ -139,17 +150,18 @@ public class BankUI {
             System.out.println("5. Logout");
             System.out.println("------------------------------------");
             System.out.print("Enter your choice: ");
-            String choice = scanner.nextLine();
+            
+            int choice = BankUI.getUserChoice();
 
             switch (choice) {
-                case "1":
+                case 1:
                     // Implement the logic to view all customers
                     Customer.viewAllCustomers();
                     break;
-                case "2":
+                case 2:
                     addNewCustomer();
                     break;
-                case "3":
+                case 3:
                     // Implement the logic to remove a customer
                     System.out.print("Enter the username of the customer to remove: ");
                     String usernameToRemove = scanner.nextLine();
@@ -169,7 +181,7 @@ public class BankUI {
                         System.out.println("Customer removed successfully."); 
                     }
                     break;
-                case "4":
+                case 4:
                     // unlock customer account given the customer's username
                     System.out.print("Enter the username of the customer to unlock: ");
                     String usernameToUnlock = scanner.nextLine();
@@ -184,7 +196,7 @@ public class BankUI {
                         System.out.println("Customer not found.");
                     }
                     break;
-                case "5":
+                case 5:
                     System.out.println("Logging out...");
                     return;
                 default:
@@ -244,10 +256,7 @@ public class BankUI {
                     // if the option number the user entered does not correspond to an existing account number, then print below
                     BankUI.printInvalid();
                 }
-            } catch (InputMismatchException e) {
-                BankUI.printInvalid();
-                continue;
-            } catch (NumberFormatException e) {
+            } catch (InputMismatchException | NumberFormatException e) {
                 BankUI.printInvalid();
                 continue;
             }
@@ -257,7 +266,6 @@ public class BankUI {
     public static void transactMenu(Bank bank, Customer customer, String accNum) {
         while (true) {
             Account loggedInAccount = new Account(accNum);
-            int choice = 0;
 
             System.out.println("------------------------------------");
             System.out.println("Account number: " + loggedInAccount.getAccountNum());
@@ -274,13 +282,7 @@ public class BankUI {
             System.out.println("------------------------------------");
             System.out.print("Enter your choice: ");
 
-            try {
-                choice = scanner.nextInt();
-                scanner.nextLine();     // Consumes the \n after the integer
-            } catch (InputMismatchException e) {
-                BankUI.printInvalid();
-                continue;
-            }
+            int choice = BankUI.getUserChoice();
 
             switch (choice) {
                 case 1:
@@ -416,6 +418,38 @@ public class BankUI {
         // Display the policy details
         insurance.displayPolicyDetails();
         
+    }
+
+    public static void viewBranches(Bank bank) {
+        ArrayList<Branch> branches = new ArrayList<Branch>();
+        try (BufferedReader br = new BufferedReader(new FileReader("Branches.csv"))){
+            String branchInfo;
+            while ((branchInfo = br.readLine()) != null) {
+                String attributes[] = branchInfo.split(",");
+                Branch branch = new Branch(Integer.parseInt(attributes[0]), attributes[1], attributes[2], LocalTime.parse(attributes[3]), LocalTime.parse(attributes[4]));
+                branches.add(branch);
+            }
+        } catch (IOException | NumberFormatException e) {
+            System.out.println(e);
+            return;
+        }
+        while (true) {
+            System.out.println("------------------------------------");
+            System.out.println("These are our branches!");
+            for (Branch branch : branches) {
+                System.out.println("--------------");
+                System.out.println("Branch name: " + branch.getBranchName());
+                System.out.println("Address: " + branch.getBranchAddress());
+                System.out.println("Opening time: " + branch.getOpeningTime());
+                System.out.println("Closing time: " + branch.getClosingTime());
+            }
+            System.out.println("--------------");
+            System.out.print("Press enter to return to main menu. ");
+            String input = scanner.nextLine();
+            if (input.isEmpty()) {
+                return;
+            }
+        }
     }
 
     public static void printInvalid() {
