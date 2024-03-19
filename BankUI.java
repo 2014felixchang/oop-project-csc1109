@@ -375,8 +375,8 @@ public class BankUI {
                         LocalDate date = LocalDate.now();
                         // hard coded annual flat rate of 6.0%
                         double interestRate = 0.06;
-                        G16_LON loan = new G16_LON(principal, interestRate, date, loanTermMonths);
-                        loan.displayLoanDetails();
+                        // G16_LON loan = new G16_LON(principal, interestRate, date, loanTermMonths);
+                        // loan.displayLoanDetails();
                         break;
                     }
                     catch (NumberFormatException e) {
