@@ -189,7 +189,13 @@ public class Insurance {
             this.policyTenure = PolicyTenure.values()[policyTenureIndex - 1];
             this.premiumFrequency = PremiumFrequency.values()[premiumFrequencyIndex - 1];
             this.policyNumber = generatePolicyNumber();
-
+    
+            // Get the current time
+            String currentTime = new SimpleDateFormat("HH:mm:ss").format(new Date());
+    
+            // Append the current time to the date string
+            startDateString += " " + currentTime;
+    
             // Parsing the start date string into a Date object.
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             dateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Singapore"));
@@ -207,7 +213,7 @@ public class Insurance {
             ZonedDateTime endDateZoned = startDateZoned.plusYears(this.policyTenure.getYears());
             this.policyEndDate = endDateZoned.toInstant();
         } catch (ArrayIndexOutOfBoundsException e) {
-            System.out.println("Invalid policy type index. Please enter a number between 1 and " + PolicyType.values().length);
+            // Handle the exception
         }
     }
 

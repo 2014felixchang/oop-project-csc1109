@@ -400,7 +400,6 @@ public class BankUI {
     }
     //create policy
     public static void createNewInsurancePolicy() {
-
         System.out.println("Enter policy type (1 for LIFE, 2 for HEALTH, 3 for ACCIDENT): ");
         int policyTypeIndex = scanner.nextInt();
         System.out.println("Enter coverage option (1 for BASIC($1000), 2 for STANDARD($2000), 3 for PREMIUM($3000)): ");
@@ -411,15 +410,15 @@ public class BankUI {
         int premiumFrequencyIndex = scanner.nextInt();
         System.out.println("Enter policy start date (yyyy-MM-dd): ");
         String startDateString = scanner.next();
+        scanner.nextLine(); // Consume the newline character
         System.out.println("Create policy successfully!");
         System.out.println("------------------------------------");
-
+    
         Insurance insurance = new Insurance(policyTypeIndex, startDateString, coverageOptionIndex, policyTenureIndex, premiumFrequencyIndex);
-        // Display the policy details
-        insurance.displayPolicyDetails();
-        
+        // Display the policy details and print them
+        System.out.println(insurance.displayPolicyDetails());
     }
-
+    
     public static void viewBranches(Bank bank) {
         ArrayList<Branch> branches = new ArrayList<Branch>();
         try (BufferedReader br = new BufferedReader(new FileReader("Branches.csv"))){
