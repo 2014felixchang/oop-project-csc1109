@@ -85,11 +85,12 @@ public class BankUI {
         
             Customer customer = Customer.registerCustomer(username, password, role, id);
             System.out.println("Registration successful!");
-            accountsMenu(bank, customer);
+            break;
         }
     }
 
     public static void addNewCustomer() {
+        Scanner scanner = new Scanner(System.in);
         System.out.print("Enter username: ");
         String username = scanner.nextLine();
         System.out.print("Enter password: ");
@@ -112,6 +113,7 @@ public class BankUI {
         String dateOfBirth = scanner.nextLine();
         CSVHandler.addCustomerDetailsToCSV(username, name, address, phoneNumber, email, dateOfBirth);
         System.out.println("Customer added successfully.");
+        scanner.nextLine();
     }
 
     public static void login(Bank bank) {
