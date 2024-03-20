@@ -5,6 +5,8 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
 
@@ -234,27 +236,11 @@ public class Insurance {
     }
 
     /**
-     * Setter method for the policy type.
-     * @param policyType the policy type.
-     */
-    public void setPolicyType(PolicyType policyType) {
-        this.policyType = policyType;
-    }
-
-    /**
      * Getter method for the coverage option.
      * @return the coverage option.
      */
     public CoverageOption getCoverageOption() {
         return coverageOption;
-    }
-
-    /**
-     * Setter method for the coverage option.
-     * @param coverageOption the coverage option.
-     */
-    public void setCoverageOption(CoverageOption coverageOption) {
-        this.coverageOption = coverageOption;
     }
 
     /**
@@ -266,27 +252,11 @@ public class Insurance {
     }
 
     /**
-     * Setter method for the policy tenure.
-     * @param policyTenure the policy tenure.
-     */
-    public void setPolicyTenure(PolicyTenure policyTenure) {
-        this.policyTenure = policyTenure;
-    }
-
-    /**
      * Getter method for the premium payment frequency.
      * @return the premium payment frequency.
-     */
+    
     public PremiumFrequency getPremiumFrequency() {
         return premiumFrequency;
-    }
-
-    /**
-     * Setter method for the premium payment frequency.
-     * @param premiumFrequency the premium payment frequency.
-     */
-    public void setPremiumFrequency(PremiumFrequency premiumFrequency) {
-        this.premiumFrequency = premiumFrequency;
     }
 
     /**
@@ -298,14 +268,6 @@ public class Insurance {
     }
 
     /**
-     * Setter method for the policy start date.
-     * @param policyStartDate the policy start date.
-     */
-    public void setPolicyStartDate(Instant policyStartDate) {
-        this.policyStartDate = policyStartDate;
-    }
-
-    /**
      * Getter method for the policy end date.
      * @return the policy end date.
      */
@@ -314,14 +276,6 @@ public class Insurance {
     }
 
     /**
-     * Setter method for the policy end date.
-     * @param policyEndDate the policy end date.
-     */
-    public void setPolicyEndDate(Instant policyEndDate) {
-        this.policyEndDate = policyEndDate;
-    }
-
-        /**
      * Method to check if the policy is currently active.
      * @return true if the policy is active, false otherwise.
      */
@@ -334,7 +288,7 @@ public class Insurance {
      * Method to calculate the premium for the policy.
      * @return a 2D array with the premium per period and total premium, both before and after GST.
      */
-    public double[][] calculatePremium() {
+    public Map<String, Double> calculatePremium() {
         int basePremium = coverageOption.getValue();
         int frequencyFactor = premiumFrequency.getMonths();
         int tenureFactor = policyTenure.getYears();
@@ -349,15 +303,19 @@ public class Insurance {
         double premiumPerPeriodWithGST = premiumPerPeriod + gstForPremiumPerPeriod;
         double totalPremiumWithGST = totalPremium + gstForTotalPremium;
 
-        premiumPerPeriod = Math.round(premiumPerPeriod * 100.0) / 100.0;
-        totalPremium = Math.round(totalPremium * 100.0) / 100.0;
-        premiumPerPeriodWithGST = Math.round(premiumPerPeriodWithGST * 100.0) / 100.0;
-        totalPremiumWithGST = Math.round(totalPremiumWithGST * 100.0) / 100.0;
+        double roundFactor = 100.0;
+        premiumPerPeriod = Math.round(premiumPerPeriod * roundFactor) / roundFactor;
+        totalPremium = Math.round(totalPremium * roundFactor) / roundFactor;
+        premiumPerPeriodWithGST = Math.round(premiumPerPeriodWithGST * roundFactor) / roundFactor;
+        totalPremiumWithGST = Math.round(totalPremiumWithGST * roundFactor) / roundFactor;
 
-        return new double[][] {
-            {premiumPerPeriod, totalPremium},
-            {premiumPerPeriodWithGST, totalPremiumWithGST}
-        };
+        Map<String, Double> premiums = new HashMap<>();
+        premiums.put("premiumPerPeriod", premiumPerPeriod);
+        premiums.put("totalPremium", totalPremium);
+        premiums.put("premiumPerPeriodWithGST", premiumPerPeriodWithGST);
+        premiums.put("totalPremiumWithGST", totalPremiumWithGST);
+
+        return premiums;
     }
 
     /**
@@ -365,22 +323,25 @@ public class Insurance {
      * coverage option, tenure, premium frequency, start and end dates, and the premium 
      * per period and total premium both before and after GST.
      */
-    public void displayPolicyDetails() {
+    public String displayPolicyDetails() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MMM-dd HH:mm:ss");
         formatter = formatter.withZone(ZoneId.of("Asia/Singapore"));
-
-        double[][] premiums = calculatePremium();
-
-        System.out.println("Policy Number: " + policyNumber);
-        System.out.println("Policy Type: " + policyType);
-        System.out.println("Coverage Option: " + coverageOption);
-        System.out.println("Policy Tenure: " + policyTenure);
-        System.out.println("Premium Frequency: " + premiumFrequency);
-        System.out.println("Policy Start Date: " + formatter.format(ZonedDateTime.ofInstant(policyStartDate, ZoneId.of("Asia/Singapore"))));
-        System.out.println("Policy End Date: " + formatter.format(ZonedDateTime.ofInstant(policyEndDate, ZoneId.of("Asia/Singapore"))));
-        System.out.println("Premium per period (before GST): $" + premiums[0][0]);
-        System.out.println("Premium per period (after GST): $" + premiums[1][0]);
-        System.out.println("Total premium (before GST): $" + premiums[0][1]);
-        System.out.println("Total premium (after GST): $" + premiums[1][1]);
+    
+        Map<String, Double> premiums = calculatePremium();
+    
+        StringBuilder sb = new StringBuilder();
+        sb.append("Policy Number: ").append(policyNumber).append("\n");
+        sb.append("Policy Type: ").append(policyType).append("\n");
+        sb.append("Coverage Option: ").append(coverageOption).append("\n");
+        sb.append("Policy Tenure: ").append(policyTenure).append("\n");
+        sb.append("Premium Frequency: ").append(premiumFrequency).append("\n");
+        sb.append("Policy Start Date: ").append(formatter.format(ZonedDateTime.ofInstant(policyStartDate, ZoneId.of("Asia/Singapore")))).append("\n");
+        sb.append("Policy End Date: ").append(formatter.format(ZonedDateTime.ofInstant(policyEndDate, ZoneId.of("Asia/Singapore")))).append("\n");
+        sb.append("Premium per period (before GST): $").append(premiums.get("premiumPerPeriod")).append("\n");
+        sb.append("Premium per period (after GST): $").append(premiums.get("premiumPerPeriodWithGST")).append("\n");
+        sb.append("Total premium (before GST): $").append(premiums.get("totalPremium")).append("\n");
+        sb.append("Total premium (after GST): $").append(premiums.get("totalPremiumWithGST")).append("\n");
+    
+        return sb.toString();
     }
 }
