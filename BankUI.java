@@ -78,12 +78,10 @@ public class BankUI {
                 password = PasswordHasher.hashPassword(String.valueOf(pin));
             }
 
-            System.out.print("Enter role: ");
-            String role = scanner.nextLine();
             System.out.print("Enter ID: ");
             String id = scanner.nextLine();
         
-            Customer customer = Customer.registerCustomer(username, password, role, id);
+            Customer customer = Customer.registerCustomer(username, password, "User", id);
             System.out.println("Registration successful!");
             break;
         }
