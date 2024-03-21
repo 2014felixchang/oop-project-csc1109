@@ -2,7 +2,6 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +23,6 @@ public class Customer {
     // Static map to store all customers
     private static Map<String, Customer> customers = new HashMap<>();
 
-    // Constructor for the Customer class
     // Constructor for the Customer class
     public Customer(String username, String password, String role, String id) {
         try {
@@ -61,11 +59,6 @@ public class Customer {
     public String getName() {
         return name;
     }
-
-    // // Method to return all customer details as an array
-    // public String[] getDetails() {
-    //     return new String[] {username, password, role, id};
-    // }
 
     // Method to return customer's administrative info as a comma-separated string
     public String customerInfoToCSV() {
@@ -178,19 +171,6 @@ public class Customer {
         }
     }
     
-    // Returns a String array of only the customer's accounts' numbers
-    // public String[] getCustomerAccounts() {
-    //     String custAccInfo = CSVHandler.getCustAccsFromCSV(this.username);
-    //     if (custAccInfo == null) {
-    //         return new String[0]; // return an empty array if no accounts found
-    //     }
-    //     String[] accounts = custAccInfo.split(",");
-    //     for (int i = 1; i < accounts.length; i++) {
-    //         accounts[i-1] = accounts[i];
-    //     }
-    //     return Arrays.copyOf(accounts, accounts.length - 1);
-    // }
-
     public static void viewAllCustomers() {
         try (BufferedReader reader = new BufferedReader(new FileReader("CustomerInfo.csv"))) {
             String line;
