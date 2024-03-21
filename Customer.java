@@ -22,36 +22,16 @@ public class Customer extends User{
     public Customer(String username, String password, String role, String id) {
         super(username, password, role, id);
     }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public String getPassword() {
-        try {
-            return String.valueOf(password);
-        } catch (Exception e) {
-            System.out.println("An error occurred while getting the password: " + e.getMessage());
-            return null;
-        }
-    }
-
-    public String getId() {
-        return id;
-    }
-
+    
     public String getName() {
         return name;
     }
 
     // Method to return customer's administrative info as a comma-separated string
+    @Override
     public String customerInfoToCSV() {
         try {
-            String custRecord = username+","+password+","+role+","+id+","+failedAttempts+","+locked;
+            String custRecord = super.customerInfoToCSV() + "," + failedAttempts + "," + locked;
             return custRecord;
         } catch (Exception e) {
             System.out.println("An error occurred while converting customer info to CSV: " + e.getMessage());
@@ -60,9 +40,10 @@ public class Customer extends User{
     }
 
     // Method to return customer's personal details as a comma-separated string
+    @Override
     public String personalDetailsToCSV() {
         try {
-            String custRecord = username+","+name+","+address+","+phoneNumber+","+email+","+dateOfBirth;
+            String custRecord = super.personalDetailsToCSV() + "," + name + "," + address + "," + phoneNumber + "," + email + "," + dateOfBirth;
             return custRecord;
         } catch (Exception e) {
             System.out.println("An error occurred while converting personal details to CSV: " + e.getMessage());
@@ -203,5 +184,25 @@ class User {
 
     public String getId() {
         return id;
+    }
+
+    public String customerInfoToCSV() {
+        try {
+            String userRecord = username+","+password+","+role+","+id;
+            return userRecord;
+        } catch (Exception e) {
+            System.out.println("An error occurred while converting user info to CSV: " + e.getMessage());
+            return null;
+        }
+    }
+
+    public String personalDetailsToCSV() {
+        try {
+            String userRecord = username;
+            return userRecord;
+        } catch (Exception e) {
+            System.out.println("An error occurred while converting user personal details to CSV: " + e.getMessage());
+            return null;
+        }
     }
 }
