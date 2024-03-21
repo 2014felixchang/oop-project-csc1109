@@ -6,12 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 // Define a Customer class
-public class Customer {
-
-    private String username;
-    private String password;
-    private String role;
-    private String id;
+public class Customer extends User{
     private String name;
     private String address;
     private String phoneNumber;
@@ -25,14 +20,7 @@ public class Customer {
 
     // Constructor for the Customer class
     public Customer(String username, String password, String role, String id) {
-        try {
-            this.username = username;
-            this.role = role;
-            this.id = id;
-            this.password = password;
-        } catch (Exception e) {
-            System.out.println("An error occurred while creating a new Customer: " + e.getMessage());
-        }
+        super(username, password, role, id);
     }
 
     public String getUsername() {
@@ -186,4 +174,34 @@ public class Customer {
         }
     }
     
+}
+
+class User {
+    protected String username;
+    protected String password;
+    protected String role;
+    protected String id;
+
+    public User(String username, String password, String role, String id) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getId() {
+        return id;
+    }
 }
