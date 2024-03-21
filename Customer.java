@@ -86,35 +86,41 @@ public class Customer {
     }
 
     public static boolean loginCustomer(String username, String password) {
+        // Retrieve customer from CSV
         Customer customer = CSVHandler.retrieveCustomer(username);
+        // Check if customer exists
         if (customer == null) {
+            System.out.println("No such user exists.");
             return false;
         }
-        else if (customer.isLocked()) {
+        // Check if account is locked
+        if (customer.isLocked()) {
             System.out.println("The account is locked and cannot be accessed.");
             return false;
         }
-        else {
-            String storedHash = customer.getPassword();
-            String passwordHash = PasswordHasher.hashPassword(password);
-            // successful login
-            if (storedHash.equals(passwordHash)) {
-                customer.setFailedAttempts(0);
-                // Update failed attempts 
-                CSVHandler.updateCSV(username, "CustomerInfo.csv", customer.customerInfoToCSV()); 
-                return true;
+        // Hash the input password
+        String passwordHash = PasswordHasher.hashPassword(password);
+        // Check if the hashed password matches the one stored
+        if (!customer.getPassword().equals(passwordHash)) {
+            // Increment failed login attempts
+            customer.setFailedAttempts(customer.getFailedAttempts() + 1);
+            // Check if failed attempts exceed the limit
+            if (customer.getFailedAttempts() >= 3) {
+                // Lock the account if there are 3 or more failed attempts
+                customer.setLocked(true);
+                System.out.println("Account is locked due to 3 failed attempts. Please contact admin.");
             }
-            // unsuccessful login, increment failed attempts and lock if attempts > 3
-            else {
-                customer.setFailedAttempts(customer.getFailedAttempts() + 1);
-                if (customer.getFailedAttempts() >= 3) {
-                    customer.setLocked(true);
-                }
-                CSVHandler.updateCSV(username, "CustomerInfo.csv", customer.customerInfoToCSV()); 
-                return false;
-            }
+            // Update the customer record in CSV
+            CSVHandler.updateCSV(username, "CustomerInfo.csv", customer.customerInfoToCSV());
+            return false;
+        } else {
+            // Successful login logic here (if needed)
+            return true;
         }
     }
+    
+    
+    
 
     public static Customer registerCustomer(String username, String password, String role, String id) {
         // Create a new Customer object with the provided details

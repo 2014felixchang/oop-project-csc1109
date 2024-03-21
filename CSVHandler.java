@@ -49,7 +49,7 @@ public class CSVHandler {
                     Customer customer = new Customer(accountData[0], accountData[1], accountData[2], accountData[3]);
                     // Set failed attempts and locked status
                     customer.setFailedAttempts(Integer.parseInt(accountData[4]));
-                    customer.setLocked("1".equals(accountData[accountData.length - 1]));
+                    customer.setLocked("true".equals(accountData[5]));
                     return customer;
                 }
             }
@@ -72,7 +72,7 @@ public class CSVHandler {
             String currentLine;
             while ((currentLine = bR.readLine()) != null) {
                 String accountData[] = currentLine.split(",");
-                if (accountData[0].equals(key) == true) {
+                if (accountData[0].equals(key)) {
                     return currentLine;
                 }
             }
