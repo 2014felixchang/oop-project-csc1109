@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 /**
  * Handles reading and writing information to and from file
@@ -49,7 +50,7 @@ public class CSVHandler {
                     Customer customer = new Customer(accountData[0], accountData[1], accountData[2], accountData[3]);
                     // Set failed attempts and locked status
                     customer.setFailedAttempts(Integer.parseInt(accountData[4]));
-                    customer.setLocked("1".equals(accountData[accountData.length - 1]));
+                    customer.setLocked("true".equals(accountData[5]));
                     return customer;
                 }
             }
@@ -72,7 +73,7 @@ public class CSVHandler {
             String currentLine;
             while ((currentLine = bR.readLine()) != null) {
                 String accountData[] = currentLine.split(",");
-                if (accountData[0].equals(key) == true) {
+                if (accountData[0].equals(key)) {
                     return currentLine;
                 }
             }
@@ -140,7 +141,8 @@ public class CSVHandler {
             while ((currentLine = bR.readLine()) != null) {
                 String data[] = currentLine.split(",");
                 // If the username in a line doesn't match the given username, write the line to the temp file
-                if (!data[0].equals(key)) {
+                boolean matchFound = Arrays.stream(data).anyMatch(key::equals);
+                if (!matchFound) {
                     bW.write(currentLine, 0, currentLine.length());
                     bW.newLine();
                 }
