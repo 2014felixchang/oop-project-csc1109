@@ -6,6 +6,9 @@ import java.util.Map;
 import java.util.UUID;
 import java.text.DecimalFormat;
 
+/**
+ * Abstract class representing an insurance policy.
+ */
 public abstract class InsurancePolicy {
 
     private String policyNumber;
@@ -16,6 +19,15 @@ public abstract class InsurancePolicy {
     private PremiumFrequency premiumFrequency;
     private int age;
 
+    /**
+     * Constructor for InsurancePolicy class.
+     * @param startDateString The start date of the policy.
+     * @param coverageOption The coverage option of the policy.
+     * @param policyTenure The tenure of the policy.
+     * @param premiumFrequency The premium payment frequency.
+     * @param age The age of the policyholder.
+     * @throws PolicyException if there is an error in policy creation.
+     */
     public InsurancePolicy(String startDateString, CoverageOption coverageOption, PolicyTenure policyTenure,
                            PremiumFrequency premiumFrequency, int age) throws PolicyException {
         this.coverageOption = coverageOption;
@@ -25,6 +37,8 @@ public abstract class InsurancePolicy {
         this.policyNumber = generatePolicyNumber();
         parseDates(startDateString);
     }
+
+    // Getters for various policy attributes
 
     protected String getPolicyNumber() {
         return policyNumber;
@@ -54,7 +68,13 @@ public abstract class InsurancePolicy {
         return age;
     }
 
+    /**
+     * Abstract method to calculate the base premium of the policy.
+     * @return The base premium amount.
+     */
     protected abstract double calculateBasePremium();
+
+    // Private methods
 
     private String generatePolicyNumber() {
         return UUID.randomUUID().toString();
@@ -71,11 +91,22 @@ public abstract class InsurancePolicy {
         }
     }
 
+    // Other methods
+
+    /**
+     * Checks if the policy is currently active.
+     * @return True if active, false otherwise.
+     */
     public boolean isPolicyActive() {
         LocalDate currentDate = LocalDate.now();
         return currentDate.isAfter(policyStartDate) && currentDate.isBefore(policyEndDate);
     }
 
+    /**
+     * Calculates various premiums associated with the policy.
+     * @return A map containing premium details.
+     * @throws PolicyException if there is an error in premium calculation.
+     */
     public Map<String, Double> calculatePremium() throws PolicyException {
         Map<String, Double> premiums = new HashMap<>();
         try {
@@ -112,7 +143,10 @@ public abstract class InsurancePolicy {
         return premiums;
     }
 
-    
+    /**
+     * Displays details of the insurance policy.
+     * @return A string containing policy details.
+     */
     public String displayPolicyDetails() {
         StringBuilder sb = new StringBuilder();
         sb.append(getPolicyType()).append(" Policy Details:\n");
@@ -140,6 +174,7 @@ public abstract class InsurancePolicy {
             // Display age price added based on policy type
             if (this instanceof LifeInsurance) {
                 sb.append("Age Price Added: $").append(df.format(((LifeInsurance) this).agePriceAdded())).append("\n");
+                
             } else if (this instanceof HealthInsurance) {
                 sb.append("Age Price Added: $").append(df.format(((HealthInsurance) this).agePriceAdded())).append("\n");
             } else if (this instanceof AccidentInsurance) {
@@ -154,7 +189,6 @@ public abstract class InsurancePolicy {
             } else if (this instanceof AccidentInsurance) {
                 sb.append("Injuries Price: $").append(df.format(((AccidentInsurance) this).hasPastInjuries() ? 1000.00 : 0.00)).append("\n");
             }
-
             sb.append("Base Premium (After Modifiers): $").append(df.format(basePremiumAfterModifiers)).append("\n");
             sb.append("Premium Per Period: $").append(df.format(premiumPerPeriod)).append("\n");
             sb.append("GST Per Period: $").append(df.format(gstPerPeriod)).append("\n"); // Display GST per period
@@ -170,10 +204,17 @@ public abstract class InsurancePolicy {
         return sb.toString();
     }
 
-    
-
+    /**
+     * Abstract method to get the type of insurance policy.
+     * @return The type of insurance policy.
+     */
     protected abstract String getPolicyType();
 
+    // Enumerations
+
+    /**
+     * Enum representing coverage options for insurance policies.
+     */
     public enum CoverageOption {
         BASIC(1000),
         STANDARD(2000),
@@ -190,6 +231,9 @@ public abstract class InsurancePolicy {
         }
     }
 
+    /**
+     * Enum representing policy tenures.
+     */
     public enum PolicyTenure {
         FIVE_YEARS(5),
         TEN_YEARS(10),
@@ -207,6 +251,9 @@ public abstract class InsurancePolicy {
         }
     }
 
+    /**
+     * Enum representing premium payment frequencies.
+     */
     public enum PremiumFrequency {
         MONTHLY(1),
         QUARTERLY(3),
@@ -224,6 +271,9 @@ public abstract class InsurancePolicy {
         }
     }
 
+    /**
+     * Exception class for policy-related errors.
+     */
     public static class PolicyException extends Exception {
         public PolicyException(String message) {
             super(message);
@@ -231,15 +281,21 @@ public abstract class InsurancePolicy {
     }
 }
 
+/**
+ * Class representing a life insurance policy.
+ */
 class LifeInsurance extends InsurancePolicy {
     private boolean smoker;
     private double agePriceAdded;
 
+    // Constructor
     public LifeInsurance(String startDateString, CoverageOption coverageOption, PolicyTenure policyTenure,
                          PremiumFrequency premiumFrequency, int age, boolean smoker) throws PolicyException {
         super(startDateString, coverageOption, policyTenure, premiumFrequency, age);
         this.smoker = smoker;
     }
+
+    // Overrides
 
     @Override
     protected double calculateBasePremium() {
@@ -256,24 +312,40 @@ class LifeInsurance extends InsurancePolicy {
         return "LIFE";
     }
 
-    // Method to check if the policyholder is a smoker
+    // Methods
+
+    /**
+     * Checks if the policyholder is a smoker.
+     * @return True if the policyholder is a smoker, false otherwise.
+     */
     public boolean isSmoker() {
         return smoker;
     }
+
+    /**
+     * Gets the additional premium due to age.
+     * @return The additional premium due to age.
+     */
     public double agePriceAdded(){
         return agePriceAdded;
     }
 }
 
+/**
+ * Class representing a health insurance policy.
+ */
 class HealthInsurance extends InsurancePolicy {
     private boolean smoker;
     private double agePriceAdded;
 
+    // Constructor
     public HealthInsurance(String startDateString, CoverageOption coverageOption, PolicyTenure policyTenure,
                            PremiumFrequency premiumFrequency, int age, boolean smoker) throws PolicyException {
         super(startDateString, coverageOption, policyTenure, premiumFrequency, age);
         this.smoker = smoker;
     }
+
+    // Overrides
 
     @Override
     protected double calculateBasePremium() {
@@ -290,24 +362,40 @@ class HealthInsurance extends InsurancePolicy {
         return "HEALTH";
     }
 
-    // Method to check if the policyholder is a smoker
+    // Methods
+
+    /**
+     * Checks if the policyholder is a smoker.
+     * @return True if the policyholder is a smoker, false otherwise.
+     */
     public boolean isSmoker() {
         return smoker;
     }
+
+    /**
+     * Gets the additional premium due to age.
+     * @return The additional premium due to age.
+     */
     public double agePriceAdded(){
         return agePriceAdded;
     }
 }
 
+/**
+ * Class representing an accident insurance policy.
+ */
 class AccidentInsurance extends InsurancePolicy {
     private boolean pastInjuries;
     private double agePriceAdded;
 
+    // Constructor
     public AccidentInsurance(String startDateString, CoverageOption coverageOption, PolicyTenure policyTenure,
                              PremiumFrequency premiumFrequency, int age, boolean pastInjuries) throws PolicyException {
         super(startDateString, coverageOption, policyTenure, premiumFrequency, age);
         this.pastInjuries = pastInjuries;
     }
+
+    // Overrides
 
     @Override
     protected double calculateBasePremium() {
@@ -318,16 +406,25 @@ class AccidentInsurance extends InsurancePolicy {
         }
         return basePremium + agePriceAdded;
     }
-
     @Override
     protected String getPolicyType() {
         return "ACCIDENT";
     }
 
-    // Method to check if the policyholder has past injuries
+    // Methods
+
+    /**
+     * Checks if the policyholder has past injuries.
+     * @return True if the policyholder has past injuries, false otherwise.
+     */
     public boolean hasPastInjuries() {
         return pastInjuries;
     }
+
+    /**
+     * Gets the additional premium due to age.
+     * @return The additional premium due to age.
+     */
     public double agePriceAdded(){
         return agePriceAdded;
     }
