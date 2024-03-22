@@ -4,6 +4,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 // Define a Customer class
 public class Customer extends User{
@@ -75,6 +76,32 @@ public class Customer extends User{
         }
     }
 
+    public static void removeCustomer(String username) {
+        try {
+            String accountsToRemove = CSVHandler.getRecord(username, "CustomerAccounts.csv");
+            if (accountsToRemove == null) {
+                System.out.println("Username does not exist.");
+            }
+            else {
+                String[] accountsToRemoveArray = accountsToRemove.split(",");
+                // start from the second column, index 1, since first col is username
+                for (int i = 1; i < accountsToRemoveArray.length; i++) {
+                    CSVHandler.removeRecord(accountsToRemoveArray[i], "Accounts.csv");
+                }
+                CSVHandler.removeRecord(username, "CustomerInfo.csv");
+                CSVHandler.removeRecord(username, "CustomerAccounts.csv");
+                CSVHandler.removeRecord(username, "CustomerDetails.csv");
+
+                // Remove the customer from the customers map
+                customers.remove(username);
+
+                System.out.println("Customer removed successfully."); 
+            }
+        } catch (Exception e) {
+            System.out.println("An error occurred during customer removal: " + e.getMessage());
+        }
+    }
+
     public static boolean loginCustomer(String username, String password) {
         try {
             // Retrieve customer from CSV
@@ -140,6 +167,37 @@ public class Customer extends User{
         } catch (Exception e) {
             System.out.println("An error occurred during registration: " + e.getMessage());
             return null;
+        }
+    }
+
+    public static void addNewCustomer() {
+        try {
+            Scanner scanner = new Scanner(System.in);
+            System.out.print("Enter username: ");
+            String username = scanner.nextLine();
+            System.out.print("Enter password: ");
+            String password = scanner.nextLine();
+            System.out.print("Enter role: ");
+            String role = scanner.nextLine();
+            System.out.print("Enter id: ");
+            String id = scanner.nextLine();
+            password = PasswordHasher.hashPassword(password);
+            Customer.registerCustomer(username, password, role, id);
+            System.out.print("Enter name: ");
+            String name = scanner.nextLine();
+            System.out.print("Enter address: ");
+            String address = scanner.nextLine();
+            System.out.print("Enter phone number: ");
+            String phoneNumber = scanner.nextLine();
+            System.out.print("Enter email: ");
+            String email = scanner.nextLine();
+            System.out.print("Enter date of birth: ");
+            String dateOfBirth = scanner.nextLine();
+            CSVHandler.addCustomerDetailsToCSV(username, name, address, phoneNumber, email, dateOfBirth);
+            System.out.println("Customer added successfully.");
+            scanner.nextLine();
+        } catch (Exception e) {
+            System.out.println("An error occurred while adding a new customer: " + e.getMessage());
         }
     }
     

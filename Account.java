@@ -237,7 +237,7 @@ import java.util.ArrayList;
     
 }
 
-// Inheritance
+// Inheritance, can remove if yall not using
 class SavingsAccount extends Account {
     private double minimumBalance;
 

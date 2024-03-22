@@ -13,17 +13,20 @@ public class BankUI {
     private static Scanner scanner = new Scanner(System.in);
     private static Map<String, Insurance> insurancePolicies = new HashMap<>();
 
+    public static void printMainMenu(Bank bank) {
+        System.out.println("------------------------------------");
+        System.out.println("Welcome to " + bank.getBankName() + "! Please give us your money!");
+        System.out.println("1. Register");
+        System.out.println("2. Login");
+        System.out.println("3. Exit");
+        System.out.println("4. Branches");
+        System.out.println("------------------------------------");
+        System.out.print("Enter your choice: ");
+    }
+
     public static void displayMainMenu(Bank bank) {
         while (true) {
-            System.out.println("------------------------------------");
-            System.out.println("Welcome to " + bank.getBankName() + "! Please give us your money!");
-            System.out.println("1. Register");
-            System.out.println("2. Login");
-            System.out.println("3. Exit");
-            System.out.println("4. Branches");
-            System.out.println("------------------------------------");
-            System.out.print("Enter your choice: ");
-
+            printMainMenu(bank);
             int choice = BankUI.getUserChoice();
 
             switch (choice) {
@@ -47,110 +50,94 @@ public class BankUI {
     }
 
     public static void register(Bank bank) {
-        while (true) {
-            System.out.println("------------------------------------");
-            System.out.print("Enter username: ");
-            String username = scanner.nextLine();
+        try {
+            while (true) {
+                System.out.println("------------------------------------");
+                System.out.print("Enter username: ");
+                String username = scanner.nextLine();
 
-            // validate username entered, check if username already exists
-            String customerString = CSVHandler.getRecord(username, "CustomerInfo.csv");
-            if (customerString != null) {
-                System.out.println("Username already exists. Please try again.");
-                continue;
-            }
+                // validate username entered, check if username already exists
+                String customerString = CSVHandler.getRecord(username, "CustomerInfo.csv");
+                if (customerString != null) {
+                    System.out.println("Username already exists. Please try again.");
+                    continue;
+                }
 
-            System.out.print("Enter 6 digit PIN: ");
-            String password = scanner.nextLine();
+                System.out.print("Enter 6 digit PIN: ");
+                String password = scanner.nextLine();
 
-            // validate PIN entered, first check if is numerical, then check if length is 6 digits
-            int pin;
-            try {
-                pin = Integer.parseInt(password);
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid password entered. Please try again.");
-                continue;
-            }
-            if (password.length() != 6) {
-                System.out.println("Invalid password entered. Please try again.");
-                continue;
-            }
-            else {
-                password = PasswordHasher.hashPassword(String.valueOf(pin));
-            }
+                // validate PIN entered, first check if is numerical, then check if length is 6 digits
+                int pin;
+                try {
+                    pin = Integer.parseInt(password);
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid password entered. Please try again.");
+                    continue;
+                }
+                if (password.length() != 6) {
+                    System.out.println("Invalid password entered. Please try again.");
+                    continue;
+                }
+                else {
+                    password = PasswordHasher.hashPassword(String.valueOf(pin));
+                }
 
-            System.out.print("Enter ID: ");
-            String id = scanner.nextLine();
-        
-            Customer customer = Customer.registerCustomer(username, password, "User", id);
-            System.out.println("Registration successful!");
-            break;
+                System.out.print("Enter ID: ");
+                String id = scanner.nextLine();
+
+                Customer.registerCustomer(username, password, "User", id);
+                System.out.println("Registration successful!");
+                break;
+            }
+        } catch (Exception e) {
+            System.out.println("An error occurred during registration: " + e.getMessage());
         }
-    }
-
-    public static void addNewCustomer() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter username: ");
-        String username = scanner.nextLine();
-        System.out.print("Enter password: ");
-        String password = scanner.nextLine();
-        System.out.print("Enter role: ");
-        String role = scanner.nextLine();
-        System.out.print("Enter id: ");
-        String id = scanner.nextLine();
-        password = PasswordHasher.hashPassword(password);
-        Customer.registerCustomer(username, password, role, id);
-        System.out.print("Enter name: ");
-        String name = scanner.nextLine();
-        System.out.print("Enter address: ");
-        String address = scanner.nextLine();
-        System.out.print("Enter phone number: ");
-        String phoneNumber = scanner.nextLine();
-        System.out.print("Enter email: ");
-        String email = scanner.nextLine();
-        System.out.print("Enter date of birth: ");
-        String dateOfBirth = scanner.nextLine();
-        CSVHandler.addCustomerDetailsToCSV(username, name, address, phoneNumber, email, dateOfBirth);
-        System.out.println("Customer added successfully.");
-        scanner.nextLine();
     }
 
     public static void login(Bank bank) {
-        System.out.println("------------------------------------");
-        System.out.print("Enter username: ");
-        String loginUsername = scanner.nextLine();
-        System.out.print("Enter password: ");
-        String loginPassword = scanner.nextLine();
+        try {
+            System.out.println("------------------------------------");
+            System.out.print("Enter username: ");
+            String loginUsername = scanner.nextLine();
+            System.out.print("Enter password: ");
+            String loginPassword = scanner.nextLine();
 
-        Customer customer = CSVHandler.retrieveCustomer(loginUsername);
-        if (customer != null && customer.isLocked()) {
-            System.out.println("The account is locked and cannot be accessed.");
-            return;
-        }
-
-        if (Customer.loginCustomer(loginUsername, loginPassword)) {
-            // Retrieve the full customer details after successful authentication
-            if ("Admin".equals(customer.getRole())) {
-                adminMenu(bank, customer);
-            } else {
-                accountsMenu(bank, customer);
+            Customer customer = CSVHandler.retrieveCustomer(loginUsername);
+            if (customer != null && customer.isLocked()) {
+                System.out.println("The account is locked and cannot be accessed.");
+                return;
             }
-        } else {
-            System.out.println("Invalid username or password.");
+
+            if (Customer.loginCustomer(loginUsername, loginPassword)) {
+                // Retrieve the full customer details after successful authentication
+                if ("Admin".equals(customer.getRole())) {
+                    adminMenu(bank, customer);
+                } else {
+                    accountsMenu(bank, customer);
+                }
+            } else {
+                System.out.println("Invalid username or password.");
+            }
+        } catch (Exception e) {
+            System.out.println("An error occurred during login: " + e.getMessage());
         }
+    }
+
+    public static void printAdminMenu(Customer admin) {
+        System.out.println("------------------------------------");
+        System.out.println("Welcome to the admin menu, " + admin.getUsername() + "!");
+        System.out.println("1. View all customers");
+        System.out.println("2. Add a new customer");
+        System.out.println("3. Remove a customer");
+        System.out.println("4. Unlock a customer account");
+        System.out.println("5. Logout");
+        System.out.println("------------------------------------");
+        System.out.print("Enter your choice: ");
     }
 
     public static void adminMenu(Bank bank, Customer admin) {
         while (true) {
-            System.out.println("------------------------------------");
-            System.out.println("Welcome to the admin menu, " + admin.getUsername() + "!");
-            System.out.println("1. View all customers");
-            System.out.println("2. Add a new customer");
-            System.out.println("3. Remove a customer");
-            System.out.println("4. Unlock a customer account");
-            System.out.println("5. Logout");
-            System.out.println("------------------------------------");
-            System.out.print("Enter your choice: ");
-            
+            printAdminMenu(admin);
             int choice = BankUI.getUserChoice();
 
             switch (choice) {
@@ -159,27 +146,13 @@ public class BankUI {
                     Customer.viewAllCustomers();
                     break;
                 case 2:
-                    addNewCustomer();
+                    Customer.addNewCustomer();
                     break;
                 case 3:
                     // Implement the logic to remove a customer
                     System.out.print("Enter the username of the customer to remove: ");
                     String usernameToRemove = scanner.nextLine();
-
-                    String accountsToRemove = CSVHandler.getRecord(usernameToRemove, "CustomerAccounts.csv");
-                    if (accountsToRemove == null) {
-                        System.out.println("Username does not exist.");
-                    }
-                    else {
-                        String[] accountsToRemoveArray = accountsToRemove.split(",");
-                        // start from the second column, index 1, since first col is username
-                        for (int i = 1; i < accountsToRemoveArray.length; i++) {
-                            CSVHandler.removeRecord(accountsToRemoveArray[i], "Accounts.csv");
-                        }
-                        CSVHandler.removeRecord(usernameToRemove, "CustomerInfo.csv");
-                        CSVHandler.removeRecord(usernameToRemove, "CustomerAccounts.csv");
-                        System.out.println("Customer removed successfully."); 
-                    }
+                    Customer.removeCustomer(usernameToRemove);
                     break;
                 case 4:
                     // unlock customer account given the customer's username

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 /**
  * Handles reading and writing information to and from file
@@ -140,7 +141,8 @@ public class CSVHandler {
             while ((currentLine = bR.readLine()) != null) {
                 String data[] = currentLine.split(",");
                 // If the username in a line doesn't match the given username, write the line to the temp file
-                if (!data[0].equals(key)) {
+                boolean matchFound = Arrays.stream(data).anyMatch(key::equals);
+                if (!matchFound) {
                     bW.write(currentLine, 0, currentLine.length());
                     bW.newLine();
                 }
