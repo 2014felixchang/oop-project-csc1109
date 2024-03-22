@@ -76,8 +76,27 @@ public class Customer extends User{
         }
     }
 
-    public static void removeCustomer(String username) {
+    public static void unlockCustomerAccount() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the username of the customer to unlock: ");
+        String usernameToUnlock = scanner.nextLine();
+        Customer customerToUnlock = CSVHandler.retrieveCustomer(usernameToUnlock);
+        if (customerToUnlock != null) {
+            customerToUnlock.setLocked(false);
+            customerToUnlock.setFailedAttempts(0);
+            CSVHandler.updateCSV(usernameToUnlock, "CustomerInfo.csv", customerToUnlock.customerInfoToCSV());
+            System.out.println("Account unlocked successfully.");
+        } else {
+            System.out.println("Customer not found.");
+        }
+    }
+
+    public static void removeCustomer() {
         try {
+            Scanner scanner = new Scanner(System.in);
+            System.out.print("Enter the username of the customer to remove: ");
+            String username = scanner.nextLine();
+
             String accountsToRemove = CSVHandler.getRecord(username, "CustomerAccounts.csv");
             if (accountsToRemove == null) {
                 System.out.println("Username does not exist.");

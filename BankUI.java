@@ -8,6 +8,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 public class BankUI {
     private static Scanner scanner = new Scanner(System.in);
@@ -150,24 +152,11 @@ public class BankUI {
                     break;
                 case 3:
                     // Implement the logic to remove a customer
-                    System.out.print("Enter the username of the customer to remove: ");
-                    String usernameToRemove = scanner.nextLine();
-                    Customer.removeCustomer(usernameToRemove);
+                    Customer.removeCustomer();
                     break;
                 case 4:
                     // unlock customer account given the customer's username
-                    System.out.print("Enter the username of the customer to unlock: ");
-                    String usernameToUnlock = scanner.nextLine();
-                    Customer customerToUnlock = CSVHandler.retrieveCustomer(usernameToUnlock);
-                    if (customerToUnlock != null) {
-                        customerToUnlock.setLocked(false);
-                        // CSVHandler.updateCustomerLockStatus(usernameToUnlock, "0");
-                        CSVHandler.updateCSV(usernameToUnlock, "CustomerInfo.csv", customerToUnlock.customerInfoToCSV());
-                        System.out.println("Account unlocked successfully.");
-                    } 
-                    else {
-                        System.out.println("Customer not found.");
-                    }
+                    Customer.unlockCustomerAccount();
                     break;
                 case 5:
                     System.out.println("Logging out...");
@@ -217,6 +206,7 @@ public class BankUI {
                     // update CustomerAccounts.csv with new account added to customer account info
                     String newCustomerRecord = custAccountsRecord + "," + randomAccNum;
                     CSVHandler.updateCSV(customer.getUsername(), "CustomerAccounts.csv", newCustomerRecord);
+                    System.out.println("New bank account created successfully.");
                 }
                 else {
                     // go through all accounts and see if user choice entered corresponds with any existing accounts
@@ -236,160 +226,219 @@ public class BankUI {
         }
     }
 
+    public static void displayAccountMenu(Account loggedInAccount) {
+        System.out.println("------------------------------------");
+        System.out.println("Account number: " + loggedInAccount.getAccountNum());
+        System.out.println("Balance: " + Account.convert2DP(loggedInAccount.getBalance()));
+        System.out.println("1. Transfer Funds");
+        System.out.println("2. Change transfer limit");
+        System.out.println("3. Deposit");
+        System.out.println("4. Withdraw");
+        System.out.println("5. Currency Exchange");
+        System.out.println("6. Get a loan");
+        System.out.println("7. Pay loan");
+        System.out.println("8. Create Insurance Policy");
+        System.out.println("9. Go back to accounts menu");
+        System.out.println("------------------------------------");
+        System.out.print("Enter your choice: ");
+    }
+
+    public static void performTransfer(Bank bank, Account loggedInAccount) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the account number to transfer money to: ");
+        String transferAccountNum = scanner.next();
+        System.out.print("Enter the amount to transfer: $");
+        double transferAmount = scanner.nextDouble();
+        scanner.nextLine();     // Consumes the \n after the double
+        bank.transferMoney(loggedInAccount.getAccountNum(), transferAccountNum, transferAmount);
+    }
+
+    public static void updateTransferLimit(Account loggedInAccount) {
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            System.out.println("------------------------------------");
+            System.out.println("Current transfer limit: $" + Account.convert2DP(loggedInAccount.getTransLimit()));
+            System.out.print("Enter new transfer limit: $");
+            try {
+                String newTransLimitStr = scanner.nextLine();
+                double newTransLimit = Double.parseDouble(newTransLimitStr);
+                loggedInAccount.setTransferLimit(newTransLimit);
+                CSVHandler.updateCSV(loggedInAccount.getAccountNum(), "Accounts.csv", loggedInAccount.convertToCSV());
+                System.out.println("Transfer limit changed successfully!");
+                break;
+            } catch (InputMismatchException | NumberFormatException e) {
+                BankUI.printInvalid();
+            }
+        }
+    }
+    
+    public static void performDeposit(Account loggedInAccount) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the amount to deposit: $");
+        double depositAmount = scanner.nextDouble();
+        scanner.nextLine();     // Consumes the \n after the double
+        loggedInAccount.deposit(depositAmount);
+    }
+
+    public static void performWithdrawal(Account loggedInAccount) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the amount to withdraw: $");
+        double withdrawAmount = scanner.nextDouble();
+        scanner.nextLine();     // Consumes the \n after the double
+        loggedInAccount.withdraw(withdrawAmount);
+    }
+
+    public static void performCurrencyExchange(Account loggedInAccount) {
+        Scanner scanner = new Scanner(System.in);
+        ForeignExchange foreignExchange = new ForeignExchange();
+        foreignExchange.displayRates();
+        System.out.println("Enter the currency to convert from (SGD/USD/JPY):");
+        String fromCurrency = scanner.next();
+        double exchangeAmount;
+        if (fromCurrency.equals("SGD")){
+            System.out.println("Enter the amount to exchange: ");
+            exchangeAmount = scanner.nextDouble();
+            scanner.nextLine();     // Consumes the \n after the double
+            if(loggedInAccount.getBalance() < exchangeAmount){
+                System.out.println("Not enough money in balance!");
+                return;
+            }
+            loggedInAccount.setBalance(loggedInAccount.getBalance() - exchangeAmount);
+        }else{
+            System.out.println("Please insert foreign cash into the machine");
+            System.out.println("Amount: ");
+            exchangeAmount = scanner.nextDouble();
+            scanner.nextLine();     // Consumes the \n after the double
+        }
+        System.out.println("Enter the currency to convert to (SGD/USD/JPY):");
+        String toCurrency = scanner.next();
+
+        double convertedAmount = foreignExchange.convert(fromCurrency, toCurrency, exchangeAmount);
+        if(toCurrency.equals("SGD")){
+            System.out.println("Converted amount: " + convertedAmount + " SGD");
+            System.out.println("Adding to balance...");
+            loggedInAccount.setBalance(loggedInAccount.getBalance() + convertedAmount);
+        }else{
+            System.out.println("Converted amount: " + convertedAmount + " " + toCurrency);
+            System.out.println("Dispensing amount...");
+        }
+    }
+
+    public static void createLoan(Scanner scanner) {
+        try {
+            System.out.print("Loan amount: ");
+            float principal = Float.parseFloat(scanner.nextLine());
+            System.out.print("Loan term (1 to 7 years): ");
+            int loanTermMonths = Integer.parseInt(scanner.nextLine()) * 12;
+            LocalDate date = LocalDate.now();
+            // hard coded annual flat rate of 6.0%
+            double interestRate = 0.06;
+            // G16_LON loan = new G16_LON(principal, interestRate, date, loanTermMonths);
+            // loan.displayLoanDetails();
+        } catch (NumberFormatException e) {
+            BankUI.printInvalid();
+        }
+    }
+
     public static void transactMenu(Bank bank, Customer customer, String accNum) {
         while (true) {
             Account loggedInAccount = new Account(accNum);
-
-            System.out.println("------------------------------------");
-            System.out.println("Account number: " + loggedInAccount.getAccountNum());
-            System.out.println("Balance: " + Account.convert2DP(loggedInAccount.getBalance()));
-            System.out.println("1. Transfer Funds");
-            System.out.println("2. Change transfer limit");
-            System.out.println("3. Deposit");
-            System.out.println("4. Withdraw");
-            System.out.println("5. Currency Exchange");
-            System.out.println("6. Get a loan");
-            System.out.println("7. Pay loan");
-            System.out.println("8. Create Insurance Policy");
-            System.out.println("9. Go back to accounts menu");
-            System.out.println("------------------------------------");
-            System.out.print("Enter your choice: ");
-
+            displayAccountMenu(loggedInAccount);
             int choice = BankUI.getUserChoice();
 
             switch (choice) {
                 case 1:
                     // Transfer money
-                    System.out.print("Enter the account number to transfer money to: ");
-                    String transferAccountNum = scanner.next();
-                    System.out.print("Enter the amount to transfer: $");
-                    double transferAmount = scanner.nextDouble();
-                    scanner.nextLine();     // Consumes the \n after the double
-                    bank.transferMoney(loggedInAccount.getAccountNum(), transferAccountNum, transferAmount);
+                    performTransfer(bank, loggedInAccount);
                     break;
                 case 2:
-                    while (true) {
-                        System.out.println("------------------------------------");
-                        System.out.println("Current transfer limit: $" + Account.convert2DP(loggedInAccount.getTransLimit()));
-                        System.out.print("Enter new transfer limit: $");
-                        try {
-                            String newTransLimitStr = scanner.nextLine();
-                            double newTransLimit = Double.parseDouble(newTransLimitStr);
-                            loggedInAccount.setTransferLimit(newTransLimit);
-                            CSVHandler.updateCSV(loggedInAccount.getAccountNum(), "Accounts.csv", loggedInAccount.convertToCSV());
-                        } catch (InputMismatchException e) {
-                            BankUI.printInvalid();
-                            continue;
-                        } catch (NumberFormatException e) {
-                            BankUI.printInvalid();
-                            continue;
-                        }
-                        break;
-                    }
-                    System.out.println("Transfer limit changed successfully!");
+                    // Change transfer limit
+                    updateTransferLimit(loggedInAccount);
                     break;
                 case 3:
                     // Deposit
-                    System.out.print("Enter the amount to deposit: $");
-                    double depositAmount = scanner.nextDouble();
-                    scanner.nextLine();     // Consumes the \n after the double
-                    loggedInAccount.deposit(depositAmount);
+                    performDeposit(loggedInAccount);
                     break;
                 case 4:
                     // Withdraw
-                    System.out.print("Enter the amount to withdraw: $");
-                    double withdrawAmount = scanner.nextDouble();
-                    scanner.nextLine();     // Consumes the \n after the double
-                    loggedInAccount.withdraw(withdrawAmount);
+                    performWithdrawal(loggedInAccount);
                     break;
                 case 5:
                     // Foreign Exchange
-                    ForeignExchange foreignExchange = new ForeignExchange();
-                    foreignExchange.displayRates();
-                    System.out.println("Enter the currency to convert from (SGD/USD/JPY):");
-                    String fromCurrency = scanner.next();
-                    double exchangeAmount;
-                    if (fromCurrency == "SGD"){
-                        System.out.println("Enter the amount to exchange: ");
-                        exchangeAmount = scanner.nextDouble();
-                        scanner.nextLine();     // Consumes the \n after the double
-                        if(loggedInAccount.getBalance() < exchangeAmount){
-                            System.out.println("Not enough money in balance!");
-                            break;
-                        }
-                        loggedInAccount.setBalance(loggedInAccount.getBalance() - exchangeAmount);
-                    }else{
-                        System.out.println("Please insert foreign cash into the machine");
-                        System.out.println("Amount: ");
-                        exchangeAmount = scanner.nextDouble();
-                        scanner.nextLine();     // Consumes the \n after the double
-                    }
-                    System.out.println("Enter the currency to convert to (SGD/USD/JPY):");
-                    String toCurrency = scanner.next();
-
-                    double convertedAmount = foreignExchange.convert(fromCurrency, toCurrency, exchangeAmount);
-                    if(toCurrency == "SGD"){
-                        System.out.println("Converted amount: " + convertedAmount + " SGD");
-                        System.out.println("Adding to balance...");
-                        loggedInAccount.setBalance(loggedInAccount.getBalance() + convertedAmount);
-                    }else{
-                        System.out.println("Converted amount: " + convertedAmount + " " + toCurrency);
-                        System.out.println("Dispensing amount...");
-                    }
+                    performCurrencyExchange(loggedInAccount);
                     break;
                 case 6:
                     // get a loan (implement 506)
                     // have not implemented saving loan info to file and linking it to account
-                    try {
-                        System.out.print("Loan amount: ");
-                        float principal = Float.parseFloat(scanner.nextLine());
-                        System.out.print("Loan term (1 to 7 years): ");
-                        int loanTermMonths = Integer.parseInt(scanner.nextLine()) * 12;
-                        LocalDate date = LocalDate.now();
-                        // hard coded annual flat rate of 6.0%
-                        double interestRate = 0.06;
-                        // G16_LON loan = new G16_LON(principal, interestRate, date, loanTermMonths);
-                        // loan.displayLoanDetails();
-                        break;
-                    }
-                    catch (NumberFormatException e) {
-                        BankUI.printInvalid();
-                        continue;
-                    }
+                    createLoan(scanner);
+                    break;
                 case 7:
                     // paying back a loan (implement 506/507)
                     break;
                 case 8:
-                    BankUI.createNewInsurancePolicy();
+                    createNewInsurancePolicy();
                     break;
                 case 9:
                     // go back to accounts menu
                     return;
                 default:
-                    BankUI.printInvalid();
+                    printInvalid();
                     break;
             }
         }
     }
     //create policy
     public static void createNewInsurancePolicy() {
-        System.out.println("Enter policy type (1 for LIFE, 2 for HEALTH, 3 for ACCIDENT): ");
-        int policyTypeIndex = scanner.nextInt();
-        System.out.println("Enter coverage option (1 for BASIC($1000), 2 for STANDARD($2000), 3 for PREMIUM($3000)): ");
-        int coverageOptionIndex = scanner.nextInt();
-        System.out.println("Enter policy tenure (1 for FIVE_YEARS, 2 for TEN_YEARS, 3 for FIFTEEN_YEARS, 4 for TWENTY_YEARS): ");
-        int policyTenureIndex = scanner.nextInt();
-        System.out.println("Enter premium frequency (1 for MONTHLY, 2 for QUARTERLY, 3 for SEMI_ANNUALLY, 4 for ANNUALLY): ");
-        int premiumFrequencyIndex = scanner.nextInt();
-        System.out.println("Enter policy start date (yyyy-MM-dd): ");
-        String startDateString = scanner.next();
-        scanner.nextLine(); // Consume the newline character
-        System.out.println("Create policy successfully!");
-        System.out.println("------------------------------------");
-    
-        Insurance insurance = new Insurance(policyTypeIndex, startDateString, coverageOptionIndex, policyTenureIndex, premiumFrequencyIndex);
-        // Display the policy details and print them
-        System.out.println(insurance.displayPolicyDetails());
+        while (true) {
+            try {
+                System.out.println("Enter policy type (1 for LIFE, 2 for HEALTH, 3 for ACCIDENT): ");
+                int policyTypeIndex = scanner.nextInt();
+                if (policyTypeIndex < 1 || policyTypeIndex > 3) {
+                    throw new InputMismatchException();
+                }
+
+                System.out.println("Enter coverage option (1 for BASIC($1000), 2 for STANDARD($2000), 3 for PREMIUM($3000)): ");
+                int coverageOptionIndex = scanner.nextInt();
+                if (coverageOptionIndex < 1 || coverageOptionIndex > 3) {
+                    throw new InputMismatchException();
+                }
+
+                System.out.println("Enter policy tenure (1 for FIVE_YEARS, 2 for TEN_YEARS, 3 for FIFTEEN_YEARS, 4 for TWENTY_YEARS): ");
+                int policyTenureIndex = scanner.nextInt();
+                if (policyTenureIndex < 1 || policyTenureIndex > 4) {
+                    throw new InputMismatchException();
+                }
+
+                System.out.println("Enter premium frequency (1 for MONTHLY, 2 for QUARTERLY, 3 for SEMI_ANNUALLY, 4 for ANNUALLY): ");
+                int premiumFrequencyIndex = scanner.nextInt();
+                if (premiumFrequencyIndex < 1 || premiumFrequencyIndex > 4) {
+                    throw new InputMismatchException();
+                }
+
+                System.out.println("Enter policy start date (yyyy-MM-dd): ");
+                String startDateString = scanner.next();
+                LocalDate.parse(startDateString, DateTimeFormatter.ofPattern("yyyy-MM-dd")); // This will throw DateTimeParseException if the date is not valid
+
+                scanner.nextLine(); // Consume the newline character
+
+                Insurance insurance = new Insurance(policyTypeIndex, startDateString, coverageOptionIndex, policyTenureIndex, premiumFrequencyIndex);
+                // Display the policy details and print them
+                System.out.println(insurance.displayPolicyDetails());
+
+                System.out.println("Create policy successfully!");
+                System.out.println("------------------------------------");
+                break; // Break the loop if everything is valid
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please try again.");
+                scanner.nextLine(); // Consume the invalid input
+            } catch (DateTimeParseException e) {
+                System.out.println("Invalid date format. Please enter the date in the format yyyy-MM-dd.");
+                scanner.nextLine(); // Consume the invalid input
+            } catch (Exception e) {
+                System.out.println("An error occurred. Please try again.");
+                scanner.nextLine(); // Consume the invalid input
+            }
+        }
     }
     
     public static void viewBranches(Bank bank) {
