@@ -13,7 +13,7 @@ import java.time.format.DateTimeParseException;
 
 public class BankUI {
     private static Scanner scanner = new Scanner(System.in);
-    private static Map<String, Insurance> insurancePolicies = new HashMap<>();
+    
 
     public static void printMainMenu(Bank bank) {
         System.out.println("------------------------------------");
@@ -389,57 +389,83 @@ public class BankUI {
     }
     //create policy
     public static void createNewInsurancePolicy() {
-        while (true) {
-            try {
-                System.out.println("Enter policy type (1 for LIFE, 2 for HEALTH, 3 for ACCIDENT): ");
-                int policyTypeIndex = scanner.nextInt();
-                if (policyTypeIndex < 1 || policyTypeIndex > 3) {
-                    throw new InputMismatchException();
-                }
-
-                System.out.println("Enter coverage option (1 for BASIC($1000), 2 for STANDARD($2000), 3 for PREMIUM($3000)): ");
-                int coverageOptionIndex = scanner.nextInt();
-                if (coverageOptionIndex < 1 || coverageOptionIndex > 3) {
-                    throw new InputMismatchException();
-                }
-
-                System.out.println("Enter policy tenure (1 for FIVE_YEARS, 2 for TEN_YEARS, 3 for FIFTEEN_YEARS, 4 for TWENTY_YEARS): ");
-                int policyTenureIndex = scanner.nextInt();
-                if (policyTenureIndex < 1 || policyTenureIndex > 4) {
-                    throw new InputMismatchException();
-                }
-
-                System.out.println("Enter premium frequency (1 for MONTHLY, 2 for QUARTERLY, 3 for SEMI_ANNUALLY, 4 for ANNUALLY): ");
-                int premiumFrequencyIndex = scanner.nextInt();
-                if (premiumFrequencyIndex < 1 || premiumFrequencyIndex > 4) {
-                    throw new InputMismatchException();
-                }
-
-                System.out.println("Enter policy start date (yyyy-MM-dd): ");
-                String startDateString = scanner.next();
-                LocalDate.parse(startDateString, DateTimeFormatter.ofPattern("yyyy-MM-dd")); // This will throw DateTimeParseException if the date is not valid
-
-                scanner.nextLine(); // Consume the newline character
-
-                Insurance insurance = new Insurance(policyTypeIndex, startDateString, coverageOptionIndex, policyTenureIndex, premiumFrequencyIndex);
-                // Display the policy details and print them
-                System.out.println(insurance.displayPolicyDetails());
-
-                System.out.println("Create policy successfully!");
-                System.out.println("------------------------------------");
-                break; // Break the loop if everything is valid
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid input. Please try again.");
-                scanner.nextLine(); // Consume the invalid input
-            } catch (DateTimeParseException e) {
-                System.out.println("Invalid date format. Please enter the date in the format yyyy-MM-dd.");
-                scanner.nextLine(); // Consume the invalid input
-            } catch (Exception e) {
-                System.out.println("An error occurred. Please try again.");
-                scanner.nextLine(); // Consume the invalid input
+        try {
+            // Prompt user for input
+            System.out.println("Enter policy type (1 for LIFE, 2 for HEALTH, 3 for ACCIDENT): ");
+            int policyTypeIndex = scanner.nextInt();
+            scanner.nextLine(); // Consume newline character
+    
+            System.out.println("Enter coverage option (1 for BASIC($1000), 2 for STANDARD($2000), 3 for PREMIUM($3000)): ");
+            int coverageOptionIndex = scanner.nextInt();
+            scanner.nextLine(); // Consume newline character
+    
+            System.out.println("Enter policy tenure (1 for FIVE_YEARS, 2 for TEN_YEARS, 3 for FIFTEEN_YEARS, 4 for TWENTY_YEARS): ");
+            int policyTenureIndex = scanner.nextInt();
+            scanner.nextLine(); // Consume newline character
+    
+            System.out.println("Enter premium frequency (1 for MONTHLY, 2 for QUARTERLY, 3 for SEMI_ANNUALLY, 4 for ANNUALLY): ");
+            int premiumFrequencyIndex = scanner.nextInt();
+            scanner.nextLine(); // Consume newline character
+    
+            System.out.println("Enter policy start date (yyyy-MM-dd): ");
+            String startDateString = scanner.next();
+            scanner.nextLine(); // Consume newline character
+    
+            System.out.println("Enter age : ");
+            int age = scanner.nextInt();
+            scanner.nextLine(); // Consume newline character
+    
+            boolean smoker = false; // Default value
+            if (policyTypeIndex == 1 || policyTypeIndex == 2) {
+                System.out.println("Are you a smoker? Additonal $500 (1 for Yes, 2 for No): ");
+                int smokerInput = scanner.nextInt();
+                scanner.nextLine(); // Consume newline character
+                smoker = (smokerInput == 1);
             }
+    
+            boolean pastInjuries = false; // Default value
+            if (policyTypeIndex == 3) {
+                System.out.println("Do you have past injuries? Addition $1000 (1 for Yes, 2 for No): ");
+                int pastInjuriesInput = scanner.nextInt();
+                scanner.nextLine(); // Consume newline character
+                pastInjuries = (pastInjuriesInput == 1);
+            }
+    
+            // Create and display the insurance policy
+            InsurancePolicy insurancePolicy = null;
+            switch (policyTypeIndex) {
+                case 1:
+                    insurancePolicy = new LifeInsurance(startDateString, InsurancePolicy.CoverageOption.values()[coverageOptionIndex - 1],
+                        InsurancePolicy.PolicyTenure.values()[policyTenureIndex - 1], InsurancePolicy.PremiumFrequency.values()[premiumFrequencyIndex - 1],
+                        age, smoker);
+                    break;
+                case 2:
+                    insurancePolicy = new HealthInsurance(startDateString, InsurancePolicy.CoverageOption.values()[coverageOptionIndex - 1],
+                        InsurancePolicy.PolicyTenure.values()[policyTenureIndex - 1], InsurancePolicy.PremiumFrequency.values()[premiumFrequencyIndex - 1],
+                        age, smoker);
+                    break;
+                case 3:
+                    insurancePolicy = new AccidentInsurance(startDateString, InsurancePolicy.CoverageOption.values()[coverageOptionIndex - 1],
+                        InsurancePolicy.PolicyTenure.values()[policyTenureIndex - 1], InsurancePolicy.PremiumFrequency.values()[premiumFrequencyIndex - 1],
+                        age, pastInjuries);
+                    break;
+                default:
+                    System.out.println("Invalid policy type.");
+                    return;
+            }
+    
+            // Display policy details
+            System.out.println(insurancePolicy.displayPolicyDetails());
+    
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input. Please try again.");
+        } catch (DateTimeParseException e) {
+            System.out.println("Invalid date format. Please enter the date in the format yyyy-MM-dd.");
+        } catch (InsurancePolicy.PolicyException e) {
+            System.out.println("Error creating insurance policy: " + e.getMessage());
         }
     }
+    
     
     public static void viewBranches(Bank bank) {
         ArrayList<Branch> branches = new ArrayList<Branch>();

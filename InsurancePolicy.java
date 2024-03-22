@@ -78,28 +78,40 @@ public abstract class InsurancePolicy {
 
     public Map<String, Double> calculatePremium() throws PolicyException {
         Map<String, Double> premiums = new HashMap<>();
-        double basePremiumBeforeModifiers = calculateBasePremium();
-    
-        // Calculate age-based price modifier within calculateBasePremium() method
-        double basePremiumAfterModifiers = basePremiumBeforeModifiers;
-    
-        double premiumPerPeriod = basePremiumAfterModifiers / getPremiumFrequency().getMonths();
-        int totalPeriods = getPremiumFrequency().getMonths() * getPolicyTenure().getYears();
-        double totalPremium = premiumPerPeriod * totalPeriods;
-        double gst = totalPremium * 0.09; // GST rate is 9%
-        double totalPremiumWithGST = totalPremium + gst;
-        double gstPerPeriod=gst/totalPeriods;
-        double premiumPerPeriodWithGST = premiumPerPeriod + gstPerPeriod;
-        premiums.put("basePremiumBeforeModifiers", basePremiumBeforeModifiers);
-        premiums.put("basePremiumAfterModifiers", basePremiumAfterModifiers);
-        premiums.put("premiumPerPeriod", premiumPerPeriod);
-        premiums.put("totalPremium", totalPremium);
-        premiums.put("gst", gst);
-        premiums.put("totalPremiumWithGST", totalPremiumWithGST);
-        premiums.put("gstPerPeriod",gstPerPeriod);
-        premiums.put("premiumPerPeriodWithGST", premiumPerPeriodWithGST);
+        try {
+            // Calculate base premium and modifiers
+            double basePremiumBeforeModifiers = calculateBasePremium();
+            double basePremiumAfterModifiers = basePremiumBeforeModifiers;
+
+            // Calculate premium per period
+            double premiumPerPeriod = basePremiumAfterModifiers / getPremiumFrequency().getMonths();
+            int totalPeriods = getPremiumFrequency().getMonths() * getPolicyTenure().getYears();
+
+            // Calculate total premium and GST
+            double totalPremium = premiumPerPeriod * totalPeriods;
+            double gst = totalPremium * 0.09; // GST rate is 9%
+            double totalPremiumWithGST = totalPremium + gst;
+
+            // Calculate GST per period
+            double gstPerPeriod = gst / totalPeriods;
+            double premiumPerPeriodWithGST = premiumPerPeriod + gstPerPeriod;
+
+            // Put the calculated values into the premiums map
+            premiums.put("basePremiumBeforeModifiers", basePremiumBeforeModifiers);
+            premiums.put("basePremiumAfterModifiers", basePremiumAfterModifiers);
+            premiums.put("premiumPerPeriod", premiumPerPeriod);
+            premiums.put("totalPremium", totalPremium);
+            premiums.put("gst", gst);
+            premiums.put("totalPremiumWithGST", totalPremiumWithGST);
+            premiums.put("gstPerPeriod", gstPerPeriod);
+            premiums.put("premiumPerPeriodWithGST", premiumPerPeriodWithGST);
+        } catch (Exception e) {
+            // If an exception occurs during the premium calculation, throw a PolicyException
+            throw new PolicyException("Error calculating premiums: " + e.getMessage());
+        }
         return premiums;
     }
+
     
     public String displayPolicyDetails() {
         StringBuilder sb = new StringBuilder();
@@ -145,8 +157,8 @@ public abstract class InsurancePolicy {
 
             sb.append("Base Premium (After Modifiers): $").append(df.format(basePremiumAfterModifiers)).append("\n");
             sb.append("Premium Per Period: $").append(df.format(premiumPerPeriod)).append("\n");
-            sb.append("GST Per Period: $").append(gstPerPeriod).append("\n"); // Display GST per period
-            sb.append("Premium Per Period (With GST): $").append(premiumPerPeriodWithGST).append("\n");
+            sb.append("GST Per Period: $").append(df.format(gstPerPeriod)).append("\n"); // Display GST per period
+            sb.append("Premium Per Period (With GST): $").append(df.format(premiumPerPeriodWithGST)).append("\n");
             sb.append("Total Premium: $").append(df.format(totalPremium)).append("\n");
             sb.append("GST (9%): $").append(df.format(gst)).append("\n");
             sb.append("Total Premium (With GST): $").append(df.format(totalPremiumWithGST)).append("\n");
