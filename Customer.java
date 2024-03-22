@@ -116,14 +116,17 @@ public class Customer extends User{
 
     public static Customer registerCustomer(String username, String password, String role, String id) {
         try {
+            // Convert role to "Admin" if it equals "admin" (ignoring case)
+            if (role.equalsIgnoreCase("admin")) {
+                role = "Admin";
+            }
+
             // Create a new Customer object with the provided details
             Customer newCustomer = new Customer(username, password, role, id);
             // Add the new customer to the customers map
             customers.put(username, newCustomer);
-            // Write the new customer's administrative info to CustomerInfo csv
+            // Write the new customer's info to CustomerInfo.csv
             CSVHandler.addRecord("CustomerInfo.csv", newCustomer.customerInfoToCSV());
-            // Write the new customer's personal details to CustomerDetails csv
-            // CSVHandler.addRecord("CustomerDetails.csv", customer.personalDetailsToCSV());
 
             String newAccNum = Bank.generateAccNum();
             Account newAccount = new Account(newAccNum);
