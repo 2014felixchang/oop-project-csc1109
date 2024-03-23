@@ -1,8 +1,11 @@
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.InputMismatchException;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.Enumeration;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -20,7 +23,7 @@ public class BankUI {
             System.out.println("1. Register");
             System.out.println("2. Login");
             System.out.println("3. Exit");
-            System.out.println("4. Branches");
+            System.out.println("4. See our branches");
             System.out.println("------------------------------------");
             System.out.print("Enter your choice: ");
 
@@ -215,25 +218,63 @@ public class BankUI {
         while (true) {
             String custAccountsRecord = CSVHandler.getRecord(customer.getUsername(), "CustomerAccounts.csv");
             String[] accounts = custAccountsRecord.split(",");
-            String choice = "";
 
             System.out.println("------------------------------------");
             System.out.println("Welcome " + customer.getUsername() + "!");
             System.out.println("Which account would you like to view?");
-            // accounts[0] contains username, so to iterate through account numbers, start index at 1
-            int i = 1;
-            for (; i < accounts.length; i++) {
-                System.out.println(i + ". " + accounts[i]);
+            int key = 1;
+            for (; key < accounts.length; key++) {
+                System.out.println(key + ". " + accounts[key]);
             }
+            
+            int i = key;
             System.out.println(i + ". Make new bank account");
-            System.err.println((i+1) + ". Logout");
+            System.err.println((i+1) + ". Delete bank account");
+            System.err.println((i+2) + ". Logout");
             System.out.println("------------------------------------");
             System.out.print("Enter your choice: ");
-            
+
             try {
-                choice = scanner.nextLine();
-                if (Integer.parseInt(choice) == (i+1)) { // i + 1 corresponds to logout option
+                String choice = scanner.nextLine();
+                if (Integer.parseInt(choice) == (i+2)) { // i + 2 corresponds to log out option
                     return;
+                }
+                else if (Integer.parseInt(choice) == (i+1)) { // i + 1 corresponds to delete account option
+                    System.out.println("------------------------------------");
+                    System.out.print("Enter account number to delete: ");
+                    try {
+                        int deleteAccNum = Integer.parseInt(scanner.nextLine());
+                        String delete = String.valueOf(deleteAccNum);
+
+                        boolean validInput = false;
+                        // validate acc num input
+                        for (int k = 1; k < accounts.length; k++) {
+                            if (accounts[k].equals(delete)) {
+                                validInput = true;
+                            }
+                        }
+
+                        if (validInput == true) {
+                            // remove account record from accounts csv
+                            CSVHandler.removeRecord(delete, "Accounts.csv");
+
+                            // remove account number from customer's accounts csv
+                            custAccountsRecord = accounts[0]; // write username
+                            for (int k = 1; k < accounts.length; k++) {
+                                // if account number is not the account to be deleted, append to record
+                                if (!accounts[k].equals(delete)) {
+                                    custAccountsRecord = custAccountsRecord + "," + accounts[k]; // append account numbers
+                                }
+                            }
+                            CSVHandler.updateCSV(customer.getUsername(), "CustomerAccounts.csv", custAccountsRecord);
+                        }
+                        else {
+                            BankUI.printInvalid();
+                        }
+                    } 
+                    catch (InputMismatchException | NumberFormatException e) {
+                        BankUI.printInvalid();
+                    }
                 }
                 else if (Integer.parseInt(choice) == i) { // i corresponds to make new bank account option
                     // call generate random acount num
@@ -269,7 +310,7 @@ public class BankUI {
 
             System.out.println("------------------------------------");
             System.out.println("Account number: " + loggedInAccount.getAccountNum());
-            System.out.println("Balance: " + Account.convert2DP(loggedInAccount.getBalance()));
+            System.out.println("Balance: $" + Account.convert2DP(loggedInAccount.getBalance()));
             System.out.println("1. Transfer Funds");
             System.out.println("2. Change transfer limit");
             System.out.println("3. Deposit");
@@ -317,17 +358,27 @@ public class BankUI {
                     break;
                 case 3:
                     // Deposit
-                    System.out.print("Enter the amount to deposit: $");
-                    double depositAmount = scanner.nextDouble();
-                    scanner.nextLine();     // Consumes the \n after the double
-                    loggedInAccount.deposit(depositAmount);
+                    try {
+                        System.out.print("Enter the amount to deposit: $");
+                        String depositAmount = scanner.nextLine();
+                        // scanner.nextLine();     // Consumes the \n after the double
+                        loggedInAccount.deposit(Double.parseDouble(depositAmount));
+                    }
+                    catch (InputMismatchException | NumberFormatException e) {
+                        BankUI.printInvalid();
+                    }
                     break;
                 case 4:
                     // Withdraw
-                    System.out.print("Enter the amount to withdraw: $");
-                    double withdrawAmount = scanner.nextDouble();
-                    scanner.nextLine();     // Consumes the \n after the double
-                    loggedInAccount.withdraw(withdrawAmount);
+                    try {
+                        System.out.print("Enter the amount to withdraw: $");
+                        String withdrawAmount = scanner.nextLine();
+                        // scanner.nextLine();     // Consumes the \n after the double
+                        loggedInAccount.withdraw(Double.parseDouble(withdrawAmount));
+                    }
+                    catch (InputMismatchException | NumberFormatException e) {
+                        BankUI.printInvalid();
+                    }
                     break;
                 case 5:
                     // Foreign Exchange
@@ -367,22 +418,23 @@ public class BankUI {
                 case 6:
                     // get a loan (implement 506)
                     // have not implemented saving loan info to file and linking it to account
-                    try {
-                        System.out.print("Loan amount: ");
-                        float principal = Float.parseFloat(scanner.nextLine());
-                        System.out.print("Loan term (1 to 7 years): ");
-                        int loanTermMonths = Integer.parseInt(scanner.nextLine()) * 12;
-                        LocalDate date = LocalDate.now();
-                        // hard coded annual flat rate of 6.0%
-                        double interestRate = 0.06;
-                        G16_LON loan = new G16_LON(principal, interestRate, date, loanTermMonths);
-                        loan.displayLoanDetails();
-                        break;
-                    }
-                    catch (NumberFormatException e) {
-                        BankUI.printInvalid();
-                        continue;
-                    }
+                    // try {
+                    //     System.out.print("Loan amount: ");
+                    //     float principal = Float.parseFloat(scanner.nextLine());
+                    //     System.out.print("Loan term (1 to 7 years): ");
+                    //     int loanTermMonths = Integer.parseInt(scanner.nextLine()) * 12;
+                    //     LocalDate date = LocalDate.now();
+                    //     // hard coded annual flat rate of 6.0%
+                    //     double interestRate = 0.06;
+                    //     G16_LON loan = new G16_LON(principal, interestRate, date, loanTermMonths);
+                    //     loan.displayLoanDetails();
+                    //     break;
+                    // }
+                    // catch (NumberFormatException e) {
+                    //     BankUI.printInvalid();
+                    //     continue;
+                    // }
+                    break;
                 case 7:
                     // paying back a loan (implement 506/507)
                     break;
