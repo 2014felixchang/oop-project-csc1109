@@ -1,7 +1,7 @@
 
 /**
- * Description: The ForeignExchange class represents the available exchange rates within a Bank 
- * and handles the conversion of currency
+ * The ForeignExchange class represents the available exchange rates within a Bank and handles the conversion of currency
+ * For simulation purposes, only three available currencies of SGD, USD and JPY.
  */
 
 public class ForeignExchange {
@@ -13,15 +13,16 @@ public class ForeignExchange {
     private double jpyToUsdRate;
 
     /**
-     * Constructor for ForeignExchange class that sets up the exchange rates (getMarketRate())
+     * Constructor for ForeignExchange class that sets up the exchange rates (setMarketRate()).
+     * It will use our specified market rates in setMarketRate()
      */
     public ForeignExchange(){
-        getMarketRate();
+        setMarketRate();
     }
 
     /**
      * Constructor for ForeignExchange class with custom exchange rates in parameters
-     * (not using our rates in getMarketRate())
+     * (not using our rates in setMarketRate())
      * 
      * @param sgdToUsdRate The 1 SGD to X USD rate, X is the parameter amount
      * @param sgdToJpyRate The 1 SGD to X JPY rate, X is the parameter amount
@@ -95,16 +96,36 @@ public class ForeignExchange {
     }
 
     /**
-     * Loads up the exchange rates from the market
+     * Loads up the exchange rates from the market. It overwrites the current market rate with these rates.
      * (Currently the rates are coded in, unsure if possible/allowed to source the rate from Internet)
+     * (For simulation purposes, the rates will be hard-coded set)
      */
-    public void getMarketRate(){
+    public void setMarketRate(){
         setSgdToUsdRate(0.75);
         setSgdToJpyRate(110);
         setUsdToSgdRate(1.24);
         setJpyToSgdRate(0.009);
         setUsdToJpyRate(150);
         setJpyToUsdRate(0.0067);
+    }
+
+    /**
+     * Gets the rate of 1 SGD to any currency specified in the parameter.
+     * If currency is unavailable (i.e. not in list), it will print out "Currency not available"
+     * 
+     * @param currency The currency that is getting requested, in 3-Letter Currency Code form. (e.g. JPY, USD, etc)
+     * @return The amount rate of the currency requested. In the form of 1 SGD to X currency.
+     */
+    public double getRate(String currency){
+        double rate = 0;
+        if(currency == "JPY"){
+            rate = getSgdToJpyRate();
+        }else if(currency == "USD"){
+            rate = getSgdToUsdRate();
+        }else{
+            System.out.println("Currency not available");
+        }
+        return rate;
     }
 
     /**

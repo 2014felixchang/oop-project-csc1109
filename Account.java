@@ -1,12 +1,13 @@
 import java.util.ArrayList;
 
+
 /**
  * Account class:
  * Account info handling (display and manage acc info like acc numbers and types).
  * Balance management (check balance, show current, available).
  * Account operations (deposit, withdraw).
  */
-public class Account {
+ public class Account {
     private String accountNum;
     private double balance = 0;
     // private double debt = 0;
@@ -34,6 +35,12 @@ public class Account {
                 }
             }
         }
+    }
+    
+    //Overloading
+    public Account(String accNum, double balance) {
+        this.accountNum = accNum;
+        this.balance = balance;
     }
 
     /**
@@ -227,5 +234,33 @@ public class Account {
         }
         return accountData;
     }
+
     
-}   
+    
+}
+
+// Inheritance, can remove if yall not using
+class SavingsAccount extends Account {
+    private double minimumBalance;
+
+    public SavingsAccount(String accNum, double minimumBalance) {
+        super(accNum);
+        this.minimumBalance = minimumBalance;
+    }
+
+    public double getMinimumBalance() {
+        return minimumBalance;
+    }
+
+    // Overriding
+    @Override
+    public void withdraw(double amount) {
+        if ((this.getBalance() - amount) < this.minimumBalance) {
+            System.out.println("Cannot withdraw. Minimum balance must be maintained.");
+        }
+        else {
+            super.withdraw(amount);
+        }
+    }
+}
+
