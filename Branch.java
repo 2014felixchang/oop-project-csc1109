@@ -120,4 +120,15 @@ public class Branch {
     public String convertToCSV() {
         return branchID+","+branchName+","+address+","+openingTime+","+closingTime;
     }
+    
+    /**
+     * Prints branch object's information, such as the name, address, opening and closing time.
+     */
+    public void printBranchInfo() {
+        System.out.println("Branch name: " + this.getBranchName());
+        System.out.println("Address: " + this.getBranchAddress());
+        System.out.println("Opening time: " + this.getOpeningTime());
+        System.out.println("Closing time: " + this.getClosingTime());
+    }
 }
+

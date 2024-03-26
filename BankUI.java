@@ -265,6 +265,7 @@ public class BankUI {
     public static void displayAccountMenu(Account loggedInAccount) {
         System.out.println("------------------------------------");
         System.out.println("Account number: " + loggedInAccount.getAccountNum());
+        System.out.println("Transfer limit: $" + Account.convert2DP(loggedInAccount.getTransLimit()));
         System.out.println("Balance: $" + Account.convert2DP(loggedInAccount.getBalance()));
         System.out.println("1. Transfer Funds");
         System.out.println("2. Change transfer limit");
@@ -275,6 +276,7 @@ public class BankUI {
         System.out.println("7. Pay loan");
         System.out.println("8. Create Insurance Policy");
         System.out.println("9. Go back to accounts menu");
+        System.out.println("10. Logout");
         System.out.println("------------------------------------");
         System.out.print("Enter your choice: ");
     }
@@ -531,10 +533,7 @@ public class BankUI {
             System.out.println("These are our branches!");
             for (Branch branch : branches) {
                 System.out.println("--------------");
-                System.out.println("Branch name: " + branch.getBranchName());
-                System.out.println("Address: " + branch.getBranchAddress());
-                System.out.println("Opening time: " + branch.getOpeningTime());
-                System.out.println("Closing time: " + branch.getClosingTime());
+                branch.printBranchInfo();
             }
             System.out.println("--------------");
             System.out.print("Press enter to return to main menu. ");
