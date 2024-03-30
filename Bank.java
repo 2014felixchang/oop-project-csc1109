@@ -3,6 +3,7 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -116,4 +117,19 @@ public class Bank {
             return false;
         }
     }
+
+    // Bank to issue loans to accounts
+    public void issueLoan(Account account, double principal, double interestRate, LocalDate startDate, int termMonths) {
+    if (account.getLoanId() != null) {
+        System.out.println("This account already has an active loan.");
+        return;
+    }
+
+    try {
+        account.applyForLoan(principal, interestRate, startDate, termMonths);
+        account.displayLoanDetails();
+    } catch (Exception e) {
+        System.out.println("Failed to issue loan: " + e.getMessage());
+    }
+}
 }

@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Bank",
+            "request": "launch",
+            "mainClass": "Bank",
+            "projectName": "oop-project-csc1109_32ee5234"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}"
