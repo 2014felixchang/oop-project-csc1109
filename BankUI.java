@@ -422,8 +422,8 @@ public class BankUI {
                     }
                     else{
                         loggedInAccount.makeLoanPayment(amount);
-                        if (loggedInAccount.getTotalPayment() <= 0) {
-                            loggedInAccount.setBalance(loggedInAccount.getBalance() + (amount - loggedInAccount.getTotalPayment()));
+                        if (loggedInAccount.getLoanRepayment() <= 0) {
+                            loggedInAccount.setBalance(loggedInAccount.getBalance() + (amount - loggedInAccount.getLoanRepayment()));
                             loggedInAccount.deleteLoan();
                         }
                         loggedInAccount.displayLoanDetails();

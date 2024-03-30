@@ -235,9 +235,9 @@ import java.util.ArrayList;
         this.loan = null;
     }
     
-    public double getTotalPayment() {
+    public double getLoanRepayment() {
         if (this.loan != null) {
-            return this.loan.getTotalPayment();
+            return this.loan.getLoanRepayment();
         }
         return 0;
     }
