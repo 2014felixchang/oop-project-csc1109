@@ -422,17 +422,21 @@ public class BankUI {
                     }
                     else{
                         loggedInAccount.makeLoanPayment(amount);
+                        if (loggedInAccount.getTotalPayment() <= 0) {
+                            loggedInAccount.setBalance(loggedInAccount.getBalance() + (amount - loggedInAccount.getTotalPayment()));
+                            loggedInAccount.deleteLoan();
+                        }
                         loggedInAccount.displayLoanDetails();
                         loggedInAccount.setBalance(loggedInAccount.getBalance() - amount);
                     }
-
+    
                 }
             catch (NumberFormatException e) {
                 BankUI.printInvalid();
-
+    
                 }
             }
-
+    
         }
 
     public static void transactMenu(Bank bank, Customer customer, String accNum) {
@@ -478,6 +482,9 @@ public class BankUI {
                     break;
                 case 10:
                     // go back to accounts menu
+                    return;
+                case 11:
+                    System.out.println("Logging out...");
                     return;
                 default:
                     printInvalid();
