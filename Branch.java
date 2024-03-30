@@ -1,4 +1,5 @@
 import java.time.LocalTime;
+import java.util.Scanner;
 
 /**
  * Branch class:
@@ -129,6 +130,47 @@ public class Branch {
         System.out.println("Address: " + this.getBranchAddress());
         System.out.println("Opening time: " + this.getOpeningTime());
         System.out.println("Closing time: " + this.getClosingTime());
+    }
+
+    public static void addNewBranch() {
+        try {
+            Scanner sc = new Scanner(System.in);
+            System.out.println("Enter branch ID: ");
+            int branchID = Integer.parseInt(sc.nextLine());
+            System.out.println("Enter branch name: ");
+            String branchName = sc.nextLine();
+            System.out.println("Enter branch address: ");
+            String address = sc.nextLine();
+            System.out.println("Enter opening time in 24h format (hh:mm): ");
+            String time = sc.nextLine();
+            LocalTime openingTime = LocalTime.parse(time);
+            System.out.println("Enter closing time in 24h format (hh:mm): ");
+            time = sc.nextLine();
+            LocalTime closingTime = LocalTime.parse(time);
+            Branch newBranch = new Branch(branchID, branchName, address, openingTime, closingTime);
+            CSVHandler.addRecord("Branches.csv", newBranch.convertToCSV());
+            System.out.println("New branch successfully added");
+            return;
+        }
+        catch (Exception e) {
+            System.err.println(e);
+            return;
+        }
+    }
+
+    public static void removeBranch() {
+        try {
+            Scanner sc = new Scanner(System.in);
+            System.out.println("Enter ID of branch to be deleted: ");
+            String branchID = sc.nextLine();
+            CSVHandler.removeRecord(branchID, "Branches.csv");
+            System.out.println("Branch successfully deleted.");
+            return;
+        }
+        catch (Exception e) {
+            System.err.println(e);
+            return;
+        }
     }
 }
 

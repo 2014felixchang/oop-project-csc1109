@@ -10,9 +10,7 @@ import java.util.ArrayList;
  public class Account {
     private String accountNum;
     private double balance = 0;
-    // private double debt = 0;
     private double transLimit = 1000.00;
-    private double interestRate = 0.1; //per year
     private ArrayList<String> history = new ArrayList<String>();
 
     /**
@@ -127,40 +125,6 @@ import java.util.ArrayList;
     public void setBalance(double amount) {
         this.balance = amount;   
     }
-
-    // /**
-    //  * Gets the account's debt
-    //  * 
-    //  * @return the account's debt
-    //  */
-    // public double getDebt() {
-    //     return debt;
-    // }
-
-    // /**
-    //  * Minus amount from debt, if amount more than debt, add excess to balance
-    //  * 
-    //  * @param amount the amount of money to be deducted from account's debt
-    //  */
-    // public void minusDebt(double amount) {
-    //     if (amount > this.debt) {
-    //         this.balance += amount - debt;
-    //         this.debt = 0.0;
-    //     }
-    //     else {
-    //         this.debt -= amount;
-    //     }
-    //     CSVHandler.updateCSV(accountNum, "Accounts.csv", this.convertToCSV());
-    // }
-
-    /**
-     * Gets the interest rate of the account
-     * 
-     * @return the interest rate of account
-     */
-    public double getInterestRate() {
-        return this.interestRate;
-    }
     
     /**
      * Prints an account's transaction history
@@ -226,7 +190,7 @@ import java.util.ArrayList;
      * @return the account's attributes as a CSV string
      */
     public String convertToCSV() {
-        String accountData = this.getAccountNum() + "," + convert2DP(this.getBalance()) + "," + convert2DP(this.getInterestRate()) + "," + convert2DP(this.getTransLimit());
+        String accountData = this.getAccountNum() + "," + convert2DP(this.getBalance()) + "," + convert2DP(this.getTransLimit());
         if (this.getHistory() != null) {
             for (String i : this.getHistory()) {
                 accountData += "," + i;
@@ -235,8 +199,6 @@ import java.util.ArrayList;
         return accountData;
     }
 
-    
-    
 }
 
 // Inheritance, can remove if yall not using

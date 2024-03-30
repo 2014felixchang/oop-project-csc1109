@@ -129,7 +129,9 @@ public class BankUI {
         System.out.println("2. Add a new customer");
         System.out.println("3. Remove a customer");
         System.out.println("4. Unlock a customer account");
-        System.out.println("5. Logout");
+        System.out.println("5. Add a new branch to branches information page");
+        System.out.println("6. Remove a branch from branches information page");
+        System.out.println("7. Logout");
         System.out.println("------------------------------------");
         System.out.print("Enter your choice: ");
     }
@@ -156,6 +158,12 @@ public class BankUI {
                     Customer.unlockCustomerAccount();
                     break;
                 case 5:
+                    Branch.addNewBranch();
+                    break;
+                case 6:
+                    Branch.removeBranch();
+                    break;
+                case 7:
                     System.out.println("Logging out...");
                     return;
                 default:
@@ -245,15 +253,12 @@ public class BankUI {
                     System.out.println("New bank account created successfully.");
                 }
                 else {
-                    // go through all accounts and see if user choice entered corresponds with any existing accounts
+                    // go to transact menu for selected account
                     for (int j = 1; j < accounts.length; j++) {
                         if (Integer.parseInt(choice) == j) {
                             transactMenu(bank, customer, accounts[j]);
-                            continue;
                         }
                     }
-                    // if the option number the user entered does not correspond to an existing account number, then print below
-                    BankUI.printInvalid();
                 }
             } catch (InputMismatchException | NumberFormatException e) {
                 BankUI.printInvalid();
@@ -514,7 +519,6 @@ public class BankUI {
         }
     }
     
-    
     public static void viewBranches(Bank bank) {
         ArrayList<Branch> branches = new ArrayList<Branch>();
         try (BufferedReader br = new BufferedReader(new FileReader("Branches.csv"))){
@@ -532,10 +536,10 @@ public class BankUI {
             System.out.println("------------------------------------");
             System.out.println("These are our branches!");
             for (Branch branch : branches) {
-                System.out.println("--------------");
+                System.out.println("------------------------------------");
                 branch.printBranchInfo();
             }
-            System.out.println("--------------");
+            System.out.println("------------------------------------");
             System.out.print("Press enter to return to main menu. ");
             String input = scanner.nextLine();
             if (input.isEmpty()) {
