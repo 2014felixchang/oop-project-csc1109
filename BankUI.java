@@ -19,6 +19,7 @@ public class BankUI {
         System.out.println("2. Login");
         System.out.println("3. Exit");
         System.out.println("4. Branches");
+        System.out.println("5. Test");
         System.out.println("------------------------------------");
         System.out.print("Enter your choice: ");
     }
@@ -41,6 +42,10 @@ public class BankUI {
                 case 4:
                     BankUI.viewBranches(bank);
                     break;
+                case 5:
+                    Security security = new Security();
+                    security.setUserEmail("test@gmail.com");
+                    System.out.println("Enter your email: "+security.getUserEmail());
                 default:
                     BankUI.printInvalid();
                     break;
