@@ -205,12 +205,17 @@ import java.util.ArrayList;
     public void applyForLoan(double principal, double interestRate, LocalDate loanStartDate, int loanTermMonths) {
         G16_LON loan = new G16_LON(principal, interestRate, loanStartDate, loanTermMonths);
         this.loan = loan;
+        this.addHistory("Applied for Loan: $" + convert2DP(principal));
+        CSVHandler.updateCSV(accountNum, "Accounts.csv", this.convertToCSV());
+
 
     }
 
     public void makeLoanPayment(double amount) {
         if (this.loan != null) {
             this.loan.payLoan(amount);
+            this.addHistory("Loan Payment: $" + convert2DP(amount));
+            CSVHandler.updateCSV(accountNum, "Accounts.csv", this.convertToCSV());
         } else {
             System.out.println("No active loan for this account.");
         }
