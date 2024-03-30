@@ -252,10 +252,10 @@ public class BankUI {
                     CSVHandler.updateCSV(customer.getUsername(), "CustomerAccounts.csv", newCustomerRecord);
                     System.out.println("New bank account created successfully.");
                 }
-                else {
+                else{
                     // go to transact menu for selected account
-                    for (int j = 1; j < accounts.length; j++) {
-                        if (Integer.parseInt(choice) == j) {
+                    for (int j = 0; j < accounts.length; j++) {
+                        if (Integer.parseInt(choice) == j+1) {
                             transactMenu(bank, customer, accounts[j]);
                         }
                     }
@@ -422,17 +422,21 @@ public class BankUI {
                     }
                     else{
                         loggedInAccount.makeLoanPayment(amount);
+                        if (loggedInAccount.getLoanRepayment() <= 0) {
+                            loggedInAccount.setBalance(loggedInAccount.getBalance() + (amount - loggedInAccount.getLoanRepayment()));
+                            loggedInAccount.deleteLoan();
+                        }
                         loggedInAccount.displayLoanDetails();
                         loggedInAccount.setBalance(loggedInAccount.getBalance() - amount);
                     }
-
+    
                 }
             catch (NumberFormatException e) {
                 BankUI.printInvalid();
-
+    
                 }
             }
-
+    
         }
 
     public static void transactMenu(Bank bank, Customer customer, String accNum) {
@@ -478,6 +482,9 @@ public class BankUI {
                     break;
                 case 10:
                     // go back to accounts menu
+                    return;
+                case 11:
+                    System.out.println("Logging out...");
                     return;
                 default:
                     printInvalid();

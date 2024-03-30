@@ -231,6 +231,17 @@ import java.util.ArrayList;
         return this.loan.getLoanId();
     }
 
+    public void deleteLoan() {
+        this.loan = null;
+    }
+    
+    public double getLoanRepayment() {
+        if (this.loan != null) {
+            return this.loan.getLoanRepayment();
+        }
+        return 0;
+    }
+
 }
 
 // Inheritance, can remove if yall not using
