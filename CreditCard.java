@@ -1,4 +1,6 @@
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class CreditCard {
@@ -14,10 +16,10 @@ public class CreditCard {
     protected double creditBill;
     protected int accountNum;
 
-    public CreditCard(Long cardNumber, String cardNumLast4Digit, LocalDate cardExpiryDate, double annualFee, double interestRate, int benefits, String cardType, double ownLimit, double creditLimit, double creditBill, int accountNum) {
+    public CreditCard(Long cardNumber, String cardNumLast4Digit, LocalDate cardExpiryDate2, double annualFee, double interestRate, int benefits, String cardType, double ownLimit, double creditLimit, double creditBill, int accountNum) {
         this.cardNumber = cardNumber;
         this.cardNumLast4Digit = cardNumLast4Digit;
-        this.cardExpiryDate = cardExpiryDate;
+        this.cardExpiryDate = cardExpiryDate2;
         this.annualFee = annualFee;
         this.interestRate = interestRate;
         this.benefits = benefits;
@@ -160,6 +162,57 @@ public class CreditCard {
         System.out.println("Bill: " + this.creditBill);
         System.out.println("Account Number: " + this.accountNum);
     }
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+    
+        System.out.println("Enter card number:");
+        Long cardNumber = scanner.nextLong();
+    
+        System.out.println("Enter last 4 digits of card number:");
+        String cardNumLast4Digit = scanner.next();
+    
+        System.out.println("Enter card expiry date (format: yyyy-mm-dd):");
+        String cardExpiryDateString = scanner.next();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate cardExpiryDate = LocalDate.parse(cardExpiryDateString, formatter);
+    
+        System.out.println("Enter annual fee:");
+        double annualFee = scanner.nextDouble();
+    
+        System.out.println("Enter interest rate:");
+        double interestRate = scanner.nextDouble();
+    
+        System.out.println("Enter benefits:");
+        int benefits = scanner.nextInt();
+    
+        String cardType = "Standard"; // Example card type
+    
+        System.out.println("Enter own limit:");
+        double ownLimit = scanner.nextDouble();
+    
+        System.out.println("Enter credit limit:");
+        double creditLimit = scanner.nextDouble();
+    
+        System.out.println("Enter credit bill:");
+        double creditBill = scanner.nextDouble();
+    
+        System.out.println("Enter account number:");
+        int accountNum = scanner.nextInt();
+    
+        // Create a CreditCard instance
+        CreditCard cc = new CreditCard(cardNumber, cardNumLast4Digit, cardExpiryDate, annualFee, interestRate, benefits, cardType, ownLimit, creditLimit, creditBill, accountNum);
+    
+        // Now you can call methods on this instance
+        cc.displayCreditCardDetails();
+
+        // Example of using the extended class CreditCardRewards
+        CreditCardRewards ccRewards = new CreditCardRewards(cardNumber, cardNumLast4Digit, cardExpiryDate, annualFee, interestRate, benefits, ownLimit, creditLimit, creditBill, accountNum);
+        ccRewards.claimRewards("1"); // Example of claiming rewards
+        
+        // Example of using the extended class CreditCardStudent
+        CreditCardStudent ccStudent = new CreditCardStudent(cardNumber, cardNumLast4Digit, cardExpiryDate, annualFee, interestRate, benefits, ownLimit, creditLimit, creditBill, accountNum);
+        ccStudent.payBill(50, 5); // Example of paying bill with cashback
+    }
 }
 
 class CreditCardRewards extends CreditCard {
@@ -225,4 +278,5 @@ class CreditCardStudent extends CreditCard {
             System.out.println("Remaining Cashback: " + this.benefits);
         }
     }
+
 }
