@@ -1,3 +1,4 @@
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 
@@ -12,6 +13,8 @@ import java.util.ArrayList;
     private double balance = 0;
     private double transLimit = 1000.00;
     private ArrayList<String> history = new ArrayList<String>();
+    private G16_LON loan;
+
 
     /**
      * Constructs an Account object with existing information given the account number exists in file.
@@ -197,6 +200,35 @@ import java.util.ArrayList;
             }
         }
         return accountData;
+    }
+
+    public void applyForLoan(double principal, double interestRate, LocalDate loanStartDate, int loanTermMonths) {
+        G16_LON loan = new G16_LON(principal, interestRate, loanStartDate, loanTermMonths);
+        this.loan = loan;
+
+    }
+
+    public void makeLoanPayment(double amount) {
+        if (this.loan != null) {
+            this.loan.payLoan(amount);
+        } else {
+            System.out.println("No active loan for this account.");
+        }
+    }
+
+    public void displayLoanDetails() {
+        if (this.loan != null) {
+            this.loan.displayLoanDetails();
+        } else {
+            System.out.println("No active loan for this account.");
+        }
+    }
+
+    public String getLoanId() {
+        if (this.loan == null) {
+            return null;
+        }
+        return this.loan.getLoanId();
     }
 
 }

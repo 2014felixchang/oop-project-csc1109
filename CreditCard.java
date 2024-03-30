@@ -1,4 +1,6 @@
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class CreditCard {
@@ -14,10 +16,10 @@ public class CreditCard {
     protected double creditBill;
     protected int accountNum;
 
-    public CreditCard(Long cardNumber, String cardNumLast4Digit, LocalDate cardExpiryDate, double annualFee, double interestRate, int benefits, String cardType, double ownLimit, double creditLimit, double creditBill, int accountNum) {
+    public CreditCard(Long cardNumber, String cardNumLast4Digit, LocalDate cardExpiryDate2, double annualFee, double interestRate, int benefits, String cardType, double ownLimit, double creditLimit, double creditBill, int accountNum) {
         this.cardNumber = cardNumber;
         this.cardNumLast4Digit = cardNumLast4Digit;
-        this.cardExpiryDate = cardExpiryDate;
+        this.cardExpiryDate = cardExpiryDate2;
         this.annualFee = annualFee;
         this.interestRate = interestRate;
         this.benefits = benefits;
@@ -28,129 +30,125 @@ public class CreditCard {
         this.accountNum = accountNum;
     }
 
-    public int getAccountNum(){
+    public int getAccountNum() {
         return accountNum;
     }
 
-    public void setAccountNum(int accountNum){
+    public void setAccountNum(int accountNum) {
         this.accountNum = accountNum;
     }
 
-    public Long getCardNumber(){
+    public Long getCardNumber() {
         return cardNumber;
     }
 
-    public void setCardNumber(Long cardNumber, boolean generateNew){
-        if (generateNew){
+    public void setCardNumber(Long cardNumber, boolean generateNew) {
+        if (generateNew) {
             Long min = 10000000000000000L;
             Long max = 99999999999999999L;
             this.cardNumber = ThreadLocalRandom.current().nextLong(min, max + 1L);
-        }
-        else {
-        this.cardNumber = cardNumber;
+        } else {
+            this.cardNumber = cardNumber;
         }
     }
 
-    public String getCardNumLast4Digit(){
+    public String getCardNumLast4Digit() {
         return cardNumLast4Digit;
     }
 
-    public void setCardNumLast4Digit(String last4Digit, boolean generateNew){
+    public void setCardNumLast4Digit(String last4Digit, boolean generateNew) {
         if (generateNew) {
             long cardNum = this.getCardNumber();
             String new4Digit = String.format("%04d", cardNum % 10000L);
             this.cardNumLast4Digit = new4Digit;
-        }
-        else {
+        } else {
             this.cardNumLast4Digit = last4Digit;
         }
     }
 
-    public LocalDate getCardExpiryDate(){
+    public LocalDate getCardExpiryDate() {
         return cardExpiryDate;
     }
 
-    public void setCardExpiryDate(LocalDate cardExpiryDate){
+    public void setCardExpiryDate(LocalDate cardExpiryDate) {
         this.cardExpiryDate = cardExpiryDate;
     }
 
-    public double getAnnualFee(){
+    public double getAnnualFee() {
         return annualFee;
     }
 
-    public void setAnnualFee(double annualFee){
+    public void setAnnualFee(double annualFee) {
         this.annualFee = annualFee;
     }
 
-    public double getInterestRate(){
+    public double getInterestRate() {
         return interestRate;
     }
 
-    public void setInterestRate(double interestRate){
+    public void setInterestRate(double interestRate) {
         this.interestRate = interestRate;
     }
 
-    public int getBenefits(){
+    public int getBenefits() {
         return benefits;
     }
 
-    public void setBenefits(int benefits){
+    public void setBenefits(int benefits) {
         this.benefits = benefits;
     }
 
-    public String getCardType(){
+    public String getCardType() {
         return cardType;
     }
 
-    public void setCardType(String cardType){
+    public void setCardType(String cardType) {
         this.cardType = cardType;
     }
 
-    public double getOwnLimit(){
+    public double getOwnLimit() {
         return ownLimit;
     }
 
-    public void setOwnLimit(double ownLimit){
+    public void setOwnLimit(double ownLimit) {
         this.ownLimit = ownLimit;
     }
 
-    public double getCreditLimit(){
+    public double getCreditLimit() {
         return creditLimit;
     }
 
-    public void setCreditLimit(double creditLimit){
+    public void setCreditLimit(double creditLimit) {
         this.creditLimit = creditLimit;
     }
 
-    public double getCreditBill(){
+    public double getCreditBill() {
         return creditBill;
     }
 
-    public void setCreditBill(double creditBill){
+    public void setCreditBill(double creditBill) {
         this.creditBill = creditBill;
     }
 
-    public void payBill(double amount){
-        if (amount > this.creditBill){
+    public void payBill(double amount) {
+        if (amount > this.creditBill) {
             System.out.println("Amount exceeds the credit bill");
-        }
-        else {
+        } else {
             this.creditBill -= amount;
         }
     }
 
-    public void makeTransactions(double amount){
-        if (amount + this.creditBill > this.creditLimit){
+    public void makeTransactions(double amount) {
+        if (amount + this.creditBill > this.creditLimit) {
             System.out.println("Amount exceeds credit limit");
-        }
-        else if (amount + this.creditBill > this.ownLimit){
-            System.out.println("Amount exceeds own limit");}
-        else {
+        } else if (amount + this.creditBill > this.ownLimit) {
+            System.out.println("Amount exceeds own limit");
+        } else {
             this.creditBill += amount;
         }
     }
 
-    public void displayCreditCardDetails(){
+    public void displayCreditCardDetails() {
         System.out.println("Credit Card Details: ");
         System.out.println("Full Credit Card Number: " + this.cardNumber);
         System.out.println("Last 4 Digit of Credit Card Number: XXXX XXXX XXXX " + this.cardNumLast4Digit);
@@ -163,6 +161,122 @@ public class CreditCard {
         System.out.println("Card Limit: " + this.creditLimit);
         System.out.println("Bill: " + this.creditBill);
         System.out.println("Account Number: " + this.accountNum);
+    }
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+    
+        System.out.println("Enter card number:");
+        Long cardNumber = scanner.nextLong();
+    
+        System.out.println("Enter last 4 digits of card number:");
+        String cardNumLast4Digit = scanner.next();
+    
+        System.out.println("Enter card expiry date (format: yyyy-mm-dd):");
+        String cardExpiryDateString = scanner.next();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate cardExpiryDate = LocalDate.parse(cardExpiryDateString, formatter);
+    
+        System.out.println("Enter annual fee:");
+        double annualFee = scanner.nextDouble();
+    
+        System.out.println("Enter interest rate:");
+        double interestRate = scanner.nextDouble();
+    
+        System.out.println("Enter benefits:");
+        int benefits = scanner.nextInt();
+    
+        String cardType = "Standard"; // Example card type
+    
+        System.out.println("Enter own limit:");
+        double ownLimit = scanner.nextDouble();
+    
+        System.out.println("Enter credit limit:");
+        double creditLimit = scanner.nextDouble();
+    
+        System.out.println("Enter credit bill:");
+        double creditBill = scanner.nextDouble();
+    
+        System.out.println("Enter account number:");
+        int accountNum = scanner.nextInt();
+    
+        // Create a CreditCard instance
+        CreditCard cc = new CreditCard(cardNumber, cardNumLast4Digit, cardExpiryDate, annualFee, interestRate, benefits, cardType, ownLimit, creditLimit, creditBill, accountNum);
+    
+        // Now you can call methods on this instance
+        cc.displayCreditCardDetails();
+
+        // Example of using the extended class CreditCardRewards
+        CreditCardRewards ccRewards = new CreditCardRewards(cardNumber, cardNumLast4Digit, cardExpiryDate, annualFee, interestRate, benefits, ownLimit, creditLimit, creditBill, accountNum);
+        ccRewards.claimRewards("1"); // Example of claiming rewards
+        
+        // Example of using the extended class CreditCardStudent
+        CreditCardStudent ccStudent = new CreditCardStudent(cardNumber, cardNumLast4Digit, cardExpiryDate, annualFee, interestRate, benefits, ownLimit, creditLimit, creditBill, accountNum);
+        ccStudent.payBill(50, 5); // Example of paying bill with cashback
+    }
+}
+
+class CreditCardRewards extends CreditCard {
+    public CreditCardRewards(Long cardNumber, String cardNumLast4Digit, LocalDate cardExpiryDate, double annualFee, double interestRate, int benefits, double ownLimit, double creditLimit, double creditBill, int accountNum) {
+        super(cardNumber, cardNumLast4Digit, cardExpiryDate, annualFee, interestRate, benefits, "Rewards Credit Card", ownLimit, creditLimit, creditBill, accountNum);
+    }
+
+    @Override
+    public int getBenefits() {
+        return benefits;
+    }
+
+    @Override
+    public void setBenefits(int benefits) {
+        this.benefits = benefits;
+    }
+
+    public void claimRewards(String item) {
+        if (Integer.valueOf(item) == 1 && this.benefits >= 300) {
+            System.out.println("$30 Grab Voucher has been claimed, 300 Points has been deducted.");
+            this.benefits -= 300;
+        } else if (Integer.valueOf(item) == 2 && this.benefits >= 500) {
+            System.out.println("$50 Shopee Voucher has been claimed, 500 Points has been deducted.");
+            this.benefits -= 500;
+        } else if (Integer.valueOf(item) == 3 && this.benefits >= 3630) {
+            System.out.println("Apple Airpods Pro (2nd Generation) (USB-C) has been claimed, 3630 Points has been deducted.");
+            this.benefits -= 3630;
+        } else if (Integer.valueOf(item) == 4 && this.benefits >= 5040) {
+            System.out.println("Apple 10.2-inch iPad Wi-Fi 64GB Space Grey has been claimed, 5040 Points has been deducted.");
+            this.benefits -= 5040;
+        } else {
+            System.out.println("Invalid card input or not enough points");
+        }
+
+        System.out.println("Remaining Points: " + this.benefits);
+    }
+}
+
+class CreditCardStudent extends CreditCard {
+    public CreditCardStudent(Long cardNumber, String cardNumLast4Digit, LocalDate cardExpiryDate, double annualFee, double interestRate, int benefits, double ownLimit, double creditLimit, double creditBill, int accountNum) {
+        super(cardNumber, cardNumLast4Digit, cardExpiryDate, annualFee, interestRate, benefits, "Student Credit Card", ownLimit, creditLimit, creditBill, accountNum);
+    }
+
+    @Override
+    public int getBenefits() {
+        return benefits;
+    }
+
+    @Override
+    public void setBenefits(int benefits) {
+        this.benefits = benefits;
+    }
+
+    public void payBill(double amount, int cashback) {
+        if (amount + (double) cashback > this.creditBill) {
+            System.out.println("Amount exceeds the credit bill");
+        } else {
+            System.out.println("Credit Bill (Before payment): " + this.creditBill);
+            this.creditBill -= (amount + (double) cashback);
+            this.benefits -= cashback;
+            System.out.println("Successful payment of $" + amount + " with $" + cashback + " cashback");
+            System.out.println("Credit Bill (After payment): " + this.creditBill);
+            System.out.println("Remaining Cashback: " + this.benefits);
+        }
     }
 
 }

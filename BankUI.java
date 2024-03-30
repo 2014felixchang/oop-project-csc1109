@@ -277,11 +277,12 @@ public class BankUI {
         System.out.println("3. Deposit");
         System.out.println("4. Withdraw");
         System.out.println("5. Currency Exchange");
-        System.out.println("6. Get a loan");
-        System.out.println("7. Pay loan");
-        System.out.println("8. Create Insurance Policy");
-        System.out.println("9. Go back to accounts menu");
-        System.out.println("10. Logout");
+        System.out.println("6. Display Loan Details");
+        System.out.println("7. Get a loan");
+        System.out.println("8. Pay loan");
+        System.out.println("9. Create Insurance Policy");
+        System.out.println("10. Go back to accounts menu");
+        System.out.println("11. Logout");
         System.out.println("------------------------------------");
         System.out.print("Enter your choice: ");
     }
@@ -377,25 +378,67 @@ public class BankUI {
         }
     }
 
-    public static void createLoan(Scanner scanner) {
-        try {
-            System.out.print("Loan amount: ");
-            float principal = Float.parseFloat(scanner.nextLine());
-            System.out.print("Loan term (1 to 7 years): ");
-            int loanTermMonths = Integer.parseInt(scanner.nextLine()) * 12;
-            LocalDate date = LocalDate.now();
-            // hard coded annual flat rate of 6.0%
-            double interestRate = 0.06;
-            // G16_LON loan = new G16_LON(principal, interestRate, date, loanTermMonths);
-            // loan.displayLoanDetails();
-        } catch (NumberFormatException e) {
-            BankUI.printInvalid();
+    public static void createLoan(Account loggedInAccount) {
+        
+        if (loggedInAccount.getLoanId() != null) {
+            System.out.println("You already have an active loan.");
+            return;
         }
+        else{
+            try{
+                System.out.print("Loan amount: ");
+                float principal = Float.parseFloat(scanner.nextLine());
+                System.out.print("Loan term (1 to 7 years): ");
+                int loanTermMonths = Integer.parseInt(scanner.nextLine()) * 12;
+                LocalDate date = LocalDate.now();
+                // hard coded annual flat rate of 6.0%
+                double interestRate = 0.06;
+                loggedInAccount.applyForLoan(principal, interestRate, date, loanTermMonths);
+                loggedInAccount.displayLoanDetails();
+            }catch (NumberFormatException e) {
+                BankUI.printInvalid();
+            }
+        }
+    
     }
 
+    public static void payLoan(Account loggedInAccount){
+
+        if (loggedInAccount.getLoanId() == null) {
+            System.out.println("No active loan for this account.");
+            return;
+        }
+        else{
+            try{
+                    System.out.print("Enter the amount to pay: ");
+                    double amount = Double.parseDouble(scanner.nextLine());
+                    if (amount > loggedInAccount.getBalance()) {
+                        System.out.println("Insufficient balance to pay loan.");
+                        return;
+                    }
+                    else if (amount > loggedInAccount.getTransLimit()){
+                        System.out.println("Transfer amount exceeds account transfer limit. Please increase transfer limit before trying again.");
+                        return;
+                    }
+                    else{
+                        loggedInAccount.makeLoanPayment(amount);
+                        loggedInAccount.displayLoanDetails();
+                        loggedInAccount.setBalance(loggedInAccount.getBalance() - amount);
+                    }
+
+                }
+            catch (NumberFormatException e) {
+                BankUI.printInvalid();
+
+                }
+            }
+
+        }
+
     public static void transactMenu(Bank bank, Customer customer, String accNum) {
+        Account loggedInAccount = new Account(accNum);
+
         while (true) {
-            Account loggedInAccount = new Account(accNum);
             displayAccountMenu(loggedInAccount);
             int choice = BankUI.getUserChoice();
 
@@ -421,17 +464,19 @@ public class BankUI {
                     performCurrencyExchange(loggedInAccount);
                     break;
                 case 6:
-                    // get a loan (implement 506)
-                    // have not implemented saving loan info to file and linking it to account
-                    createLoan(scanner);
+                    loggedInAccount.displayLoanDetails();
                     break;
                 case 7:
-                    // paying back a loan (implement 506/507)
+                    createLoan(loggedInAccount);
                     break;
                 case 8:
-                    createNewInsurancePolicy();
+                    payLoan(loggedInAccount);
                     break;
                 case 9:
+                    createNewInsurancePolicy();
+                    // go back to accounts menu
+                    break;
+                case 10:
                     // go back to accounts menu
                     return;
                 case 10:
