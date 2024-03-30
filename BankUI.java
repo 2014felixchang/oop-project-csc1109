@@ -252,10 +252,10 @@ public class BankUI {
                     CSVHandler.updateCSV(customer.getUsername(), "CustomerAccounts.csv", newCustomerRecord);
                     System.out.println("New bank account created successfully.");
                 }
-                else {
+                else{
                     // go to transact menu for selected account
-                    for (int j = 1; j < accounts.length; j++) {
-                        if (Integer.parseInt(choice) == j) {
+                    for (int j = 0; j < accounts.length; j++) {
+                        if (Integer.parseInt(choice) == j+1) {
                             transactMenu(bank, customer, accounts[j]);
                         }
                     }
