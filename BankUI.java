@@ -479,8 +479,6 @@ public class BankUI {
                 case 10:
                     // go back to accounts menu
                     return;
-                case 10:
-                    displayMainMenu(bank);
                 default:
                     printInvalid();
                     break;
