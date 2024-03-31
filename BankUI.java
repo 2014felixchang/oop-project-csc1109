@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 public class BankUI {
@@ -19,7 +20,6 @@ public class BankUI {
         System.out.println("2. Login");
         System.out.println("3. Exit");
         System.out.println("4. Branches");
-        System.out.println("5. Test");
         System.out.println("------------------------------------");
         System.out.print("Enter your choice: ");
     }
@@ -42,15 +42,64 @@ public class BankUI {
                 case 4:
                     BankUI.viewBranches(bank);
                     break;
-                case 5:
-                    Security security = new Security();
-                    security.setUserEmail("test@gmail.com");
-                    System.out.println("Enter your email: "+security.getUserEmail());
+                
                 default:
                     BankUI.printInvalid();
                     break;
             }
         }
+    }
+
+    public static void createCreditCard() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Enter card number:");
+        Long cardNumber = scanner.nextLong();
+
+        System.out.println("Enter last 4 digits of card number:");
+        String cardNumLast4Digit = scanner.next();
+
+        System.out.println("Enter card expiry date (format: yyyy-mm-dd):");
+        String cardExpiryDateString = scanner.next();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate cardExpiryDate = LocalDate.parse(cardExpiryDateString, formatter);
+
+        System.out.println("Enter annual fee:");
+        double annualFee = scanner.nextDouble();
+
+        System.out.println("Enter interest rate:");
+        double interestRate = scanner.nextDouble();
+
+        System.out.println("Enter benefits:");
+        int benefits = scanner.nextInt();
+
+        String cardType = "Standard"; // Example card type
+
+        System.out.println("Enter own limit:");
+        double ownLimit = scanner.nextDouble();
+
+        System.out.println("Enter credit limit:");
+        double creditLimit = scanner.nextDouble();
+
+        System.out.println("Enter credit bill:");
+        double creditBill = scanner.nextDouble();
+
+        System.out.println("Enter account number:");
+        int accountNum = scanner.nextInt();
+
+        // Create a CreditCard instance
+        CreditCard cc = new CreditCard(cardNumber, cardNumLast4Digit, cardExpiryDate, annualFee, interestRate, benefits, cardType, ownLimit, creditLimit, creditBill, accountNum);
+
+        // Now you can call methods on this instance
+        cc.displayCreditCardDetails();
+
+        // Example of using the extended class CreditCardRewards
+        CreditCardRewards ccRewards = new CreditCardRewards(cardNumber, cardNumLast4Digit, cardExpiryDate, annualFee, interestRate, benefits, ownLimit, creditLimit, creditBill, accountNum);
+        ccRewards.claimRewards("1"); // Example of claiming rewards
+
+        // Example of using the extended class CreditCardStudent
+        CreditCardStudent ccStudent = new CreditCardStudent(cardNumber, cardNumLast4Digit, cardExpiryDate, annualFee, interestRate, benefits, ownLimit, creditLimit, creditBill, accountNum);
+        ccStudent.payBill(50, 5); // Example of paying bill with cashback
     }
 
     public static void register(Bank bank) {
@@ -288,6 +337,7 @@ public class BankUI {
         System.out.println("9. Create Insurance Policy");
         System.out.println("10. Go back to accounts menu");
         System.out.println("11. Logout");
+        System.out.println("12. Credit Card");
         System.out.println("------------------------------------");
         System.out.print("Enter your choice: ");
     }
@@ -491,6 +541,10 @@ public class BankUI {
                 case 11:
                     System.out.println("Logging out...");
                     return;
+                case 12:
+                    // Credit card
+                    createCreditCard();
+                    break;
                 default:
                     printInvalid();
                     break;
