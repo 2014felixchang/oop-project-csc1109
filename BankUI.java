@@ -51,56 +51,112 @@ public class BankUI {
     }
 
     public static void createCreditCard() {
-        Scanner scanner = new Scanner(System.in);
+        try {
+            System.out.println("Enter card number:");
+            Long cardNumber = scanner.nextLong();
+            scanner.nextLine(); // Consume newline
 
-        System.out.println("Enter card number:");
-        Long cardNumber = scanner.nextLong();
+            System.out.println("Enter last 4 digits of card number:");
+            String cardNumLast4Digit = scanner.nextLine();
 
-        System.out.println("Enter last 4 digits of card number:");
-        String cardNumLast4Digit = scanner.next();
+            System.out.println("Enter card expiry date (format: yyyy-mm-dd):");
+            String cardExpiryDateString = scanner.nextLine();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate cardExpiryDate = LocalDate.parse(cardExpiryDateString, formatter);
 
-        System.out.println("Enter card expiry date (format: yyyy-mm-dd):");
-        String cardExpiryDateString = scanner.next();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate cardExpiryDate = LocalDate.parse(cardExpiryDateString, formatter);
+            System.out.println("Enter annual fee:");
+            double annualFee = scanner.nextDouble();
+            scanner.nextLine(); // Consume newline
 
-        System.out.println("Enter annual fee:");
-        double annualFee = scanner.nextDouble();
+            System.out.println("Enter interest rate:");
+            double interestRate = scanner.nextDouble();
+            scanner.nextLine(); // Consume newline
 
-        System.out.println("Enter interest rate:");
-        double interestRate = scanner.nextDouble();
+            System.out.println("Enter benefits:");
+            int benefits = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
 
-        System.out.println("Enter benefits:");
-        int benefits = scanner.nextInt();
+            System.out.println("Enter own limit:");
+            double ownLimit = scanner.nextDouble();
+            scanner.nextLine(); // Consume newline
 
-        String cardType = "Standard"; // Example card type
+            System.out.println("Enter credit limit:");
+            double creditLimit = scanner.nextDouble();
+            scanner.nextLine(); // Consume newline
 
-        System.out.println("Enter own limit:");
-        double ownLimit = scanner.nextDouble();
+            System.out.println("Enter credit bill:");
+            double creditBill = scanner.nextDouble();
+            scanner.nextLine(); // Consume newline
 
-        System.out.println("Enter credit limit:");
-        double creditLimit = scanner.nextDouble();
+            System.out.println("Enter account number:");
+            int accountNum = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
 
-        System.out.println("Enter credit bill:");
-        double creditBill = scanner.nextDouble();
+            // Create a CreditCard instance
+            CreditCard cc = new CreditCard(cardNumber, cardNumLast4Digit, cardExpiryDate, annualFee, interestRate, benefits, "", ownLimit, creditLimit, creditBill, accountNum);
+            if (benefits >= 3000) {
+                cc.setCardType("Travel Credit Card");
+            } else if (benefits >= 500) {
+                cc.setCardType("Rewards Credit Card");
+            } else if (benefits >= 200) {
+                cc.setCardType("Student Credit Card");
+            } else {
+                cc.setCardType("Standard");
+            }
 
-        System.out.println("Enter account number:");
-        int accountNum = scanner.nextInt();
+            // Now you can call methods on this instance
+            cc.displayCreditCardDetails();
 
-        // Create a CreditCard instance
-        CreditCard cc = new CreditCard(cardNumber, cardNumLast4Digit, cardExpiryDate, annualFee, interestRate, benefits, cardType, ownLimit, creditLimit, creditBill, accountNum);
+            // Example of using the extended class CreditCardRewards
+            CreditCardRewards ccRewards = new CreditCardRewards(cardNumber, cardNumLast4Digit, cardExpiryDate, annualFee, interestRate, benefits, ownLimit, creditLimit, creditBill, accountNum);
+            System.out.println("Do you want to claim rewards? (yes/no):");
+            String claimRewardsOption = scanner.next();
+            scanner.nextLine(); // Consume newline
+            if (claimRewardsOption.equalsIgnoreCase("yes")) {
+                System.out.println("Enter the item number you want to claim:");
+                System.out.println("1. $30 Grab Voucher, 300points");
+                System.out.println("2. $50 Shopee Voucher, 500points");
+                System.out.println("3. Apple Airpods Pro (2nd Generation) (USB-C), 3630points");
+                System.out.println("4. Apple 10.2-inch iPad Wi-Fi 64GB Space Grey, 5040points");
+                int item = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+                ccRewards.claimRewards(String.valueOf(item));
+            }
+            
 
-        // Now you can call methods on this instance
-        cc.displayCreditCardDetails();
+            // Example of using the extended class CreditCardStudent
+            CreditCardStudent ccStudent = new CreditCardStudent(cardNumber, cardNumLast4Digit, cardExpiryDate, annualFee, interestRate, benefits, ownLimit, creditLimit, creditBill, accountNum);
+            System.out.println("Do you want to pay bill with cashback? (yes/no):");
+            String payBillWithCashbackOption = scanner.next();
+            scanner.nextLine(); // Consume newline
+            if (payBillWithCashbackOption.equalsIgnoreCase("yes")) {
+                System.out.println("Enter the bill amount:");
+                double billAmount = scanner.nextDouble();
+                scanner.nextLine(); // Consume newline
+                System.out.println("Enter the cashback amount:");
+                int cashbackAmount = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+                ccStudent.payBill(billAmount, cashbackAmount);
+            }
 
-        // Example of using the extended class CreditCardRewards
-        CreditCardRewards ccRewards = new CreditCardRewards(cardNumber, cardNumLast4Digit, cardExpiryDate, annualFee, interestRate, benefits, ownLimit, creditLimit, creditBill, accountNum);
-        ccRewards.claimRewards("1"); // Example of claiming rewards
-
-        // Example of using the extended class CreditCardStudent
-        CreditCardStudent ccStudent = new CreditCardStudent(cardNumber, cardNumLast4Digit, cardExpiryDate, annualFee, interestRate, benefits, ownLimit, creditLimit, creditBill, accountNum);
-        ccStudent.payBill(50, 5); // Example of paying bill with cashback
+            // Example of using the extended class CreditCardTravel
+            CreditCardTravel ccTravel = new CreditCardTravel(cardNumber, cardNumLast4Digit, cardExpiryDate, annualFee, interestRate, benefits, ownLimit, creditLimit, creditBill, accountNum);
+            System.out.println("Do you want to claim travel benefits? (yes/no):");
+            String claimTravelBenefitsOption = scanner.next();
+            scanner.nextLine(); // Consume newline
+            if (claimTravelBenefitsOption.equalsIgnoreCase("yes")) {
+                System.out.println("Enter the benefit number you want to claim:");
+                System.out.println("1. Free airplane merchandise, 50points");
+                System.out.println("2. $200 Dining Voucher, 600points");
+                System.out.println("3. One Way trip within Asia, 10000points");
+                String item = scanner.nextLine();
+                ccTravel.claimBenefits(item);
+            }
+        } catch (Exception e) {
+            System.out.println("Error occurred: " + e.getMessage());
+        }
     }
+
 
     public static void register(Bank bank) {
         try {

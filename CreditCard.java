@@ -162,57 +162,6 @@ public class CreditCard {
         System.out.println("Bill: " + this.creditBill);
         System.out.println("Account Number: " + this.accountNum);
     }
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-    
-        System.out.println("Enter card number:");
-        Long cardNumber = scanner.nextLong();
-    
-        System.out.println("Enter last 4 digits of card number:");
-        String cardNumLast4Digit = scanner.next();
-    
-        System.out.println("Enter card expiry date (format: yyyy-mm-dd):");
-        String cardExpiryDateString = scanner.next();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate cardExpiryDate = LocalDate.parse(cardExpiryDateString, formatter);
-    
-        System.out.println("Enter annual fee:");
-        double annualFee = scanner.nextDouble();
-    
-        System.out.println("Enter interest rate:");
-        double interestRate = scanner.nextDouble();
-    
-        System.out.println("Enter benefits:");
-        int benefits = scanner.nextInt();
-    
-        String cardType = "Standard"; // Example card type
-    
-        System.out.println("Enter own limit:");
-        double ownLimit = scanner.nextDouble();
-    
-        System.out.println("Enter credit limit:");
-        double creditLimit = scanner.nextDouble();
-    
-        System.out.println("Enter credit bill:");
-        double creditBill = scanner.nextDouble();
-    
-        System.out.println("Enter account number:");
-        int accountNum = scanner.nextInt();
-    
-        // Create a CreditCard instance
-        CreditCard cc = new CreditCard(cardNumber, cardNumLast4Digit, cardExpiryDate, annualFee, interestRate, benefits, cardType, ownLimit, creditLimit, creditBill, accountNum);
-    
-        // Now you can call methods on this instance
-        cc.displayCreditCardDetails();
-
-        // Example of using the extended class CreditCardRewards
-        CreditCardRewards ccRewards = new CreditCardRewards(cardNumber, cardNumLast4Digit, cardExpiryDate, annualFee, interestRate, benefits, ownLimit, creditLimit, creditBill, accountNum);
-        ccRewards.claimRewards("1"); // Example of claiming rewards
-        
-        // Example of using the extended class CreditCardStudent
-        CreditCardStudent ccStudent = new CreditCardStudent(cardNumber, cardNumLast4Digit, cardExpiryDate, annualFee, interestRate, benefits, ownLimit, creditLimit, creditBill, accountNum);
-        ccStudent.payBill(50, 5); // Example of paying bill with cashback
-    }
 }
 
 class CreditCardRewards extends CreditCard {
@@ -280,3 +229,34 @@ class CreditCardStudent extends CreditCard {
     }
 
 }
+class CreditCardTravel extends CreditCard{
+    public CreditCardTravel (Long cardNumber, String cardNumLast4Digit, LocalDate cardExpiryDate, double annualFee, double interestRate, int benefits, double ownLimit, double creditLimit, double creditBill, int accountNum) { 
+        super (cardNumber, cardNumLast4Digit, cardExpiryDate, annualFee, interestRate, benefits, "Travel Credit Card", ownLimit, creditLimit, creditBill, accountNum);
+    }
+    @Override
+    public int getBenefits(){
+        return benefits;
+    }
+    @Override
+    public void setBenefits(int benefits){
+        this.benefits = benefits;
+    }
+
+    public void claimBenefits(String item){
+        if (Integer.valueOf(item) == 1 && this.benefits >= 50) {
+            System.out.println("Free airplane merchandise has been claimed, 50 Points has been deducted.");
+            this.benefits -= 50;
+         } else if (Integer.valueOf(item) == 2 && this.benefits >= 600) {
+            System.out.println("$200 dinning Voucher has been claimed, 600 Points has been deducted.");
+            this.benefits -= 500;
+         } else if (Integer.valueOf(item) == 3 && this.benefits >= 10000) {
+            System.out.println("One Way trip within Asia has been claimed, 10000 Points has been deducted.");
+            this.benefits -= 10000;
+         } else {
+            System.out.println("Invalid card input or not enough points");
+         }
+   
+         System.out.println("Remaining Miles: " + this.benefits);
+        }
+    }
+
