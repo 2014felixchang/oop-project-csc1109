@@ -200,7 +200,9 @@ import java.util.ArrayList;
                 accountData += "," + i;
             }
         }
-        accountData = loan.getPrincipal() + "," + loan.getInterestRate() + "," + loan.getLoanStartDate() + "," + loan.getLoanTermMonths();
+        if (loan != null){
+            accountData = loan.getPrincipal() + "," + loan.getInterestRate() + "," + loan.getLoanStartDate() + "," + loan.getLoanTermMonths();
+        }
         return accountData;
     }
 
