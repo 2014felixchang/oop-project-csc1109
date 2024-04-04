@@ -487,8 +487,9 @@ public class BankUI {
     }
     
     /**
-     * 
-     * @param loggedInAccount
+     * Handles the deposit operation.
+     * Prompts the user the amount to deposit and deposit it through the account class
+     * @param loggedInAccount The active user's account
      */
     public static void performDeposit(Account loggedInAccount) {
         try {
@@ -502,6 +503,11 @@ public class BankUI {
         }
     }
 
+    /**
+     * Handles the withdrawal operation.
+     * Prompts the user the amount to withdraw and withdraws it through the account class
+     * @param loggedInAccount The active user's account
+     */
     public static void performWithdrawal(Account loggedInAccount) {
         try {
             System.out.print("Enter the amount to withdraw: $");
@@ -515,8 +521,10 @@ public class BankUI {
     }
 
     /**
-     * 
-     * @param loggedInAccount
+     * Handles the currency exchange operation.
+     * Prompts the user for the amount and currency to and from.
+     * Calls the ForeignExchange class.
+     * @param loggedInAccount The active user's account
      */
     public static void performCurrencyExchange(Account loggedInAccount) {
         ForeignExchange foreignExchange = new ForeignExchange();
@@ -554,8 +562,9 @@ public class BankUI {
     }
 
     /**
-     * 
-     * @param loggedInAccount
+     * Handles the creation of loans.
+     * Prompts the user for the loan details and calls the external loan component with the information provided.
+     * @param loggedInAccount The active user's account
      */
     public static void createLoan(Account loggedInAccount) {
         
@@ -582,8 +591,9 @@ public class BankUI {
     }
 
     /**
-     * 
-     * @param loggedInAccount
+     * Handles the payment of loan operation.
+     * Prompts the user for the amount to pay the loan and pays the loan using the external loan component.
+     * @param loggedInAccount The active user's account
      */
     public static void payLoan(Account loggedInAccount){
 
@@ -623,10 +633,10 @@ public class BankUI {
         }
 
     /**
-     * 
-     * @param bank
-     * @param customer
-     * @param accNum
+     * Displays the user's menu and handles the user's chocies in the menu.
+     * @param bank The active Bank instance
+     * @param customer The active Customer
+     * @param accNum The account number of the account
      */
     public static void transactMenu(Bank bank, Customer customer, String accNum) {
         Account loggedInAccount = new Account(accNum);
@@ -769,8 +779,9 @@ public class BankUI {
     }
     
     /**
-     * 
-     * @param bank
+     * Handles the viewing of Branches through the information in Branches.csv and prints them out into the terminal.
+     * Handles the user's choice of Branch as well.
+     * @param bank The active Bank instance
      */
     public static void viewBranches(Bank bank) {
         ArrayList<Branch> branches = new ArrayList<Branch>();
