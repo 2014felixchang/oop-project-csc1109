@@ -10,8 +10,8 @@ import java.util.ArrayList;
  */
  public class Account {
     private String accountNum;
-    private double balance = 0;
-    private double transLimit = 1000.00;
+    private double balance;
+    private double transLimit;
     private ArrayList<String> history = new ArrayList<String>();
     private G16_LON loan;
 
@@ -28,10 +28,9 @@ import java.util.ArrayList;
         if (record != null) {
             String[] accountData = record.split(",");
             this.balance = Double.parseDouble(accountData[1]);
-            // this.debt = Double.parseDouble(accountData[2]);
-            this.transLimit = Double.parseDouble(accountData[3]);
-            if (accountData.length > 4) {
-                for (int i = 4; i < accountData.length; i++) {
+            this.transLimit = Double.parseDouble(accountData[2]);
+            if (accountData.length > 3) {
+                for (int i = 3; i < accountData.length; i++) {
                     this.history.add(accountData[i]);
                 }
             }
@@ -39,9 +38,10 @@ import java.util.ArrayList;
     }
     
     //Overloading
-    public Account(String accNum, double balance) {
+    public Account(String accNum, double balance, double transLimit) {
         this.accountNum = accNum;
         this.balance = balance;
+        this.transLimit = transLimit;
     }
 
     /**
@@ -88,8 +88,6 @@ import java.util.ArrayList;
      */
     public void withdraw(double amount) {
         if ((this.balance - amount) < 0) {
-            System.out.println("Withdrawal limit reached. Remaining amount will be loaned, and added to debt");
-            // this.debt += amount - this.balance; //May not be the right idea as there is no auto loan irl
             this.balance = 0.0;
             this.addHistory("Withdrawn: $" + convert2DP(amount));
         }
@@ -207,8 +205,6 @@ import java.util.ArrayList;
         this.loan = loan;
         this.addHistory("Applied for Loan: $" + convert2DP(principal));
         CSVHandler.updateCSV(accountNum, "Accounts.csv", this.convertToCSV());
-
-
     }
 
     public void makeLoanPayment(double amount) {
@@ -247,30 +243,5 @@ import java.util.ArrayList;
         return 0;
     }
 
-}
-
-// Inheritance, can remove if yall not using
-class SavingsAccount extends Account {
-    private double minimumBalance;
-
-    public SavingsAccount(String accNum, double minimumBalance) {
-        super(accNum);
-        this.minimumBalance = minimumBalance;
-    }
-
-    public double getMinimumBalance() {
-        return minimumBalance;
-    }
-
-    // Overriding
-    @Override
-    public void withdraw(double amount) {
-        if ((this.getBalance() - amount) < this.minimumBalance) {
-            System.out.println("Cannot withdraw. Minimum balance must be maintained.");
-        }
-        else {
-            super.withdraw(amount);
-        }
-    }
 }
 

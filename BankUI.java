@@ -362,10 +362,10 @@ public class BankUI {
                     CSVHandler.updateCSV(customer.getUsername(), "CustomerAccounts.csv", newCustomerRecord);
                     System.out.println("New bank account created successfully.");
                 }
-                else{
+                else {
                     // go to transact menu for selected account
-                    for (int j = 0; j < accounts.length; j++) {
-                        if (Integer.parseInt(choice) == j+1) {
+                    for (int j = 1; j < accounts.length; j++) {
+                        if (Integer.parseInt(choice) == j) {
                             transactMenu(bank, customer, accounts[j]);
                         }
                     }
@@ -380,6 +380,8 @@ public class BankUI {
     public static void displayAccountMenu(Account loggedInAccount) {
         System.out.println("------------------------------------");
         System.out.println("Account number: " + loggedInAccount.getAccountNum());
+        System.out.println("Transaction history: " );
+        System.out.println(loggedInAccount.getHistory());
         System.out.println("Transfer limit: $" + Account.convert2DP(loggedInAccount.getTransLimit()));
         System.out.println("Balance: $" + Account.convert2DP(loggedInAccount.getBalance()));
         System.out.println("1. Transfer Funds");
@@ -596,7 +598,7 @@ public class BankUI {
                     return;
                 case 11:
                     System.out.println("Logging out...");
-                    return;
+                    displayMainMenu(bank);
                 case 12:
                     // Credit card
                     createCreditCard();
