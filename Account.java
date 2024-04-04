@@ -152,6 +152,9 @@ import java.util.ArrayList;
      */
     public void addHistory(String transaction) {
         this.history.add(transaction);
+        if (history.size() > 5) {
+            history.remove(0);
+        }
         CSVHandler.updateCSV(accountNum, "Accounts.csv", this.convertToCSV());
     }
 
@@ -197,6 +200,7 @@ import java.util.ArrayList;
                 accountData += "," + i;
             }
         }
+        accountData = loan.getPrincipal() + "," + loan.getInterestRate() + "," + loan.getLoanStartDate() + "," + loan.getLoanTermMonths();
         return accountData;
     }
 
