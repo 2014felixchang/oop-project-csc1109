@@ -9,10 +9,17 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
+/**
+ * The BankUI class serves as a helper class for the Bank class. 
+ * It handles all the UI elements of the Bank application
+ */
 public class BankUI {
     private static Scanner scanner = new Scanner(System.in);
     
-
+    /**
+     * Prints the Main Menu in the terminal
+     * @param bank The active bank instance
+     */
     public static void printMainMenu(Bank bank) {
         System.out.println("------------------------------------");
         System.out.println("Welcome to " + bank.getBankName() + "! Please give us your money!");
@@ -24,6 +31,10 @@ public class BankUI {
         System.out.print("Enter your choice: ");
     }
 
+    /**
+     * Handles the user's choice in the Main Menu
+     * @param bank The active bank instance
+     */
     public static void displayMainMenu(Bank bank) {
         while (true) {
             printMainMenu(bank);
@@ -49,7 +60,10 @@ public class BankUI {
             }
         }
     }
-
+    /**
+     * Prints out to the user to enter the information needed for creating a credit card
+     * It will then take the information and create the Credit Card using the external component.
+     */
     public static void createCreditCard() {
         try {
             System.out.println("Enter card number:");
@@ -157,7 +171,11 @@ public class BankUI {
         }
     }
 
-
+    /**
+     * Handles the registration process of a new user.
+     * Prints the prompts for the user and creates a new user using the information provided.
+     * @param bank The active Bank instance
+     */
     public static void register(Bank bank) {
         try {
             while (true) {
@@ -203,6 +221,13 @@ public class BankUI {
         }
     }
 
+    /**
+     * Handles the login process of the Bank application.
+     * Prints the prompts for the user and passes the information onto the Customer class.
+     * Advances the menu upon a successful login.
+     * 
+     * @param bank The active Bank instance
+     */
     public static void login(Bank bank) {
         try {
             System.out.println("------------------------------------");
@@ -232,6 +257,10 @@ public class BankUI {
         }
     }
 
+    /**
+     * Prints the admin menu
+     * @param admin The active admin account
+     */
     public static void printAdminMenu(Customer admin) {
         System.out.println("------------------------------------");
         System.out.println("Welcome to the admin menu, " + admin.getUsername() + "!");
@@ -246,6 +275,11 @@ public class BankUI {
         System.out.print("Enter your choice: ");
     }
 
+    /**
+     * Handles the admin's choice in the admin menu
+     * @param bank The active Bank instance
+     * @param admin The active admin account
+     */
     public static void adminMenu(Bank bank, Customer admin) {
         while (true) {
             printAdminMenu(admin);
@@ -283,6 +317,11 @@ public class BankUI {
         }
     }
 
+    /**
+     * Handles the accounts menu where users choose their account to do their business and their choices
+     * @param bank The active Bank instance
+     * @param customer The active Customer
+     */
     public static void accountsMenu(Bank bank, Customer customer) {
         if (customer.isLocked()) {
             System.out.println("The account is locked and cannot be accessed.");
@@ -377,6 +416,10 @@ public class BankUI {
         }
     }
 
+    /**
+     * Prints the regular user menu
+     * @param loggedInAccount
+     */
     public static void displayAccountMenu(Account loggedInAccount) {
         System.out.println("------------------------------------");
         System.out.println("Account number: " + loggedInAccount.getAccountNum());
@@ -400,6 +443,12 @@ public class BankUI {
         System.out.print("Enter your choice: ");
     }
 
+    /**
+     * Handles the Money Transfer operation.
+     * Asks the user prompts and transfers the money using the Bank class
+     * @param bank The active Bank instance
+     * @param loggedInAccount The active user's account
+     */
     public static void performTransfer(Bank bank, Account loggedInAccount) {
         try {
             System.out.print("Enter the account number to transfer money to: ");
@@ -414,6 +463,11 @@ public class BankUI {
         }
     }
 
+    /**
+     * Handles the updating of transfer limit operation.
+     * Prompts the user for input and updates the limit through the account class.
+     * @param loggedInAccount The active user's account
+     */
     public static void updateTransferLimit(Account loggedInAccount) {
         while (true) {
             System.out.println("------------------------------------");
@@ -432,6 +486,10 @@ public class BankUI {
         }
     }
     
+    /**
+     * 
+     * @param loggedInAccount
+     */
     public static void performDeposit(Account loggedInAccount) {
         try {
             System.out.print("Enter the amount to deposit: $");
@@ -456,6 +514,10 @@ public class BankUI {
         }
     }
 
+    /**
+     * 
+     * @param loggedInAccount
+     */
     public static void performCurrencyExchange(Account loggedInAccount) {
         ForeignExchange foreignExchange = new ForeignExchange();
         foreignExchange.displayRates();
@@ -491,6 +553,10 @@ public class BankUI {
         }
     }
 
+    /**
+     * 
+     * @param loggedInAccount
+     */
     public static void createLoan(Account loggedInAccount) {
         
         if (loggedInAccount.getLoanId() != null) {
@@ -515,6 +581,10 @@ public class BankUI {
     
     }
 
+    /**
+     * 
+     * @param loggedInAccount
+     */
     public static void payLoan(Account loggedInAccount){
 
         if (loggedInAccount.getLoanId() == null) {
@@ -552,6 +622,12 @@ public class BankUI {
     
         }
 
+    /**
+     * 
+     * @param bank
+     * @param customer
+     * @param accNum
+     */
     public static void transactMenu(Bank bank, Customer customer, String accNum) {
         Account loggedInAccount = new Account(accNum);
 
@@ -609,7 +685,11 @@ public class BankUI {
             }
         }
     }
-    //create policy
+    
+    /**
+     * Handles the creation of a new insurance policy. (Only accessible by Admin role)
+     * Prints out the prompts for the admin and calls the Insurance component with the provided information
+     */
     public static void createNewInsurancePolicy() {
         try {
             // Prompt user for input
@@ -688,6 +768,10 @@ public class BankUI {
         }
     }
     
+    /**
+     * 
+     * @param bank
+     */
     public static void viewBranches(Bank bank) {
         ArrayList<Branch> branches = new ArrayList<Branch>();
         try (BufferedReader br = new BufferedReader(new FileReader("Branches.csv"))){
@@ -717,11 +801,18 @@ public class BankUI {
         }
     }
 
+    /**
+     * Prints the invalid input message
+     */
     public static void printInvalid() {
         System.out.println("------------------------------------");
         System.out.println("Invalid input. Please try again.");
     }
    
+    /**
+     * Gets the user's choice from the terminal
+     * @return Returns the user's choice back
+     */
     public static int getUserChoice() {
         try {
             String choice = scanner.nextLine();
@@ -733,5 +824,4 @@ public class BankUI {
         }
     }
 
-    // ... more methods for other menus and user input
 }

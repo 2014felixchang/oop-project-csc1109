@@ -17,7 +17,10 @@ public class Bank {
     private String bankName;
     private List<Customer> customers;
     
-    
+    /**
+     * Constructor for the Bank class
+     * @param bankName The name of the bank
+     */
     public Bank(String bankName){
         this.bankName = bankName;
         this.customers = new ArrayList<>();
@@ -118,18 +121,26 @@ public class Bank {
         }
     }
 
-    // Bank to issue loans to accounts
+    /**
+     * Issues a loan to the account user using the external Loan class
+     * 
+     * @param account The account which the loan will be attached to
+     * @param principal The principal amount of the loan
+     * @param interestRate The interest rate of the loan
+     * @param startDate The start date of the loan
+     * @param termMonths The amount of months where the loan will be active
+     */
     public void issueLoan(Account account, double principal, double interestRate, LocalDate startDate, int termMonths) {
-    if (account.getLoanId() != null) {
-        System.out.println("This account already has an active loan.");
-        return;
-    }
+        if (account.getLoanId() != null) {
+            System.out.println("This account already has an active loan.");
+            return;
+        }
 
-    try {
-        account.applyForLoan(principal, interestRate, startDate, termMonths);
-        account.displayLoanDetails();
-    } catch (Exception e) {
-        System.out.println("Failed to issue loan: " + e.getMessage());
+        try {
+            account.applyForLoan(principal, interestRate, startDate, termMonths);
+            account.displayLoanDetails();
+        } catch (Exception e) {
+            System.out.println("Failed to issue loan: " + e.getMessage());
     }
 }
 }
