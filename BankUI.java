@@ -349,6 +349,7 @@ public class BankUI {
 
             try {
                 String choice = scanner.nextLine();
+                
                 if (Integer.parseInt(choice) == (i+2)) { // i + 2 corresponds to log out option
                     return;
                 }
@@ -409,8 +410,8 @@ public class BankUI {
                         }
                     }
                 }
-            } catch (InputMismatchException | NumberFormatException e) {
-                BankUI.printInvalid();
+            } catch (NumberFormatException e) {
+                System.err.println(e);
                 continue;
             }
         }

@@ -30,18 +30,27 @@ import java.util.ArrayList;
             this.balance = Double.parseDouble(accountData[1]);
             this.transLimit = Double.parseDouble(accountData[2]);
             if (accountData.length > 3) {
-                for (int i = 3; i < accountData.length; i++) {
+                for (int i = 3; i < 8; i++) {
                     this.history.add(accountData[i]);
                 }
             }
+            double principal = Double.parseDouble(accountData[8]);
+            double interestRate = Double.parseDouble(accountData[9]);
+            LocalDate loanStartDate = LocalDate.parse(accountData[10]);
+            int loanTermMonths = Integer.parseInt(accountData[11]);
+            this.loan = new G16_LON(principal, interestRate, loanStartDate, loanTermMonths);
+            double totalRepayment = loan.getTotalPayment();
+            double loanRepaymentLeft = Double.parseDouble(accountData[12]);
+            double amountPaid = totalRepayment - loanRepaymentLeft;
+            // this will effectively make the loan object's repayment amount be the correct amount
+            // need to do this because the class has no setter method to set the loan repayment amount
+            this.loan.payLoan(amountPaid);
         }
-    }
-    
-    //Overloading
-    public Account(String accNum, double balance, double transLimit) {
-        this.accountNum = accNum;
-        this.balance = balance;
-        this.transLimit = transLimit;
+        else {
+            this.balance = 0.0;
+            this.transLimit = 1000.0;
+            this.loan = null;
+        }
     }
 
     /**
@@ -201,7 +210,7 @@ import java.util.ArrayList;
             }
         }
         if (loan != null){
-            accountData = loan.getPrincipal() + "," + loan.getInterestRate() + "," + loan.getLoanStartDate() + "," + loan.getLoanTermMonths();
+            accountData += "," + loan.getPrincipal() + "," + loan.getInterestRate() + "," + loan.getLoanStartDate() + "," + loan.getLoanTermMonths() + "," + loan.getLoanRepayment();
         }
         return accountData;
     }
