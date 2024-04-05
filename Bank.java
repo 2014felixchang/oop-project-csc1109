@@ -51,9 +51,10 @@ public class Bank {
     /**
      * Transfers money from one account to another
      * 
-     * @param sourceAccountNum The source account number
+     * @param sourceAccountObj The source account object which is the logged in account
      * @param destinationAccountNum The destination account number
      * @param amount The amount to be transferred
+     * @return The updated logged in account object
      */
     public Account transferMoney(Account sourceAccountObj, String destinationAccountNum, double amount){
         if ((CSVHandler.getRecord(sourceAccountObj.getAccountNum(), "Accounts.csv")) == null || (CSVHandler.getRecord(sourceAccountObj.getAccountNum(), "Accounts.csv")) == null ) {

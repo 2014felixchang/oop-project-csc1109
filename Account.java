@@ -225,6 +225,13 @@ import java.util.ArrayList;
         return accountData;
     }
 
+    /**
+     * Method for applying a loan using G16_LON
+     * @param principal The amount to be loaned
+     * @param interestRate The interest rate of the loan
+     * @param loanStartDate The start date of the loan
+     * @param loanTermMonths The duration of the loan
+     */
     public void applyForLoan(double principal, double interestRate, LocalDate loanStartDate, int loanTermMonths) {
         G16_LON loan = new G16_LON(principal, interestRate, loanStartDate, loanTermMonths);
         this.loan = loan;
@@ -232,6 +239,10 @@ import java.util.ArrayList;
         CSVHandler.updateCSV(accountNum, "Accounts.csv", this.convertToCSV());
     }
 
+    /**
+     * Method for the user to pay off the loan
+     * @param amount The amount that the user is paying
+     */
     public void makeLoanPayment(double amount) {
         if (this.loan != null) {
             this.loan.payLoan(amount);
@@ -242,6 +253,9 @@ import java.util.ArrayList;
         }
     }
 
+    /**
+     * Method to display any active loan that the user has
+     */
     public void displayLoanDetails() {
         if (this.loan != null) {
             this.loan.displayLoanDetails();
@@ -250,6 +264,10 @@ import java.util.ArrayList;
         }
     }
 
+    /**
+     * Getter for the loan id
+     * @return Returns the loan id if available
+     */
     public String getLoanId() {
         if (this.loan == null) {
             return null;
@@ -257,10 +275,17 @@ import java.util.ArrayList;
         return this.loan.getLoanId();
     }
 
+    /**
+     * Deletes the active loan
+     */
     public void deleteLoan() {
         this.loan = null;
     }
     
+    /**
+     * Gets the amount that still needs to be repaid
+     * @return The amount that needs to be repaid
+     */
     public double getLoanRepayment() {
         if (this.loan != null) {
             return this.loan.getLoanRepayment();

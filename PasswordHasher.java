@@ -3,8 +3,15 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.math.BigInteger;
 
+/**
+ * The PasswordHasher class handles the hashing of the customer's password using SHA-256
+ */
 public class PasswordHasher {
-    // Method to hash a password using SHA-256
+    /**
+     * Method to hash a password using SHA-256
+     * @param password The plaintext password string
+     * @return Returns the hashed password
+     */
     public static String hashPassword(String password) {
         try {
             // Get an instance of MessageDigest that implements SHA-256

@@ -414,7 +414,7 @@ public class BankUI {
 
     /**
      * Prints the regular user menu
-     * @param loggedInAccount
+     * @param loggedInAccount The active user account
      */
     public static void displayAccountMenu(Account loggedInAccount) {
         System.out.println("------------------------------------");

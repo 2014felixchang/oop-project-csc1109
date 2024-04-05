@@ -6,7 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-// Define a Customer class
+/**
+ * The Customer class inherits the User class in and represents a customer for the Bank
+ */
 public class Customer extends User{
     private String name;
     private String address;
@@ -19,16 +21,28 @@ public class Customer extends User{
     // Static map to store all customers
     private static Map<String, Customer> customers = new HashMap<>();
 
-    // Constructor for the Customer class
+    /**
+     * Constructor for the Customer class
+     * @param username The username of the customer
+     * @param password The password of the customer
+     * @param role The role of the customer (User/Admin)
+     * @param id The customer's id
+     */
     public Customer(String username, String password, String role, String id) {
         super(username, password, role, id);
     }
     
+    /**
+     * Getter for the name of the customer
+     * @return The name of the customer
+     */
     public String getName() {
         return name;
     }
 
-    // Method to return customer's administrative info as a comma-separated string
+    /**
+     * Method to return customer's administrative info as a comma-separated string
+     */
     @Override
     public String customerInfoToCSV() {
         try {
@@ -40,7 +54,9 @@ public class Customer extends User{
         }
     }
 
-    // Method to return customer's personal details as a comma-separated string
+    /**
+     * Method to return customer's personal details as a comma-separated string
+     */
     @Override
     public String personalDetailsToCSV() {
         try {
@@ -52,14 +68,26 @@ public class Customer extends User{
         }
     }
 
+    /**
+     * Method to check whether the customer is locked out of the account
+     * @return A boolean of true or false
+     */
     public boolean isLocked() {
         return this.locked;
     }
 
+    /**
+     * Getter for the amount of failed log in attempts by the customer
+     * @return The amount of failed log in attempts
+     */
     public int getFailedAttempts() {
         return this.failedAttempts;
     }
 
+    /**
+     * Setter for setting the amount of failed log in attempts
+     * @param attempts The amount of failed log in attempts
+     */
     public void setFailedAttempts(int attempts) {
         try {
             this.failedAttempts = attempts;
@@ -68,6 +96,10 @@ public class Customer extends User{
         }
     }
 
+    /**
+     * Setter for whether the customer's account is locked due to failed log in attempts
+     * @param locked Boolean of True (Locked) or False (not locked)
+     */
     public void setLocked(boolean locked) {
         try {
             this.locked = locked;
@@ -76,6 +108,9 @@ public class Customer extends User{
         }
     }
 
+    /**
+     * Method to handle the Admin's action of unlocking a customer's account
+     */
     public static void unlockCustomerAccount() {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter the username of the customer to unlock: ");
@@ -91,6 +126,9 @@ public class Customer extends User{
         }
     }
 
+    /**
+     * Method for the admin to remove a customer from its records
+     */
     public static void removeCustomer() {
         try {
             Scanner scanner = new Scanner(System.in);
@@ -121,6 +159,12 @@ public class Customer extends User{
         }
     }
 
+    /**
+     * Method for the customer to log in to their accounts
+     * @param username The username provided by the customer
+     * @param password The password provided by the customer
+     * @return Returns True for Success and False for Failure of the log in process
+     */
     public static boolean loginCustomer(String username, String password) {
         try {
             // Retrieve customer from CSV
@@ -160,6 +204,14 @@ public class Customer extends User{
         }
     } 
 
+    /**
+     * Method for a new registration of a new customer
+     * @param username The username provided by the customer
+     * @param password The password provided by the customer
+     * @param role The role of the account (User/Admin)
+     * @param id The id provided by the customer
+     * @return Returns the newly-made customer object based on the information provided
+     */
     public static Customer registerCustomer(String username, String password, String role, String id) {
         try {
             // Convert role to "Admin" if it equals "admin" (ignoring case)
@@ -189,6 +241,9 @@ public class Customer extends User{
         }
     }
 
+    /**
+     * Method for the admin to add a new customer
+     */
     public static void addNewCustomer() {
         try {
             Scanner scanner = new Scanner(System.in);
@@ -220,6 +275,9 @@ public class Customer extends User{
         }
     }
     
+    /**
+     * Method for the admin to view all the customers
+     */
     public static void viewAllCustomers() {
         try (BufferedReader reader = new BufferedReader(new FileReader("CustomerInfo.csv"))) {
             String line;
@@ -237,12 +295,22 @@ public class Customer extends User{
     
 }
 
+/**
+ * The User class represents the basic core attributes of a typical user in a Bank
+ */
 class User {
     protected String username;
     protected String password;
     protected String role;
     protected String id;
 
+    /**
+     * Constructor for the User class
+     * @param username The username provided
+     * @param password The password provided
+     * @param role The role of the user (User/Admin)
+     * @param id The id provided
+     */
     public User(String username, String password, String role, String id) {
         this.username = username;
         this.password = password;
@@ -250,22 +318,42 @@ class User {
         this.id = id;
     }
 
+    /**
+     * Getter for the username
+     * @return Returns the username
+     */
     public String getUsername() {
         return username;
     }
 
+    /**
+     * Getter for the role
+     * @return Returns the role
+     */
     public String getRole() {
         return role;
     }
 
+    /**
+     * Getter for the password
+     * @return Returns the password
+     */
     public String getPassword() {
         return password;
     }
 
+    /**
+     * Getter for the id
+     * @return Returns the id
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Method to build the string of user information for CSV input
+     * @return The string that is built
+     */
     public String customerInfoToCSV() {
         try {
             String userRecord = username+","+password+","+role+","+id;
@@ -276,6 +364,10 @@ class User {
         }
     }
 
+    /**
+     * Method to build the string to input the username into the CSV
+     * @return The username string that has been built
+     */
     public String personalDetailsToCSV() {
         try {
             String userRecord = username;

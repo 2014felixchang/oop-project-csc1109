@@ -66,7 +66,7 @@ public class CSVHandler {
      * 
      * @param key the identifier for a record
      * @param filepath the CSV file name
-     * @return
+     * @return Returns the line from the CSV
      */
     public static String getRecord(String key, String filepath) {
         try (BufferedReader bR = new BufferedReader(new FileReader(filepath))){
@@ -166,12 +166,12 @@ public class CSVHandler {
     /**
      * Appends a customer's personal details to CustomerDetails.csv
      * 
-     * @param username
-     * @param name
-     * @param address
-     * @param phoneNumber
-     * @param email
-     * @param dateOfBirth
+     * @param username Customer's username
+     * @param name Customer's name
+     * @param address Customer's address
+     * @param phoneNumber Customer's phone number
+     * @param email Customer's email
+     * @param dateOfBirth Customer's date of birth
      */
     public static void addCustomerDetailsToCSV(String username, String name, String address, String phoneNumber, String email, String dateOfBirth) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("CustomerDetails.csv", true))) {
