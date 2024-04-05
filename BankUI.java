@@ -102,26 +102,26 @@ public class BankUI {
             scanner.nextLine(); // Consume newline
     
             // Create a CreditCard instance
-            CreditCard cc;
+            G21_CRD cc;
             if (benefits >= 3000) {
-                cc = new CreditCardTravel(cardNumber, cardNumLast4Digit, cardExpiryDate, annualFee, interestRate, benefits, ownLimit, creditLimit, creditBill, accountNum);
+                cc = new G21_CRDTravel(cardNumber, cardNumLast4Digit, cardExpiryDate, annualFee, interestRate, benefits, ownLimit, creditLimit, creditBill, accountNum);
                 cc.setCardType("Travel Credit Card");
             } else if (benefits >= 500) {
-                cc = new CreditCardRewards(cardNumber, cardNumLast4Digit, cardExpiryDate, annualFee, interestRate, benefits, ownLimit, creditLimit, creditBill, accountNum);
+                cc = new G21_CRDRewards(cardNumber, cardNumLast4Digit, cardExpiryDate, annualFee, interestRate, benefits, ownLimit, creditLimit, creditBill, accountNum);
                 cc.setCardType("Rewards Credit Card");
             } else if (benefits >= 200) {
-                cc = new CreditCardStudent(cardNumber, cardNumLast4Digit, cardExpiryDate, annualFee, interestRate, benefits, ownLimit, creditLimit, creditBill, accountNum);
+                cc = new G21_CRDStudent(cardNumber, cardNumLast4Digit, cardExpiryDate, annualFee, interestRate, benefits, ownLimit, creditLimit, creditBill, accountNum);
                 cc.setCardType("Student Credit Card");
             } else {
-                cc = new CreditCard(cardNumber, cardNumLast4Digit, cardExpiryDate, annualFee, interestRate, benefits, "", ownLimit, creditLimit, creditBill, accountNum);
+                cc = new G21_CRD(cardNumber, cardNumLast4Digit, cardExpiryDate, annualFee, interestRate, benefits, "", ownLimit, creditLimit, creditBill, accountNum);
                 cc.setCardType("Standard");
             }
             // Call the displayCreditDetails method based on user input and display 
             cc.displayCreditCardDetails();
     
             // Call the extended method based on the card type
-            if (cc instanceof CreditCardRewards) {
-                CreditCardRewards ccRewards = (CreditCardRewards) cc;
+            if (cc instanceof G21_CRDRewards) {
+                G21_CRDRewards ccRewards = (G21_CRDRewards) cc;
                 System.out.println("Do you want to claim rewards? (yes/no):");
                 String claimRewardsOption = scanner.next();
                 scanner.nextLine(); // Consume newline
@@ -138,8 +138,8 @@ public class BankUI {
             }
     
             //Call the extended method based on the card type
-            if (cc instanceof CreditCardStudent) {
-                CreditCardStudent ccStudent = (CreditCardStudent) cc;
+            if (cc instanceof G21_CRDStudent) {
+                G21_CRDStudent ccStudent = (G21_CRDStudent) cc;
                 System.out.println("Do you want to pay bill with cashback? (yes/no):");
                 String payBillWithCashbackOption = scanner.next();
                 scanner.nextLine(); // Consume newline
@@ -154,9 +154,9 @@ public class BankUI {
                 }
             }
     
-            // Example of using the extended class CreditCardTravel
-            if (cc instanceof CreditCardTravel) {
-                CreditCardTravel ccTravel = (CreditCardTravel) cc;
+            // Example of using the extended class G21_CRDTravel
+            if (cc instanceof G21_CRDTravel) {
+                G21_CRDTravel ccTravel = (G21_CRDTravel) cc;
                 System.out.println("Do you want to claim travel benefits? (yes/no):");
                 String claimTravelBenefitsOption = scanner.next();
                 scanner.nextLine(); // Consume newline

@@ -3,7 +3,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class CreditCard {
+public class G21_CRD {
     protected Long cardNumber;
     protected String cardNumLast4Digit;
     protected LocalDate cardExpiryDate;
@@ -16,7 +16,7 @@ public class CreditCard {
     protected double creditBill;
     protected int accountNum;
 
-    public CreditCard(Long cardNumber, String cardNumLast4Digit, LocalDate cardExpiryDate2, double annualFee, double interestRate, int benefits, String cardType, double ownLimit, double creditLimit, double creditBill, int accountNum) {
+    public G21_CRD(Long cardNumber, String cardNumLast4Digit, LocalDate cardExpiryDate2, double annualFee, double interestRate, int benefits, String cardType, double ownLimit, double creditLimit, double creditBill, int accountNum) {
         this.cardNumber = cardNumber;
         this.cardNumLast4Digit = cardNumLast4Digit;
         this.cardExpiryDate = cardExpiryDate2;
@@ -164,8 +164,8 @@ public class CreditCard {
     }
 }
 
-class CreditCardRewards extends CreditCard {
-    public CreditCardRewards(Long cardNumber, String cardNumLast4Digit, LocalDate cardExpiryDate, double annualFee, double interestRate, int benefits, double ownLimit, double creditLimit, double creditBill, int accountNum) {
+class G21_CRDRewards extends G21_CRD {
+    public G21_CRDRewards(Long cardNumber, String cardNumLast4Digit, LocalDate cardExpiryDate, double annualFee, double interestRate, int benefits, double ownLimit, double creditLimit, double creditBill, int accountNum) {
         super(cardNumber, cardNumLast4Digit, cardExpiryDate, annualFee, interestRate, benefits, "Rewards Credit Card", ownLimit, creditLimit, creditBill, accountNum);
     }
 
@@ -200,8 +200,8 @@ class CreditCardRewards extends CreditCard {
     }
 }
 
-class CreditCardStudent extends CreditCard {
-    public CreditCardStudent(Long cardNumber, String cardNumLast4Digit, LocalDate cardExpiryDate, double annualFee, double interestRate, int benefits, double ownLimit, double creditLimit, double creditBill, int accountNum) {
+class G21_CRDStudent extends G21_CRD {
+    public G21_CRDStudent(Long cardNumber, String cardNumLast4Digit, LocalDate cardExpiryDate, double annualFee, double interestRate, int benefits, double ownLimit, double creditLimit, double creditBill, int accountNum) {
         super(cardNumber, cardNumLast4Digit, cardExpiryDate, annualFee, interestRate, benefits, "Student Credit Card", ownLimit, creditLimit, creditBill, accountNum);
     }
 
@@ -229,8 +229,8 @@ class CreditCardStudent extends CreditCard {
     }
 
 }
-class CreditCardTravel extends CreditCard{
-    public CreditCardTravel (Long cardNumber, String cardNumLast4Digit, LocalDate cardExpiryDate, double annualFee, double interestRate, int benefits, double ownLimit, double creditLimit, double creditBill, int accountNum) { 
+class G21_CRDTravel extends G21_CRD{
+    public G21_CRDTravel (Long cardNumber, String cardNumLast4Digit, LocalDate cardExpiryDate, double annualFee, double interestRate, int benefits, double ownLimit, double creditLimit, double creditBill, int accountNum) { 
         super (cardNumber, cardNumLast4Digit, cardExpiryDate, annualFee, interestRate, benefits, "Travel Credit Card", ownLimit, creditLimit, creditBill, accountNum);
     }
     @Override
