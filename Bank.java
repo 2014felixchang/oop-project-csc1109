@@ -55,23 +55,23 @@ public class Bank {
      * @param destinationAccountNum The destination account number
      * @param amount The amount to be transferred
      */
-    public void transferMoney(String sourceAccountNum, String destinationAccountNum, double amount){
-        if ((CSVHandler.getRecord(sourceAccountNum, "Accounts.csv")) == null || (CSVHandler.getRecord(sourceAccountNum, "Accounts.csv")) == null ) {
+    public Account transferMoney(Account sourceAccountObj, String destinationAccountNum, double amount){
+        if ((CSVHandler.getRecord(sourceAccountObj.getAccountNum(), "Accounts.csv")) == null || (CSVHandler.getRecord(sourceAccountObj.getAccountNum(), "Accounts.csv")) == null ) {
             System.out.println("Invalid account numbers given. Transfer process terminated.");
-            return;
+            return sourceAccountObj;
         }
         
-        Account sourceAccount = new Account(sourceAccountNum);
+        Account sourceAccount = sourceAccountObj;
         Account destinationAccount = new Account(destinationAccountNum);
 
         if (sourceAccount.getBalance() < amount) {
             System.out.println("Insufficient balance to transfer funds.");
-            return;
+            return sourceAccountObj;
         }
 
         if (sourceAccount.getTransLimit() < amount) {
             System.out.println("Transfer amount exceeds account transfer limit. Please increase transfer limit before trying again.");
-            return;
+            return sourceAccountObj;
         }
 
         sourceAccount.setBalance(sourceAccount.getBalance() - amount);
@@ -83,6 +83,7 @@ public class Bank {
         CSVHandler.updateCSV(destinationAccount.getAccountNum(), "Accounts.csv", destinationAccount.convertToCSV());
 
         System.out.println("\nTransfer Successful!");
+        return sourceAccountObj;
     }
     
     /**

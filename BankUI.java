@@ -450,7 +450,7 @@ public class BankUI {
             System.out.print("Enter the amount to transfer: $");
             String transferAmount = scanner.nextLine();
             // scanner.nextLine();     // Consumes the \n after the double
-            bank.transferMoney(loggedInAccount.getAccountNum(), transferAccountNum, Double.parseDouble(transferAmount));
+            loggedInAccount = bank.transferMoney(loggedInAccount, transferAccountNum, Double.parseDouble(transferAmount));
         }
         catch (InputMismatchException | NumberFormatException e) {
             BankUI.printInvalid();

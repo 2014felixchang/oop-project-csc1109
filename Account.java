@@ -30,7 +30,7 @@ import java.util.ArrayList;
             this.balance = Double.parseDouble(accountData[1]);
             this.transLimit = Double.parseDouble(accountData[2]);
             if (accountData.length > 3) {
-                for (int i = 3; i < 8; i++) {
+                for (int i = 3; i < accountData.length; i++) {
                     this.history.add(accountData[i]);
                 }
             }
