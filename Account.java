@@ -34,17 +34,17 @@ import java.util.ArrayList;
                     this.history.add(accountData[i]);
                 }
             }
-            double principal = Double.parseDouble(accountData[8]);
-            double interestRate = Double.parseDouble(accountData[9]);
-            LocalDate loanStartDate = LocalDate.parse(accountData[10]);
-            int loanTermMonths = Integer.parseInt(accountData[11]);
-            this.loan = new G16_LON(principal, interestRate, loanStartDate, loanTermMonths);
-            double totalRepayment = loan.getTotalPayment();
-            double loanRepaymentLeft = Double.parseDouble(accountData[12]);
-            double amountPaid = totalRepayment - loanRepaymentLeft;
-            // this will effectively make the loan object's repayment amount be the correct amount
-            // need to do this because the class has no setter method to set the loan repayment amount
-            this.loan.payLoan(amountPaid);
+            // double principal = Double.parseDouble(accountData[8]);
+            // double interestRate = Double.parseDouble(accountData[9]);
+            // LocalDate loanStartDate = LocalDate.parse(accountData[10]);
+            // int loanTermMonths = Integer.parseInt(accountData[11]);
+            // this.loan = new G16_LON(principal, interestRate, loanStartDate, loanTermMonths);
+            // double totalRepayment = loan.getTotalPayment();
+            // double loanRepaymentLeft = Double.parseDouble(accountData[12]);
+            // double amountPaid = totalRepayment - loanRepaymentLeft;
+            // // this will effectively make the loan object's repayment amount be the correct amount
+            // // need to do this because the class has no setter method to set the loan repayment amount
+            // this.loan.payLoan(amountPaid);
         }
         else {
             this.balance = 0.0;
