@@ -8,3 +8,8 @@
 6636947,0.00,1000.00
 1528086,0.00,1000.00
 7224141,537.00,1000.00,Withdrawn: $20.00,Withdrawn: $12.00,Loan Payment: $30.00,Loan Payment: $50.00,Loan Payment: $3.00,100.0,0.06,2024-04-04,12,50.0
+516042,1010.00,1000.00,Received $10.0 from Account: 8037387,Received $1000.0 from Account: 9157162
+8037387,990.00,1000.00,Deposited: $1000.00,Transfered $10.0 to Account: 516042
+9157162,4000.00,1000.00,Deposited: $5000.00,Transfered $1000.0 to Account: 516042
+4498672,0.00,1000.00
+4875810,0.00,1000.00
