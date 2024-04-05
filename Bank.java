@@ -93,9 +93,11 @@ public class Bank {
      */
     public static String generateAccNum() {
         Random rand = new Random();
-        String randomAccNum = String.valueOf(rand.nextInt(9999999));
+        int randomNumber = 1000000 + rand.nextInt(9000000);
+        String randomAccNum = String.valueOf(randomNumber);
         while (Bank.checkAccNumExists(randomAccNum) == true) {
-            randomAccNum = String.valueOf(rand.nextInt(9999999));
+            randomNumber = 1000000 + rand.nextInt(9000000);
+            randomAccNum = String.valueOf(randomNumber);
         }
         return randomAccNum;
     }

@@ -29,22 +29,27 @@ import java.util.ArrayList;
             String[] accountData = record.split(",");
             this.balance = Double.parseDouble(accountData[1]);
             this.transLimit = Double.parseDouble(accountData[2]);
-            if (accountData.length > 3) {
-                for (int i = 3; i < accountData.length; i++) {
+            if (!accountData[3].equals(" ")) {
+                double principal = Double.parseDouble(accountData[3]);
+                double interestRate = Double.parseDouble(accountData[4]);
+                LocalDate loanStartDate = LocalDate.parse(accountData[5]);
+                int loanTermMonths = Integer.parseInt(accountData[6]);
+                this.loan = new G16_LON(principal, interestRate, loanStartDate, loanTermMonths);
+                double totalRepayment = loan.getTotalPayment();
+                double loanRepaymentLeft = Double.parseDouble(accountData[7]);
+                double amountPaid = totalRepayment - loanRepaymentLeft;
+                // this will effectively make the loan object's repayment amount be the correct amount
+                // need to do this because the class has no setter method to set the loan repayment amount
+                this.loan.payLoan(amountPaid);
+            }
+            else {
+                this.loan = null;
+            }
+            if (accountData.length > 7) {
+                for (int i = 8; i < accountData.length; i++) {
                     this.history.add(accountData[i]);
                 }
             }
-            // double principal = Double.parseDouble(accountData[8]);
-            // double interestRate = Double.parseDouble(accountData[9]);
-            // LocalDate loanStartDate = LocalDate.parse(accountData[10]);
-            // int loanTermMonths = Integer.parseInt(accountData[11]);
-            // this.loan = new G16_LON(principal, interestRate, loanStartDate, loanTermMonths);
-            // double totalRepayment = loan.getTotalPayment();
-            // double loanRepaymentLeft = Double.parseDouble(accountData[12]);
-            // double amountPaid = totalRepayment - loanRepaymentLeft;
-            // // this will effectively make the loan object's repayment amount be the correct amount
-            // // need to do this because the class has no setter method to set the loan repayment amount
-            // this.loan.payLoan(amountPaid);
         }
         else {
             this.balance = 0.0;
@@ -204,14 +209,19 @@ import java.util.ArrayList;
      */
     public String convertToCSV() {
         String accountData = this.getAccountNum() + "," + convert2DP(this.getBalance()) + "," + convert2DP(this.getTransLimit());
+        if (loan != null) {
+            accountData += "," + loan.getPrincipal() + "," + loan.getInterestRate() + "," + loan.getLoanStartDate() + "," + loan.getLoanTermMonths() + "," + loan.getLoanRepayment();
+        }
+        else {
+            accountData += ", , , , ,";
+        }
+
         if (this.getHistory() != null) {
             for (String i : this.getHistory()) {
                 accountData += "," + i;
             }
         }
-        if (loan != null){
-            accountData += "," + loan.getPrincipal() + "," + loan.getInterestRate() + "," + loan.getLoanStartDate() + "," + loan.getLoanTermMonths() + "," + loan.getLoanRepayment();
-        }
+
         return accountData;
     }
 

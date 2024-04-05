@@ -1,15 +1,5 @@
-5450728,9400.00,1000.00,Deposited: $10000.00,Withdrawn: $500.00,Transfered $100.0 to Account: 5304991
-2059635,4050.00,5000.00,Deposited: $50.00,Deposited: $4000.00
-1812474,0.00,1000.00
-1531636,0.00,1000.00
-5490962,0.00,1000.00
-8333231,0.00,1000.00
-2740685,0.00,1000.00
-6636947,0.00,1000.00
-1528086,0.00,1000.00
-7224141,537.00,1000.00,Withdrawn: $20.00,Withdrawn: $12.00,Loan Payment: $30.00,Loan Payment: $50.00,Loan Payment: $3.00,100.0,0.06,2024-04-04,12,50.0
-516042,1010.00,1000.00,Received $10.0 from Account: 8037387,Received $1000.0 from Account: 9157162
-8037387,990.00,1000.00,Deposited: $1000.00,Transfered $10.0 to Account: 516042
-9157162,4000.00,1000.00,Deposited: $5000.00,Transfered $1000.0 to Account: 516042
-4498672,0.00,1000.00
-4875810,0.00,1000.00
+7224141,567.99,1000.00,100.0,0.06,2024-04-04,12,40.0,Loan Payment: $8.61,Loan Payment: $0.40,Loan Payment: $0.30,Loan Payment: $1.00,Received $40.0 from Account: 4326898
+516042,1010.00,1000.00, , , , , ,Received $10.0 from Account: 8037387,Received $1000.0 from Account: 9157162
+8037387,990.00,1000.00, , , , , ,Deposited: $1000.00,Transfered $10.0 to Account: 516042
+4326898,60.00,1000.00,5000.0,0.06,2024-04-05,84,6066.0,Deposited: $100.00,Applied for Loan: $5000.00,Loan Payment: $70.00,Transfered $40.0 to Account: 7224141
+2625849,1000.00,1000.00,500.0,0.06,2024-04-05,12,516.0,Deposited: $1000.00,Applied for Loan: $500.00
