@@ -26,7 +26,6 @@ public class BankUI {
         System.out.println("1. Register");
         System.out.println("2. Login");
         System.out.println("3. Exit");
-        System.out.println("4. Branches");
         System.out.println("------------------------------------");
         System.out.print("Enter your choice: ");
     }
@@ -50,10 +49,6 @@ public class BankUI {
                 case 3:
                     System.exit(0);
                     break;
-                case 4:
-                    BankUI.viewBranches(bank);
-                    break;
-                
                 default:
                     BankUI.printInvalid();
                     break;
@@ -268,9 +263,7 @@ public class BankUI {
         System.out.println("2. Add a new customer");
         System.out.println("3. Remove a customer");
         System.out.println("4. Unlock a customer account");
-        System.out.println("5. Add a new branch to branches information page");
-        System.out.println("6. Remove a branch from branches information page");
-        System.out.println("7. Logout");
+        System.out.println("5. Logout");
         System.out.println("------------------------------------");
         System.out.print("Enter your choice: ");
     }
@@ -302,12 +295,6 @@ public class BankUI {
                     Customer.unlockCustomerAccount();
                     break;
                 case 5:
-                    Branch.addNewBranch();
-                    break;
-                case 6:
-                    Branch.removeBranch();
-                    break;
-                case 7:
                     System.out.println("Logging out...");
                     return;
                 default:
@@ -432,14 +419,12 @@ public class BankUI {
         System.out.println("2. Change transfer limit");
         System.out.println("3. Deposit");
         System.out.println("4. Withdraw");
-        System.out.println("5. Currency Exchange");
-        System.out.println("6. Display Loan Details");
-        System.out.println("7. Get a loan");
-        System.out.println("8. Pay loan");
-        System.out.println("9. Create Insurance Policy");
-        System.out.println("10. Go back to accounts menu");
-        System.out.println("11. Logout");
-        System.out.println("12. Credit Card");
+        System.out.println("5. Display Loan Details");
+        System.out.println("6. Get a loan");
+        System.out.println("7. Pay loan");
+        System.out.println("8. Credit Card");
+        System.out.println("9. Go back to accounts menu");
+        System.out.println("10. Logout");
         System.out.println("------------------------------------");
         System.out.print("Enter your choice: ");
     }
@@ -518,47 +503,6 @@ public class BankUI {
         }
         catch (InputMismatchException | NumberFormatException e) {
             BankUI.printInvalid();
-        }
-    }
-
-    /**
-     * Handles the currency exchange operation.
-     * Prompts the user for the amount and currency to and from.
-     * Calls the ForeignExchange class.
-     * @param loggedInAccount The active user's account
-     */
-    public static void performCurrencyExchange(Account loggedInAccount) {
-        ForeignExchange foreignExchange = new ForeignExchange();
-        foreignExchange.displayRates();
-        System.out.println("Enter the currency to convert from (SGD/USD/JPY):");
-        String fromCurrency = scanner.next();
-        double exchangeAmount;
-        if (fromCurrency.equals("SGD")){
-            System.out.println("Enter the amount to exchange: ");
-            exchangeAmount = scanner.nextDouble();
-            scanner.nextLine();     // Consumes the \n after the double
-            if(loggedInAccount.getBalance() < exchangeAmount){
-                System.out.println("Not enough money in balance!");
-                return;
-            }
-            loggedInAccount.setBalance(loggedInAccount.getBalance() - exchangeAmount);
-        }else{
-            System.out.println("Please insert foreign cash into the machine");
-            System.out.println("Amount: ");
-            exchangeAmount = scanner.nextDouble();
-            scanner.nextLine();     // Consumes the \n after the double
-        }
-        System.out.println("Enter the currency to convert to (SGD/USD/JPY):");
-        String toCurrency = scanner.next();
-
-        double convertedAmount = foreignExchange.convert(fromCurrency, toCurrency, exchangeAmount);
-        if(toCurrency.equals("SGD")){
-            System.out.println("Converted amount: " + convertedAmount + " SGD");
-            System.out.println("Adding to balance...");
-            loggedInAccount.setBalance(loggedInAccount.getBalance() + convertedAmount);
-        }else{
-            System.out.println("Converted amount: " + convertedAmount + " " + toCurrency);
-            System.out.println("Dispensing amount...");
         }
     }
 
@@ -664,151 +608,27 @@ public class BankUI {
                     performWithdrawal(loggedInAccount);
                     break;
                 case 5:
-                    // Foreign Exchange
-                    performCurrencyExchange(loggedInAccount);
-                    break;
-                case 6:
                     loggedInAccount.displayLoanDetails();
                     break;
-                case 7:
+                case 6:
                     createLoan(loggedInAccount);
                     break;
-                case 8:
+                case 7:
                     payLoan(loggedInAccount);
                     break;
-                case 9:
-                    createNewInsurancePolicy();
-                    // go back to accounts menu
-                    break;
-                case 10:
-                    // go back to accounts menu
-                    return;
-                case 11:
-                    System.out.println("Logging out...");
-                    displayMainMenu(bank);
-                case 12:
+                case 8:
                     // Credit card
                     createCreditCard();
                     break;
+                case 9:
+                    // go back to accounts menu
+                    return;
+                case 10:
+                    System.out.println("Logging out...");
+                    displayMainMenu(bank);
                 default:
                     printInvalid();
                     break;
-            }
-        }
-    }
-    
-    /**
-     * Handles the creation of a new insurance policy. (Only accessible by Admin role)
-     * Prints out the prompts for the admin and calls the Insurance component with the provided information
-     */
-    public static void createNewInsurancePolicy() {
-        try {
-            // Prompt user for input
-            System.out.println("Enter policy type (1 for LIFE, 2 for HEALTH, 3 for ACCIDENT): ");
-            int policyTypeIndex = scanner.nextInt();
-            scanner.nextLine(); // Consume newline character
-    
-            System.out.println("Enter coverage option (1 for BASIC($1000), 2 for STANDARD($2000), 3 for PREMIUM($3000)): ");
-            int coverageOptionIndex = scanner.nextInt();
-            scanner.nextLine(); // Consume newline character
-    
-            System.out.println("Enter policy tenure (1 for FIVE_YEARS, 2 for TEN_YEARS, 3 for FIFTEEN_YEARS, 4 for TWENTY_YEARS): ");
-            int policyTenureIndex = scanner.nextInt();
-            scanner.nextLine(); // Consume newline character
-    
-            System.out.println("Enter premium frequency (1 for MONTHLY, 2 for QUARTERLY, 3 for SEMI_ANNUALLY, 4 for ANNUALLY): ");
-            int premiumFrequencyIndex = scanner.nextInt();
-            scanner.nextLine(); // Consume newline character
-    
-            System.out.println("Enter policy start date (yyyy-MM-dd): ");
-            String startDateString = scanner.next();
-            scanner.nextLine(); // Consume newline character
-    
-            System.out.println("Enter age : ");
-            int age = scanner.nextInt();
-            scanner.nextLine(); // Consume newline character
-    
-            boolean smoker = false; // Default value
-            if (policyTypeIndex == 1 || policyTypeIndex == 2) {
-                System.out.println("Are you a smoker? Additonal $500 (1 for Yes, 2 for No): ");
-                int smokerInput = scanner.nextInt();
-                scanner.nextLine(); // Consume newline character
-                smoker = (smokerInput == 1);
-            }
-    
-            boolean pastInjuries = false; // Default value
-            if (policyTypeIndex == 3) {
-                System.out.println("Do you have past injuries? Addition $1000 (1 for Yes, 2 for No): ");
-                int pastInjuriesInput = scanner.nextInt();
-                scanner.nextLine(); // Consume newline character
-                pastInjuries = (pastInjuriesInput == 1);
-            }
-    
-            // Create and display the insurance policy
-            InsurancePolicy insurancePolicy = null;
-            switch (policyTypeIndex) {
-                case 1:
-                    insurancePolicy = new LifeInsurance(startDateString, InsurancePolicy.CoverageOption.values()[coverageOptionIndex - 1],
-                        InsurancePolicy.PolicyTenure.values()[policyTenureIndex - 1], InsurancePolicy.PremiumFrequency.values()[premiumFrequencyIndex - 1],
-                        age, smoker);
-                    break;
-                case 2:
-                    insurancePolicy = new HealthInsurance(startDateString, InsurancePolicy.CoverageOption.values()[coverageOptionIndex - 1],
-                        InsurancePolicy.PolicyTenure.values()[policyTenureIndex - 1], InsurancePolicy.PremiumFrequency.values()[premiumFrequencyIndex - 1],
-                        age, smoker);
-                    break;
-                case 3:
-                    insurancePolicy = new AccidentInsurance(startDateString, InsurancePolicy.CoverageOption.values()[coverageOptionIndex - 1],
-                        InsurancePolicy.PolicyTenure.values()[policyTenureIndex - 1], InsurancePolicy.PremiumFrequency.values()[premiumFrequencyIndex - 1],
-                        age, pastInjuries);
-                    break;
-                default:
-                    System.out.println("Invalid policy type.");
-                    return;
-            }
-    
-            // Display policy details
-            System.out.println(insurancePolicy.displayPolicyDetails());
-    
-        } catch (InputMismatchException e) {
-            System.out.println("Invalid input. Please try again.");
-        } catch (DateTimeParseException e) {
-            System.out.println("Invalid date format. Please enter the date in the format yyyy-MM-dd.");
-        } catch (InsurancePolicy.PolicyException e) {
-            System.out.println("Error creating insurance policy: " + e.getMessage());
-        }
-    }
-    
-    /**
-     * Handles the viewing of Branches through the information in Branches.csv and prints them out into the terminal.
-     * Handles the user's choice of Branch as well.
-     * @param bank The active Bank instance
-     */
-    public static void viewBranches(Bank bank) {
-        ArrayList<Branch> branches = new ArrayList<Branch>();
-        try (BufferedReader br = new BufferedReader(new FileReader("Branches.csv"))){
-            String branchInfo;
-            while ((branchInfo = br.readLine()) != null) {
-                String attributes[] = branchInfo.split(",");
-                Branch branch = new Branch(Integer.parseInt(attributes[0]), attributes[1], attributes[2], LocalTime.parse(attributes[3]), LocalTime.parse(attributes[4]));
-                branches.add(branch);
-            }
-        } catch (IOException | NumberFormatException e) {
-            System.out.println(e);
-            return;
-        }
-        while (true) {
-            System.out.println("------------------------------------");
-            System.out.println("These are our branches!");
-            for (Branch branch : branches) {
-                System.out.println("------------------------------------");
-                branch.printBranchInfo();
-            }
-            System.out.println("------------------------------------");
-            System.out.print("Press enter to return to main menu. ");
-            String input = scanner.nextLine();
-            if (input.isEmpty()) {
-                return;
             }
         }
     }
